@@ -10,6 +10,8 @@ export interface BeneficiariesListType {
   nameFilter: string | undefined
   cpfFilter: string | undefined
   allFilter: string | undefined
+  tsId: number | undefined
+  setTsId: Dispatch<SetStateAction<number | undefined>>
   setallFilter: Dispatch<SetStateAction<string | undefined>>
   handleFilter: (values: {
     name: string;

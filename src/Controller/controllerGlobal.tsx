@@ -90,16 +90,14 @@ export const ROLE = {
 export const kinship = [
   { id: "PAI", name: 'Pai' },
   { id: "MAE", name: 'Mãe' },
-  { id: "CONJUGE", name: 'Cônjuge' },
+  { id: "PRIMO_A", name: 'Primo(a)' },
+  { id: "TIO_A", name: 'Tio(a)' },
   { id: "FILHO_A", name: 'Filho(a)' },
-  { id: "ENTEADO_A", name: 'Enteado(a)' },
-  { id: "NETO_A", name: 'Neto(a)' },
-  { id: "SOGRO_A", name: 'Sogro(a)' },
   { id: "IRMAO_A", name: 'Irmão(a)' },
-  { id: "GENRO", name: 'Genro' },
-  { id: "NORA", name: 'Nora' },
   { id: "OUTRO", name: 'Outro' },
-  { id: "NAO_PARENTE", name: 'Não Parente' }
+  { id: "NAO_PARENTE", name: 'Não Parente' },
+  { id: "NAO_DEFINIDO", name: 'Não Definido' }
+
 ]
 
 export const loadImageFileAsBase64 = (imagePath: string): Promise<string> => {

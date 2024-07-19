@@ -6,15 +6,17 @@ export const useFetchRequestAllRegistration = ({
   limite,
   cpf,
   name,
-  allFilter
+  allFilter,
+  idTs
 }: {
   page: number;
   limite: number;
   name?: string;
   cpf?: string;
-  allFilter?: string
+  allFilter?: string,
+  idTs?: string,
 }) => {
-  return useQuery(["useRequestAllRegistration", page, limite, cpf, name, allFilter], () =>
-    requestAllRegistration({ limite: limite, page: page, cpf: cpf, name: name, allFilter: allFilter })
+  return useQuery(["useRequestAllRegistration", page, limite, cpf, name, allFilter, idTs], () =>
+    requestAllRegistration({ limite: limite, page: page, cpf: cpf, name: name, allFilter: allFilter, idTs: idTs })
   );
 };
