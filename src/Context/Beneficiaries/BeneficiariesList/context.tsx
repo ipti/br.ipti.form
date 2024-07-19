@@ -23,7 +23,9 @@ const BeneficiariesListProvider = ({
     cpfFilter,
     nameFilter,
     allFilter,
-    setallFilter
+    setallFilter,
+    setTsId,
+    tsId
   } = BeneficiariesListState();
 
   return (
@@ -41,7 +43,9 @@ const BeneficiariesListProvider = ({
         cpfFilter,
         nameFilter,
         allFilter,
-        setallFilter
+        setallFilter,
+        setTsId,
+        tsId
       }}
     >
       {children}
