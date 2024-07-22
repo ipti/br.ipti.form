@@ -134,7 +134,7 @@ const Menu = ({ viewdMenu }: { viewdMenu: boolean }) => {
             active={active === 5 ? true : false}
             path={"/beneficiarios"}
             icon={active === 5 ? beneficiaries_hover : beneficiaries}
-          /><Padding />
+          />
           {/* <Item
             text={"Reaplicadores"}
             funcActiv={() => {
@@ -145,19 +145,22 @@ const Menu = ({ viewdMenu }: { viewdMenu: boolean }) => {
             path={"/reaplicadores"}
             icon={active === 8 ? turmasHover : turmas}
           /> */}
-          
+
           {props.user?.role === ROLE.ADMIN ||
-            props.user?.role === ROLE.COORDINATORS ? (
-            <Item
-              text={"Usuarios"}
-              funcActiv={() => {
-                setActive(6);
-                menuItem("6");
-              }}
-              active={active === 6 ? true : false}
-              path={"/users"}
-              icon={active === 6 ? user_hover : user}
-            />
+          props.user?.role === ROLE.COORDINATORS ? (
+            <>
+              <Padding />
+              <Item
+                text={"Usuarios"}
+                funcActiv={() => {
+                  setActive(6);
+                  menuItem("6");
+                }}
+                active={active === 6 ? true : false}
+                path={"/users"}
+                icon={active === 6 ? user_hover : user}
+              />
+            </>
           ) : null}
 
           <Padding />

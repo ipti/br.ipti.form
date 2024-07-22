@@ -26,7 +26,6 @@ export const requestUsersChart = (id?: string) => {
 
   let path = "/user-bff/chart?year=" + getYear() ?? 2024;
 
-  console.log(id)
 
   if (id) {
     return http.get("/user-bff/chart-ts?year=" + (getYear() ?? 2024) + "&tsId=" + id).then((response) => response.data)
@@ -56,7 +55,6 @@ export const requestUsersChart = (id?: string) => {
 export const requestCreateUsers = (data: CreateUser) => {
   let path = "/user-bff";
 
-  console.log(data)
   return http
     .post(path, { ...data, role: data.role })
     .then((response) => response.data)
@@ -85,6 +83,20 @@ export const requestDeleteUsers = (id: number) => {
 
 export const requestUpdateUsers = (id: number, data: any) => {
   let path = "/user-bff?idUser=" + id;
+  return http
+    .put(path, data)
+    .then((response) => response.data)
+    .catch((err) => {
+      if (err.response.status === 401) {
+        logout();
+        window.location.reload();
+      }
+      throw err;
+    });
+};
+
+export const requestChangePassword = (id: number, data: {password: string}) => {
+  let path = "/user-bff/change-password?idUser=" + id;
   return http
     .put(path, data)
     .then((response) => response.data)

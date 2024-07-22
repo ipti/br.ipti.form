@@ -8,6 +8,9 @@ export interface UsersTypes {
   isLoading: boolean,
   role?: string,
   setRole: Dispatch<SetStateAction<string | undefined>>
+  ChangePassword: (data: {
+    password: string;
+}, id: number) => void
 }
 
 export interface CreateUser {
