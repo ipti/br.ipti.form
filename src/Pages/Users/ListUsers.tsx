@@ -12,7 +12,7 @@ import { AplicationContext } from "../../Context/Aplication/context";
 import UsersProvider, { UsersContext } from "../../Context/Users/context";
 import { UsersTypes } from "../../Context/Users/type";
 import { ROLE } from "../../Controller/controllerGlobal";
-import { Container, Padding, Row } from "../../Styles/styles";
+import { Padding, Row } from "../../Styles/styles";
 import { PropsAplicationContext } from "../../Types/types";
 
 const ListUsers = () => {

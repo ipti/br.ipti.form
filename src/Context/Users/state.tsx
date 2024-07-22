@@ -54,6 +54,11 @@ export const UsersState = () => {
     props.requestUpdateUserMutation.mutate({ data: body, id: id });
   };
 
+  const ChangePassword = (data: {password: string}, id: number) => {
+   
+    props.requestPasswordMutation.mutate({ data: data, id: id });
+  };
+
   const DeleteUser = (id: number) => {
     props.requestDeleteUserMutation.mutate(id);
   };
@@ -63,5 +68,5 @@ export const UsersState = () => {
     }
   }, [userRequest, role]);
 
-  return { users, CreateUser, DeleteUser, UpdateUser, isLoading, role, setRole };
+  return { users, CreateUser, DeleteUser, UpdateUser, isLoading, role, setRole, ChangePassword };
 };

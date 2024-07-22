@@ -1,15 +1,21 @@
 import { Form, Formik } from "formik";
 import { Button } from "primereact/button";
 import { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import styled from "styled-components";
 import * as Yup from "yup";
+import ContentPage from "../../../Components/ContentPage";
+import { AplicationContext } from "../../../Context/Aplication/context";
 import UsersProvider, { UsersContext } from "../../../Context/Users/context";
 import { UsersTypes } from "../../../Context/Users/type";
-import { useFetchRequestUsersOne } from "../../../Services/Users/query";
-import { Container, Padding, Row } from "../../../Styles/styles";
-import InputsUser from "../Inputs";
+import { formatarData, ROLE } from "../../../Controller/controllerGlobal";
 import queryClient from "../../../Services/reactquery";
-import { formatarData } from "../../../Controller/controllerGlobal";
+import { useFetchRequestUsersOne } from "../../../Services/Users/query";
+import color from "../../../Styles/colors";
+import { Padding, Row } from "../../../Styles/styles";
+import typography from "../../../Styles/typography";
+import { PropsAplicationContext } from "../../../Types/types";
+import InputsUser from "../Inputs";
 
 const EditUser = () => {
   return (
@@ -19,18 +25,39 @@ const EditUser = () => {
   );
 };
 
+const LinkSenha = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  .link {
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 20px;
+    text-align: center;
+    cursor: pointer;
+    font-family: ${typography.types.inter};
+    color: ${color.colorsBaseProductNormal};
+    :hover {
+      text-decoration: underline;
+    }
+  }
+`;
+
 const EditUserPage = () => {
   const props = useContext(UsersContext) as UsersTypes;
+  const propsAplication = useContext(
+    AplicationContext
+  ) as PropsAplicationContext;
 
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-   if(loading){
-    queryClient.removeQueries("useRequestsUsersOne")
-    setLoading(false)
-   }
-  }, [loading])
-  
+    if (loading) {
+      queryClient.removeQueries("useRequestsUsersOne");
+      setLoading(false);
+    }
+  }, [loading]);
 
   const { id } = useParams();
 
@@ -61,17 +88,15 @@ const EditUserPage = () => {
   });
 
   const selectTs = (data: any) => {
-    const array: any = []
+    const array: any = [];
     data.forEach((element: any) => {
-      array.push(element.usersocialtechnology)
+      array.push(element.usersocialtechnology);
     });
     return array;
-  }
+  };
 
   return (
-    <Container>
-      <Padding padding="8px" />
-      <h3>Editar usuário</h3>
+    <ContentPage title="Editar usuário" description="Faça a edição do usuário.">
       <Padding />
       {project ? (
         <Formik
@@ -80,12 +105,16 @@ const EditUserPage = () => {
             username: project?.username ?? "",
             role: project?.role ?? "",
             project: selectTs(project.user_social_technology),
-            initial_date: project?.reapplicators[0]?.initial_date ? formatarData(project?.reapplicators[0]?.initial_date) : "",
+            initial_date: project?.reapplicators[0]?.initial_date
+              ? formatarData(project?.reapplicators[0]?.initial_date)
+              : "",
             phone: project?.reapplicators[0]?.phone ?? "",
             email: project?.reapplicators[0]?.email ?? "",
             color_race: project?.reapplicators[0]?.color_race ?? "",
             sex: project?.reapplicators[0]?.sex ?? "",
-            birthday: project?.reapplicators[0]?.birthday ?  formatarData(project?.reapplicators[0]?.birthday) : "",
+            birthday: project?.reapplicators[0]?.birthday
+              ? formatarData(project?.reapplicators[0]?.birthday)
+              : "",
           }}
           onSubmit={(values) => {
             props.UpdateUser(values, parseInt(id!));
@@ -93,12 +122,24 @@ const EditUserPage = () => {
           validationSchema={CreateUserSchema}
         >
           {({ values, handleChange, errors, touched }) => {
-
             return (
               <Form>
-                <Row id="end">
+                <Row
+                  id={
+                    propsAplication.user?.role === ROLE.ADMIN
+                      ? "space-between"
+                      : "end"
+                  }
+                >
+                  {propsAplication.user?.role === ROLE.ADMIN && (
+                    <LinkSenha>
+                      <Link to={"/users/senha/" + id} className="link">
+                        <LinkSenha>Alterar senha</LinkSenha>
+                      </Link>
+                    </LinkSenha>
+                  )}
 
-                <Button label="Salvar" />
+                  <Button label="Salvar" />
                 </Row>
                 <Padding padding="16px" />
                 <InputsUser
@@ -112,7 +153,7 @@ const EditUserPage = () => {
           }}
         </Formik>
       ) : null}
-    </Container>
+    </ContentPage>
   );
 };
 

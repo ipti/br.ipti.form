@@ -32,6 +32,7 @@ import ListUsers from "../Pages/Users/ListUsers";
 import PrivateRoute from "./privaterouter";
 import InitialPage from "../Pages/InitialPage";
 import ReapplicatorsList from "../Pages/Reapplicators/ReapplicatorsList";
+import ChangePassword from "../Pages/Users/ChangePassword";
 
 const RoutesApp = () => {
   return (
@@ -158,6 +159,10 @@ const RoutesApp = () => {
         <Route
           element={<PrivateRoute Component={<EditUser />} />}
           path="/users/:id"
+        />
+        <Route
+          element={<PrivateRoute Component={<ChangePassword />} />}
+          path="/users/senha/:id"
         />
         <Route element={<SignUp />} path="/register" />
         <Route element={<Login />} path="/login" />
