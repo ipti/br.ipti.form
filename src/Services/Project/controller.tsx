@@ -21,8 +21,12 @@ export const ProjectController = () => {
     (data: CreateProject) => requestCreateProject(data),
     {
       onError: (error: any) => {
-        alert(error?.response.data.message);
-      },
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
       onSuccess: (data) => {
         Swal.fire({
           icon: "success",
@@ -42,8 +46,12 @@ export const ProjectController = () => {
       requestUpdateProject(data, id),
     {
       onError: (error: any) => {
-        alert(error?.response.data.message);
-      },
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
       onSuccess: (data) => {
         Swal.fire({
           icon: "success",
@@ -63,8 +71,12 @@ export const ProjectController = () => {
       requestRulerProject(data, id),
     {
       onError: (error: any) => {
-        alert(error?.response.data.message);
-      },
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
       onSuccess: (data) => {},
     }
   );
@@ -72,8 +84,12 @@ export const ProjectController = () => {
     ({ id }: { id: number }) => requestRemoveRulerProject(id),
     {
       onError: (error: any) => {
-        alert(error?.response.data.message);
-      },
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
       onSuccess: (data) => {},
     }
   );

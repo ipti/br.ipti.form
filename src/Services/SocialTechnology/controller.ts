@@ -13,8 +13,12 @@ export const TechnologySocialController = () => {
         (data: {name: string}) => requestCreateSocialTechnology(data),
         {
             onError: (error: any) => {
-                alert(error?.response.data.message);
-            },
+                Swal.fire({
+                  icon: 'error',
+                  title: error.response.data.message,
+                  confirmButtonColor: styles.colors.colorsBaseProductNormal,
+                })
+               },
             onSuccess: (data) => {
                 Swal.fire({
                     icon: 'success',

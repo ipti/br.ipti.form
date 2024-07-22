@@ -25,7 +25,7 @@ const CreateUserPage = () => {
     name: Yup.string().required("Campo Obrigatório").min(8, "Nome deve ter pelo menos 8 caracteres"),
     username: Yup.string().required("Campo Obrigatório").min(8, "Nome do usuário deve ter pelo menos 8 caracteres"),
     password: Yup.string().required("Campo Obrigatório").min(8, "Senha deve ter pelo menos 8 caracteres"),
-    role: Yup.object().required("Campo Obrigatório"),
+    role: Yup.string().required("Campo Obrigatório"),
     project: Yup.array().required("Campo Obrigatório"),
     initial_date: Yup.string().required("Campo Obrigatório"),
     birthday: Yup.string().required("Campo Obrigatório"),

@@ -56,8 +56,9 @@ export const requestUsersChart = (id?: string) => {
 export const requestCreateUsers = (data: CreateUser) => {
   let path = "/user-bff";
 
+  console.log(data)
   return http
-    .post(path, { ...data, role: data.role?.id })
+    .post(path, { ...data, role: data.role })
     .then((response) => response.data)
     .catch((err) => {
       if (err.response.status === 401) {
@@ -83,7 +84,7 @@ export const requestDeleteUsers = (id: number) => {
 };
 
 export const requestUpdateUsers = (id: number, data: any) => {
-  let path = "/users/" + id;
+  let path = "/user-bff?idUser=" + id;
   return http
     .put(path, data)
     .then((response) => response.data)
@@ -96,9 +97,26 @@ export const requestUpdateUsers = (id: number, data: any) => {
     });
 };
 
-export const requestUsersOne = (id: number) => {
+export const requestUsersLogin = (id: number) => {
   if (id) {
     let path = "/users/" + id;
+    return http
+      .get(path)
+      .then((response) => response.data)
+      .catch((err) => {
+        if (err.response.status === 401) {
+          logout();
+          window.location.reload();
+        }
+        throw err;
+      });
+  }
+};
+
+
+export const requestUsersOne = (id: number) => {
+  if (id) {
+    let path = "/user-bff/one?idUser=" + id;
     return http
       .get(path)
       .then((response) => response.data)

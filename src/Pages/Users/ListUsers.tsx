@@ -12,7 +12,7 @@ import { AplicationContext } from "../../Context/Aplication/context";
 import UsersProvider, { UsersContext } from "../../Context/Users/context";
 import { UsersTypes } from "../../Context/Users/type";
 import { ROLE } from "../../Controller/controllerGlobal";
-import { Container, Padding } from "../../Styles/styles";
+import { Container, Padding, Row } from "../../Styles/styles";
 import { PropsAplicationContext } from "../../Types/types";
 
 const ListUsers = () => {
@@ -29,7 +29,7 @@ const ListUsersPage = () => {
   const propsAplication = useContext(AplicationContext) as PropsAplicationContext;
 
 
-  const [visible, setVisible] = useState<any>(false)
+  const [visible, setVisible] = useState<any>(false);
   // const actionBodyTemplate = (rowData: any) => {
 
   //     return (
@@ -55,16 +55,29 @@ const ListUsersPage = () => {
   };
 
   const ActiveUserBody = (rowData: any) => {
-    return (
-      <p>
-        {rowData.active ? "Ativo" : "Desativado"}
-      </p>
-    );
+    return <p>{rowData.active ? "Ativo" : "Desativado"}</p>;
   };
 
   const ActionsUserBody = (rowData: any) => {
     return (
-      <Button severity="danger" rounded icon={"pi pi-trash"} onClick={() => { setVisible(rowData) }} />
+      <Row>
+        <Button
+          icon="pi pi-pencil"
+          rounded
+          className="mr-2"
+          onClick={() => {
+            history("/users/" + rowData.id);
+          }}
+        />
+        <Button
+          severity="danger"
+          rounded
+          icon={"pi pi-trash"}
+          onClick={() => {
+            setVisible(rowData);
+          }}
+        />
+      </Row>
     );
   };
 
@@ -101,7 +114,7 @@ const ListUsersPage = () => {
 
 
   return (
-    <Container>
+    <>
       <ContentPage title="Usuários" description="Lista usuários do MeuBen.">
         <Padding padding="16px" />
         <DataTable value={props.users} header={renderHeader} paginator rows={10} rowsPerPageOptions={[5, 10, 25, 50]} tableStyle={{ minWidth: "50rem" }}>
@@ -122,7 +135,7 @@ const ListUsersPage = () => {
         accept={() => props.DeleteUser(visible?.id)}
         reject={() => setVisible(false)}
       />
-    </Container>
+    </>
   );
 };
 

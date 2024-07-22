@@ -21,7 +21,13 @@ export const ControllerPreRegistration = () => {
   const requestPreRegistrationMutation = useMutation(
     (data: CreatePreRegistration) => requestPreRegistration(data),
     {
-      onError: (error) => { },
+      onError: (error: any) => {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
       onSuccess: (data) => {
         Swal.fire({
           icon: "success",
@@ -39,7 +45,13 @@ export const ControllerPreRegistration = () => {
   const requestRegistrationMutation = useMutation(
     (data: CreatePreRegistration) => requestPreRegistration(data),
     {
-      onError: (error) => { },
+      onError: (error: any) => {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
       onSuccess: (data) => {
         Swal.fire({
           icon: "success",
@@ -66,7 +78,13 @@ export const ControllerUpdateRegistration = () => {
     ({ data, id }: { data: UpdateRegister; id: number }) =>
       requestUpdateRegistration(data, id),
     {
-      onError: (error) => { },
+      onError: (error: any) => {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
       onSuccess: (data) => {
         Swal.fire({
           icon: "success",
