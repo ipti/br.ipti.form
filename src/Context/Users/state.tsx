@@ -30,9 +30,9 @@ export const UsersState = () => {
       project: GetId(data.project),
       sex: data.sex,
       color_race: data.color_race,
-      birthday: data.birthday,
+      birthday: converterData(data.birthday),
       email: data.email,
-      initial_date: data.initial_date,
+      initial_date: converterData(data.initial_date),
       phone: data.phone,
     };
     props.requestUserMutation.mutate(body);

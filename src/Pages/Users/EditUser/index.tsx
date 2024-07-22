@@ -80,12 +80,12 @@ const EditUserPage = () => {
             username: project?.username ?? "",
             role: project?.role ?? "",
             project: selectTs(project.user_social_technology),
-            initial_date: formatarData(project?.reapplicators[0]?.initial_date) ?? "",
+            initial_date: project?.reapplicators[0]?.initial_date ? formatarData(project?.reapplicators[0]?.initial_date) : "",
             phone: project?.reapplicators[0]?.phone ?? "",
             email: project?.reapplicators[0]?.email ?? "",
             color_race: project?.reapplicators[0]?.color_race ?? "",
             sex: project?.reapplicators[0]?.sex ?? "",
-            birthday: formatarData(project?.reapplicators[0]?.birthday) ?? "",
+            birthday: project?.reapplicators[0]?.birthday ?  formatarData(project?.reapplicators[0]?.birthday) : "",
           }}
           onSubmit={(values) => {
             props.UpdateUser(values, parseInt(id!));

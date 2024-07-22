@@ -15,7 +15,7 @@ export interface CreateUser {
   username: string;
   password?: string;
   project: number[];
-  role?: { name: string, id: string }
+  role?:string,
   email?: string,
   phone?: string,
   sex: number,

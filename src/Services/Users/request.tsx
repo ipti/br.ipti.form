@@ -56,8 +56,9 @@ export const requestUsersChart = (id?: string) => {
 export const requestCreateUsers = (data: CreateUser) => {
   let path = "/user-bff";
 
+  console.log(data)
   return http
-    .post(path, { ...data, role: data.role?.id })
+    .post(path, { ...data, role: data.role })
     .then((response) => response.data)
     .catch((err) => {
       if (err.response.status === 401) {
