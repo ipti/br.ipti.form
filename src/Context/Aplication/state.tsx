@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useFetchRequestSocialTechnologyLists } from "../../Services/SocialTechnology/query";
-import { useFetchRequestUsersOne } from "../../Services/Users/query";
+import { useFetchRequestUsersLogin } from "../../Services/Users/query";
 import { GetIdTs, GetIdUser, idTs } from "../../Services/localstorage";
 import { Projects, PropsForm } from "../../Types/types";
 import { User } from "../Users/type";
@@ -13,7 +13,7 @@ const AplicationState = () => {
     const [user, setuser] = useState<User | undefined>()
 
 
-    const { data: userRequest } = useFetchRequestUsersOne(parseInt(GetIdUser()!))
+    const { data: userRequest } = useFetchRequestUsersLogin(parseInt(GetIdUser()!))
 
 
 

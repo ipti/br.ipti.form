@@ -17,8 +17,12 @@ export const ControllerClassroom = () => {
     (data: CreateClassroom) => requestCreateClassroom(data),
     {
       onError: (error: any) => {
-        alert(error?.response.data.message);
-      },
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
       onSuccess: (data) => {
         Swal.fire({
           icon: "success",
@@ -37,8 +41,12 @@ export const ControllerClassroom = () => {
     (data: ChangeClassroom) => requestChangeClassroom(data),
     {
       onError: (error: any) => {
-        alert(error?.response.data.message);
-      },
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
       onSuccess: (data) => {
         Swal.fire({
           icon: "success",
@@ -58,8 +66,12 @@ export const ControllerClassroom = () => {
       requestUpdateClassroom(id, data),
     {
       onError: (error: any) => {
-        alert(error?.response.data.message);
-      },
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
       onSuccess: (data) => {
         Swal.fire({
           icon: "success",
@@ -78,7 +90,13 @@ export const ControllerClassroom = () => {
   const requestDeleteClassroomMutation = useMutation(
     (id: number) => requestDeleteClassroom(id),
     {
-      onError: (error) => {},
+      onError: (error: any) => {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
       onSuccess: (data) => {
         Swal.fire({
           icon: "success",

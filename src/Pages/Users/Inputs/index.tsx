@@ -1,7 +1,6 @@
 import { Form } from "formik";
 import { MultiSelect } from "primereact/multiselect";
 import { useContext } from "react";
-import CalendarComponent from "../../../Components/Calendar";
 import DropdownComponent from "../../../Components/Dropdown";
 import MaskInput from "../../../Components/InputMask";
 import TextInput from "../../../Components/TextInput";
@@ -77,6 +76,7 @@ const InputsUser = ({
             name="role"
             placerholder="Tipo de usuário"
             optionsLabel="name"
+            optionsValue="id"
             value={values.role}
             onChange={handleChange}
             options={
@@ -149,11 +149,11 @@ const InputsUser = ({
           <div>
             <label>Data de Nascimento *</label>
             <Padding />
-            <CalendarComponent
-              placeholder="Data de Nascimento *"
+            <MaskInput
+              mask="99/99/9999"
+              value={values.birthday?.toString()}
+              placeholder="Data de Nascimento"
               name="birthday"
-              dateFormat="dd/mm/yy"
-              value={values.birthday}
               onChange={handleChange}
             />
           </div>
@@ -184,10 +184,10 @@ const InputsUser = ({
         <div className="col-12 md:col-6">
           <label>Data de inicio *</label>
           <Padding />
-          <CalendarComponent
+          <MaskInput
+            mask="99/99/9999"
             placeholder="Data de inicio *"
             name="initial_date"
-            dateFormat="dd/mm/yy"
             value={values.initial_date}
             onChange={handleChange}
           />

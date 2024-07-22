@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import { requestUsers, requestUsersChart, requestUsersOne } from "./request";
+import { requestUsers, requestUsersChart, requestUsersLogin, requestUsersOne } from "./request";
 
 export const useFetchRequestUsers = () => {
     return useQuery(["useRequestsUsers"], () => requestUsers());
@@ -11,4 +11,9 @@ export const useFetchRequestUsers = () => {
 
   export const useFetchRequestUsersOne = (id: number) => {
     return useQuery(["useRequestsUsersOne"], () => requestUsersOne(id));
+  };
+
+
+  export const useFetchRequestUsersLogin = (id: number) => {
+    return useQuery(["useRequestsUsersLogin"], () => requestUsersLogin(id));
   };

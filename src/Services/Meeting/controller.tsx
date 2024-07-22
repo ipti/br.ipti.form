@@ -24,8 +24,12 @@ export const MeetingController = () => {
     (data: CreateMeeting) => requestCreateMeeting(data),
     {
       onError: (error: any) => {
-        alert(error?.response.data.message);
-      },
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
       onSuccess: (data) => {
         Swal.fire({
           icon: "success",
@@ -45,8 +49,12 @@ export const MeetingController = () => {
       requestArchivesMeeting(data, id),
     {
       onError: (error: any) => {
-        alert(error?.response.data.message);
-      },
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
       onSuccess: (data) => {
         // Swal.fire({
         //     icon: 'success',
@@ -67,8 +75,12 @@ export const MeetingController = () => {
       requestUpdateMeeting(data, id),
     {
       onError: (error: any) => {
-        alert(error?.response.data.message);
-      },
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
       onSuccess: (data) => {
         Swal.fire({
           icon: "success",
@@ -87,8 +99,12 @@ export const MeetingController = () => {
     (data: CreateFouls) => requestUpdateFouls(data),
     {
       onError: (error: any) => {
-        alert(error?.response.data.message);
-      },
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
       onSuccess: (data) => {
         Swal.fire({
           icon: "success",
@@ -106,7 +122,13 @@ export const MeetingController = () => {
   const requestDeleteMeetingMutation = useMutation(
     (id: number) => requestDeleteMeeting(id),
     {
-      onError: (error) => {},
+      onError: (error: any) => {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
       onSuccess: (data) => {
         Swal.fire({
           icon: "success",
@@ -124,7 +146,13 @@ export const MeetingController = () => {
   const requestDeleteArchivesMeetingMutation = useMutation(
     (id: number) => requestDeleteArchivesMeeting(id),
     {
-      onError: (error) => {},
+      onError: (error: any) => {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
       onSuccess: (data) => {
         Swal.fire({
           icon: "success",
