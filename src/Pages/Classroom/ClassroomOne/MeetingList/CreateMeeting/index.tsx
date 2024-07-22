@@ -24,7 +24,7 @@ const CreateMeeting = () => {
 const CreateMeetingPage = () => {
   const props = useContext(CreateMeetingContext) as CreateMeetingType;
 
-  const { data: userRequest } = useFetchRequestUsers();
+  const { data: userRequest } = useFetchRequestUsers(undefined);
 
   const { id } = useParams();
 

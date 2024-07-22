@@ -6,8 +6,9 @@ import { converterData } from "../../Controller/controllerGlobal";
 
 export const UsersState = () => {
   const [users, setusers] = useState<any>();
+  const [role, setRole] = useState<string | undefined>("TODOS")
 
-  const { data: userRequest, isLoading } = useFetchRequestUsers();
+  const { data: userRequest, isLoading } = useFetchRequestUsers(role);
 
   const props = ControllerUser();
 
@@ -60,7 +61,7 @@ export const UsersState = () => {
     if (userRequest) {
       setusers(userRequest);
     }
-  }, [userRequest]);
+  }, [userRequest, role]);
 
-  return { users, CreateUser, DeleteUser, UpdateUser, isLoading };
+  return { users, CreateUser, DeleteUser, UpdateUser, isLoading, role, setRole };
 };
