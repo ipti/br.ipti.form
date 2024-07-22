@@ -19,6 +19,9 @@ import {
 import color from "../../../Styles/colors";
 import { Padding, Row } from "../../../Styles/styles";
 import ModalFilter from "./ModalFilter";
+import DropdownComponent from "../../../Components/Dropdown";
+import { PropsAplicationContext } from "../../../Types/types";
+import { AplicationContext } from "../../../Context/Aplication/context";
 
 const BeneficiariesList = () => {
   return (
@@ -30,6 +33,7 @@ const BeneficiariesList = () => {
 
 const BeneficiariesListPage = () => {
   const props = useContext(BeneficiariesListContext) as BeneficiariesListType;
+  const propsAplication = useContext(AplicationContext) as PropsAplicationContext;
   const history = useNavigate();
 
   const [visible, setVisible] = useState<any>();
@@ -91,6 +95,22 @@ const BeneficiariesListPage = () => {
   return (
     <>
       <ContentPage title="Beneficiários" description="Visualização dos beneficiários da tecnologia.">
+        <Row id="end">
+
+          {propsAplication.project
+            ? (
+              <DropdownComponent
+                placerholder="Escolha uma tecnologia"
+                options={[{ name: "Todos", id: undefined }, ...propsAplication.project]}
+                value={props.tsId}
+                optionsValue="id"
+
+                onChange={(e) => {
+                  props.setTsId(e.target.value);
+                }}
+              />
+            ) : null}{" "}
+        </Row>
         <Padding padding="16px" />
         <Row style={{ gap: 8 }}>
           {props.nameFilter?.length! > 0 && (

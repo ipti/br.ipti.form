@@ -13,6 +13,7 @@ export interface CreatePreRegistration {
     responsable_telephone?: string | null;
     zone: number;
     classroom: number;
+    kinship: string | undefined | null
   }
 
   export interface CreateRegistrationClassroomType {

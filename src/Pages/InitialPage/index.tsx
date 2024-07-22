@@ -1,11 +1,12 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import CardQuant from "../../Components/Chart/CardQuant";
 import ContentPage from "../../Components/ContentPage";
 import Loading from "../../Components/Loading";
 import { AplicationContext } from "../../Context/Aplication/context";
 import { useFetchRequestUsersChart } from "../../Services/Users/query";
-import { Padding } from "../../Styles/styles";
+import { Padding, Row } from "../../Styles/styles";
 import { PropsAplicationContext } from "../../Types/types";
+import DropdownComponent from "../../Components/Dropdown";
 
 export interface Chart {
   totalUserSocialTechnologies: number;
@@ -17,27 +18,30 @@ export interface Chart {
 }
 
 const State = () => {
-  const { data, isLoading, isError } = useFetchRequestUsersChart();
+
+  const [ts, setTs] = useState<number | undefined>()
+  const { data, isLoading, isError } = useFetchRequestUsersChart(ts?.toString());
+
+  console.log(ts)
 
   var chart: Chart | undefined = data;
 
   return {
     chart,
     isLoading,
-    isError,
+    isError, ts, setTs
   };
 };
 
 const InitialPage = () => {
   const propsAplication = useContext(AplicationContext) as PropsAplicationContext
   const props = State();
-
   if (props.isLoading) return <Loading />;
   return (
     <ContentPage title={"Bem vindo, " + propsAplication.user?.name + "!"} description="Visualização dos dados gerais do meuBen.">
-      <Padding />
-      <h1> </h1>
-      <Padding padding="16px" />
+      <Padding padding="8px" />
+      {propsAplication.project && <Row id="end"><DropdownComponent options={[...propsAplication.project, { id: undefined, name: "Todos" }]} optionsLabel="name" optionsValue="id" value={props.ts} onChange={(e) => props.setTs(e.target.value)} placerholder="Filtrar por Tecnologia" /></Row>
+      }      <Padding padding="16px" />
       <div className="grid">
         <div className="col-12 md:col-4 lg:col-4">
           <CardQuant title="Total de Ts" quant={props.chart?.totalUserSocialTechnologies!} color="navy_blue" />

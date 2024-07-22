@@ -29,7 +29,7 @@ export interface UpdateRegister
     status: {id: string, name: string} | undefined;
     registration_classroom_id?: number
     deficiency_description: any
-    kinship: string | undefined
+    kinship: string | undefined | null
 }
 export interface RegistrationType {
   id: number

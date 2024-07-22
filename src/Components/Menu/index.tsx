@@ -46,7 +46,6 @@ const Menu = ({ viewdMenu }: { viewdMenu: boolean }) => {
   return (
     <Container active={viewdMenu}>
       <Padding padding="4px" />
-
       <Padding padding="16px">
         <Row id="center">
           <Column id="center">
@@ -136,7 +135,7 @@ const Menu = ({ viewdMenu }: { viewdMenu: boolean }) => {
             path={"/beneficiarios"}
             icon={active === 5 ? beneficiaries_hover : beneficiaries}
           /><Padding />
-          <Item
+          {/* <Item
             text={"Reaplicadores"}
             funcActiv={() => {
               setActive(8);
@@ -145,8 +144,8 @@ const Menu = ({ viewdMenu }: { viewdMenu: boolean }) => {
             active={active === 8 ? true : false}
             path={"/reaplicadores"}
             icon={active === 8 ? turmasHover : turmas}
-          />
-          <Padding />
+          /> */}
+          
           {props.user?.role === ROLE.ADMIN ||
             props.user?.role === ROLE.COORDINATORS ? (
             <Item

@@ -58,7 +58,7 @@ export const RegisterState = () => {
     const data = new Date(dataValues?.birthday);
     const dataFormatada = data?.toISOString()?.split('T')[0];
 
-    props.requestPreRegistrationMutation.mutate({ ...dataValues, cpf: dataValues.cpf.replace(/[^a-zA-Z0-9]/g, ''), responsable_telephone: dataValues.responsable_telephone.replace(/[^a-zA-Z0-9]/g, ''), birthday: dataFormatada, responsable_cpf: dataValues?.responsable_cpf?.replace(/[^a-zA-Z0-9]/g, '') })
+    props.requestPreRegistrationMutation.mutate({ ...dataValues, cpf: dataValues.cpf.replace(/[^a-zA-Z0-9]/g, ''),kinship: dataValues.kinship === "" ? "NAO_DEFINIDO" : dataValues.kinship, responsable_telephone: dataValues.responsable_telephone.replace(/[^a-zA-Z0-9]/g, ''), birthday: dataFormatada, responsable_cpf: dataValues?.responsable_cpf?.replace(/[^a-zA-Z0-9]/g, '') })
   }
 
   const initialState: Registration = {
