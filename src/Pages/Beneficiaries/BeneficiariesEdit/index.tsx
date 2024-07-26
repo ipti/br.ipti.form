@@ -21,6 +21,8 @@ import {
 import color from "../../../Styles/colors";
 import { Container, Padding, Row } from "../../../Styles/styles";
 import ModalCreateRegisterClassroom from "./ModalCreateRegisterClassroom";
+import styled from "styled-components";
+import styles from "../../../Styles";
 
 const BeneficiariesEdit = () => {
   return (
@@ -30,9 +32,24 @@ const BeneficiariesEdit = () => {
   );
 };
 
+const Avatar = styled.div`
+  border: 1px solid ${styles.colors.colorsBaseInkLight};
+  height: 128px;
+  width: 128px;
+  border-radius: 50%;
+  
+  img {
+    border-radius: 50%; /* This will make the image circular */
+    height: 100%;
+    width: 100%;
+  }
+`;
+
 const BeneficiariesEditPage = () => {
   const props = useContext(BeneficiariesEditContext) as BeneficiariesEditType;
   const [visible, setVisible] = useState<any>();
+
+
 
   const [visibleDelete, setVisibleDelete] = useState<any>();
 
@@ -94,6 +111,24 @@ const BeneficiariesEditPage = () => {
                   <Row id="end">
                     <Button label="Salvar" />
                   </Row>
+                </div>
+                <Padding padding="8px" />
+                <Avatar>
+                  <img alt="" src="https://seeklogo.com/images/A/avatar-logo-6EDCD92C05-seeklogo.com.png" />
+                </Avatar>
+                <Padding padding="8px" />
+                <div className="grid">
+                  <div className="col-12 md:col-6">
+                    <label>Avatar </label>
+                    <Padding />
+                    <TextInput
+                      // value={props.file}
+                      type="file"
+                      placeholder="Avatar"
+                      onChange={(e) => props.setFile(e.target.files)}
+                      name="name"
+                    />
+                  </div>
                 </div>
                 <Padding padding="8px" />
                 <h3>Dados basicos</h3>

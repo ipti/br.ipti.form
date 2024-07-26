@@ -21,11 +21,15 @@ const BeneficiariesEditProvider = ({
     project,
     projectRequet,
     setProject,
+    file, 
+    setFile
   } = BeneficiariesEditState();
 
   return (
     <BeneficiariesEditContext.Provider
       value={{
+        file,
+        setFile,
         registrations,
         initialValue,
         isLoading,

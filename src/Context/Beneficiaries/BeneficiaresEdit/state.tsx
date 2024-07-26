@@ -22,6 +22,9 @@ export const BeneficiariesEditState = () => {
   const { data: projectRequet } = useFetchRequestProjectList();
   const { data: classroomsFetch } = useFetchRequestClassroom(project!)
   const [classrooms, setClassrooms] = useState<any>();
+  const [file, setFile] = useState<File[] | undefined>()
+
+  console.log(file);
 
   const { id } = useParams();
   const {
@@ -78,19 +81,37 @@ export const BeneficiariesEditState = () => {
   };
 
   const handleUpdateRegistration = (data: UpdateRegister, id: number) => {
-    requestPreRegistrationMutation.mutate({
-      data: {
-        ...data,
-        birthday: converterData(data?.birthday?.toString()!),
-        responsable_telephone: data?.responsable_telephone?.replace(
-          /[^a-zA-Z0-9]/g,
-          ""
-        ),
-        kinship: data.kinship === "" ? "NAO_DEFINIDO" : data.kinship,
-        responsable_cpf: data?.responsable_cpf?.replace(/[^a-zA-Z0-9]/g, ""),
-      },
-      id: id,
-    });
+    if (file) {
+      requestPreRegistrationMutation.mutate({
+        data: {
+          ...data,
+          birthday: converterData(data?.birthday?.toString()!),
+          responsable_telephone: data?.responsable_telephone?.replace(
+            /[^a-zA-Z0-9]/g,
+            ""
+          ),
+          kinship: data.kinship === "" ? "NAO_DEFINIDO" : data.kinship,
+          responsable_cpf: data?.responsable_cpf?.replace(/[^a-zA-Z0-9]/g, ""),
+        },
+        id: id,
+        file: file[0]
+      });
+    } else {
+      requestPreRegistrationMutation.mutate({
+        data: {
+          ...data,
+          birthday: converterData(data?.birthday?.toString()!),
+          responsable_telephone: data?.responsable_telephone?.replace(
+            /[^a-zA-Z0-9]/g,
+            ""
+          ),
+          kinship: data.kinship === "" ? "NAO_DEFINIDO" : data.kinship,
+          responsable_cpf: data?.responsable_cpf?.replace(/[^a-zA-Z0-9]/g, ""),
+        },
+        id: id,
+        file: undefined
+      });
+    }
   };
   return {
     registrations,
@@ -102,6 +123,7 @@ export const BeneficiariesEditState = () => {
     projectRequet,
     project,
     setProject,
-    classrooms
+    classrooms,
+    file, setFile
   };
 };

@@ -55,6 +55,7 @@ export const RegistrationClassroomState = () => {
         responsable_cpf: data?.responsable_cpf?.replace(/[^a-zA-Z0-9]/g, ""),
       },
       id: id,
+      file: undefined
     });
   };
 

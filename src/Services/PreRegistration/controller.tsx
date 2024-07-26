@@ -47,7 +47,7 @@ export const ControllerPreRegistration = () => {
           confirmButtonColor: styles.colors.colorsBaseProductNormal,
         }).then((result) => {
           if (result.isConfirmed) {
-            if(data?.user?.id){
+            if (data?.user?.id) {
               history("/beneficiarios/" + data?.user?.id);
             } else {
               history("/beneficiarios");
@@ -62,9 +62,10 @@ export const ControllerPreRegistration = () => {
 };
 
 export const ControllerUpdateRegistration = () => {
+
   const requestPreRegistrationMutation = useMutation(
-    ({ data, id }: { data: UpdateRegister; id: number }) =>
-      requestUpdateRegistration(data, id),
+    ({ data, id, file }: { data: UpdateRegister; id: number, file: File | undefined }) =>
+      requestUpdateRegistration(data, id, file),
     {
       onError: (error) => { },
       onSuccess: (data) => {

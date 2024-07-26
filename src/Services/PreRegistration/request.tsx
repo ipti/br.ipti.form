@@ -1,4 +1,3 @@
-import { UpdateRegister } from "../../Context/Classroom/Registration/type";
 import http from "../axios";
 import { getYear, logout } from "../localstorage";
 import { CreatePreRegistration, CreateRegistrationClassroomType } from "./types";
@@ -33,9 +32,12 @@ export const requestRegistrationClassroom = (data: CreateRegistrationClassroomTy
 
 
 
-export const requestUpdateRegistration = (data: UpdateRegister, id: number) => {
+export const requestUpdateRegistration = (data: any, id: number, file: File | undefined) => {
+
+  const body = { ...data, color_race: data.color_race?.id, sex: data.sex?.id, deficiency: data.deficiency.id, status: data.status?.id }
+
   return http
-    .put("/registration/" + id, { ...data, color_race: data.color_race?.id, sex: data.sex?.id, deficiency: data.deficiency.id, status: data.status?.id })
+    .put("/registration/" + id, body)
     .then(response => response.data)
     .catch(err => {
       if (err.response.status === 401) {
