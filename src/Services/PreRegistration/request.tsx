@@ -1,4 +1,3 @@
-import { UpdateRegister } from "../../Context/Classroom/Registration/type";
 import http from "../axios";
 import { getYear, logout } from "../localstorage";
 import { CreatePreRegistration, CreateRegistrationClassroomType } from "./types";
@@ -33,9 +32,31 @@ export const requestRegistrationClassroom = (data: CreateRegistrationClassroomTy
 
 
 
-export const requestUpdateRegistration = (data: UpdateRegister, id: number) => {
+export const requestUpdateRegistration = (data: any, id: number) => {
+
+  const body = { ...data, color_race: data.color_race?.id, sex: data.sex?.id, deficiency: data.deficiency.id, status: data.status?.id }
+
   return http
-    .put("/registration/" + id, { ...data, color_race: data.color_race?.id, sex: data.sex?.id, deficiency: data.deficiency.id, status: data.status?.id })
+    .put("/registration/" + id, body)
+    .then(response => response.data)
+    .catch(err => {
+      if (err.response.status === 401) {
+        window.location.reload()
+      }
+      alert(err.response.message)
+
+      throw err;
+    });
+};
+
+export const requestUpdateAvatarRegistration = ( id: number, file: File) => {
+
+  const formData = new FormData()
+
+  formData.append("file", file)
+
+  return http
+    .put("/registration/avatar/" + id, formData)
     .then(response => response.data)
     .catch(err => {
       if (err.response.status === 401) {

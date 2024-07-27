@@ -20,14 +20,16 @@ import { useFetchRequestClassroom } from "../../../Services/Classroom/query";
 export const BeneficiariesEditState = () => {
   const [project, setProject] = useState<any | undefined>();
   const { data: projectRequet } = useFetchRequestProjectList();
-  const { data: classroomsFetch } = useFetchRequestClassroom(project!)
+  const { data: classroomsFetch } = useFetchRequestClassroom(project!);
   const [classrooms, setClassrooms] = useState<any>();
+  const [file, setFile] = useState<File[] | undefined>();
 
   const { id } = useParams();
   const {
     requestRegistrationClassroomMutation,
     requestDeleteRegistrationClassroomMutation,
     requestPreRegistrationMutation,
+    requestCHangeAvatarRegistrationMutation,
   } = ControllerUpdateRegistration();
   const { data: registrationsRequests, isLoading } =
     useFetchRequestRegistrationOne(id!);
@@ -37,9 +39,9 @@ export const BeneficiariesEditState = () => {
 
   useEffect(() => {
     if (classroomsFetch) {
-      setClassrooms(classroomsFetch)
+      setClassrooms(classroomsFetch);
     }
-  }, [classroomsFetch, project])
+  }, [classroomsFetch, project]);
 
   useEffect(() => {
     if (registrationsRequests) {
@@ -65,8 +67,7 @@ export const BeneficiariesEditState = () => {
     responsable_telephone: registrations?.responsable_telephone,
     status: getStatus(registrations?.status!),
     deficiency_description: registrations?.deficiency_description,
-    kinship: registrations?.kinship
-
+    kinship: registrations?.kinship,
   };
 
   const CreateRegisterClassroom = (data: CreateRegistrationClassroomType) => {
@@ -78,6 +79,12 @@ export const BeneficiariesEditState = () => {
   };
 
   const handleUpdateRegistration = (data: UpdateRegister, id: number) => {
+    if (file) {
+      requestCHangeAvatarRegistrationMutation.mutate({
+        id: id,
+        file: file[0],
+      });
+    }
     requestPreRegistrationMutation.mutate({
       data: {
         ...data,
@@ -88,6 +95,8 @@ export const BeneficiariesEditState = () => {
         ),
         kinship: data.kinship === "" ? "NAO_DEFINIDO" : data.kinship,
         responsable_cpf: data?.responsable_cpf?.replace(/[^a-zA-Z0-9]/g, ""),
+        cpf: data?.cpf?.replace(/[^a-zA-Z0-9]/g, ""),
+
       },
       id: id,
     });
@@ -102,6 +111,8 @@ export const BeneficiariesEditState = () => {
     projectRequet,
     project,
     setProject,
-    classrooms
+    classrooms,
+    file,
+    setFile,
   };
 };
