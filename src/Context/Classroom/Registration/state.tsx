@@ -52,10 +52,10 @@ export const RegistrationClassroomState = () => {
           ""
         ),
         kinship: data.kinship === "" ? "NAO_DEFINIDO" : data.kinship,
+        cpf: data?.cpf?.replace(/[^a-zA-Z0-9]/g, ""),
         responsable_cpf: data?.responsable_cpf?.replace(/[^a-zA-Z0-9]/g, ""),
       },
       id: id,
-      file: undefined
     });
   };
 

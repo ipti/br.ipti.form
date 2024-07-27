@@ -23,6 +23,7 @@ export interface Registration {
   birthday: string;
   cpf: string;
   sex: number;
+  avatar_url: string | null
   color_race: number;
   deficiency: boolean;
   deficiency_description: string;

@@ -20,17 +20,16 @@ import { useFetchRequestClassroom } from "../../../Services/Classroom/query";
 export const BeneficiariesEditState = () => {
   const [project, setProject] = useState<any | undefined>();
   const { data: projectRequet } = useFetchRequestProjectList();
-  const { data: classroomsFetch } = useFetchRequestClassroom(project!)
+  const { data: classroomsFetch } = useFetchRequestClassroom(project!);
   const [classrooms, setClassrooms] = useState<any>();
-  const [file, setFile] = useState<File[] | undefined>()
-
-  console.log(file);
+  const [file, setFile] = useState<File[] | undefined>();
 
   const { id } = useParams();
   const {
     requestRegistrationClassroomMutation,
     requestDeleteRegistrationClassroomMutation,
     requestPreRegistrationMutation,
+    requestCHangeAvatarRegistrationMutation,
   } = ControllerUpdateRegistration();
   const { data: registrationsRequests, isLoading } =
     useFetchRequestRegistrationOne(id!);
@@ -40,9 +39,9 @@ export const BeneficiariesEditState = () => {
 
   useEffect(() => {
     if (classroomsFetch) {
-      setClassrooms(classroomsFetch)
+      setClassrooms(classroomsFetch);
     }
-  }, [classroomsFetch, project])
+  }, [classroomsFetch, project]);
 
   useEffect(() => {
     if (registrationsRequests) {
@@ -68,8 +67,7 @@ export const BeneficiariesEditState = () => {
     responsable_telephone: registrations?.responsable_telephone,
     status: getStatus(registrations?.status!),
     deficiency_description: registrations?.deficiency_description,
-    kinship: registrations?.kinship
-
+    kinship: registrations?.kinship,
   };
 
   const CreateRegisterClassroom = (data: CreateRegistrationClassroomType) => {
@@ -82,36 +80,26 @@ export const BeneficiariesEditState = () => {
 
   const handleUpdateRegistration = (data: UpdateRegister, id: number) => {
     if (file) {
-      requestPreRegistrationMutation.mutate({
-        data: {
-          ...data,
-          birthday: converterData(data?.birthday?.toString()!),
-          responsable_telephone: data?.responsable_telephone?.replace(
-            /[^a-zA-Z0-9]/g,
-            ""
-          ),
-          kinship: data.kinship === "" ? "NAO_DEFINIDO" : data.kinship,
-          responsable_cpf: data?.responsable_cpf?.replace(/[^a-zA-Z0-9]/g, ""),
-        },
+      requestCHangeAvatarRegistrationMutation.mutate({
         id: id,
-        file: file[0]
-      });
-    } else {
-      requestPreRegistrationMutation.mutate({
-        data: {
-          ...data,
-          birthday: converterData(data?.birthday?.toString()!),
-          responsable_telephone: data?.responsable_telephone?.replace(
-            /[^a-zA-Z0-9]/g,
-            ""
-          ),
-          kinship: data.kinship === "" ? "NAO_DEFINIDO" : data.kinship,
-          responsable_cpf: data?.responsable_cpf?.replace(/[^a-zA-Z0-9]/g, ""),
-        },
-        id: id,
-        file: undefined
+        file: file[0],
       });
     }
+    requestPreRegistrationMutation.mutate({
+      data: {
+        ...data,
+        birthday: converterData(data?.birthday?.toString()!),
+        responsable_telephone: data?.responsable_telephone?.replace(
+          /[^a-zA-Z0-9]/g,
+          ""
+        ),
+        kinship: data.kinship === "" ? "NAO_DEFINIDO" : data.kinship,
+        responsable_cpf: data?.responsable_cpf?.replace(/[^a-zA-Z0-9]/g, ""),
+        cpf: data?.cpf?.replace(/[^a-zA-Z0-9]/g, ""),
+
+      },
+      id: id,
+    });
   };
   return {
     registrations,
@@ -124,6 +112,7 @@ export const BeneficiariesEditState = () => {
     project,
     setProject,
     classrooms,
-    file, setFile
+    file,
+    setFile,
   };
 };

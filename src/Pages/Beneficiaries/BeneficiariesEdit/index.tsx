@@ -23,6 +23,7 @@ import { Container, Padding, Row } from "../../../Styles/styles";
 import ModalCreateRegisterClassroom from "./ModalCreateRegisterClassroom";
 import styled from "styled-components";
 import styles from "../../../Styles";
+import avatar from "../../../Assets/images/avatar.svg"
 
 const BeneficiariesEdit = () => {
   return (
@@ -33,7 +34,7 @@ const BeneficiariesEdit = () => {
 };
 
 const Avatar = styled.div`
-  border: 1px solid ${styles.colors.colorsBaseInkLight};
+  border: 1px solid ${styles.colors.colorBorderCard};
   height: 128px;
   width: 128px;
   border-radius: 50%;
@@ -48,7 +49,6 @@ const Avatar = styled.div`
 const BeneficiariesEditPage = () => {
   const props = useContext(BeneficiariesEditContext) as BeneficiariesEditType;
   const [visible, setVisible] = useState<any>();
-
 
 
   const [visibleDelete, setVisibleDelete] = useState<any>();
@@ -109,12 +109,12 @@ const BeneficiariesEditPage = () => {
               <Form>
                 <div>
                   <Row id="end">
-                    <Button label="Salvar" />
+                    <Button label="Salvar"  type="submit"/>
                   </Row>
                 </div>
                 <Padding padding="8px" />
                 <Avatar>
-                  <img alt="" src="https://seeklogo.com/images/A/avatar-logo-6EDCD92C05-seeklogo.com.png" />
+                  <img alt="" src={props.file ? (URL.createObjectURL(props.file![0]) ?? undefined) : props.registrations?.avatar_url ? props.registrations?.avatar_url : avatar} />
                 </Avatar>
                 <Padding padding="8px" />
                 <div className="grid">

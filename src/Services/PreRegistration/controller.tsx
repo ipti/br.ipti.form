@@ -9,6 +9,7 @@ import {
   requestDeleteRegistrationClassroom,
   requestPreRegistration,
   requestRegistrationClassroom,
+  requestUpdateAvatarRegistration,
   requestUpdateRegistration,
 } from "./request";
 import {
@@ -64,8 +65,23 @@ export const ControllerPreRegistration = () => {
 export const ControllerUpdateRegistration = () => {
 
   const requestPreRegistrationMutation = useMutation(
-    ({ data, id, file }: { data: UpdateRegister; id: number, file: File | undefined }) =>
-      requestUpdateRegistration(data, id, file),
+    ({ data, id }: { data: UpdateRegister; id: number }) =>
+      requestUpdateRegistration(data, id),
+    {
+      onError: (error) => { },
+      onSuccess: (data) => {
+        Swal.fire({
+          icon: "success",
+          title: "Alteração realizada com sucesso!",
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        });
+      },
+    }
+  );
+
+  const requestCHangeAvatarRegistrationMutation = useMutation(
+    ({  id, file }: { id: number, file: File }) =>
+      requestUpdateAvatarRegistration(id, file),
     {
       onError: (error) => { },
       onSuccess: (data) => {
@@ -141,6 +157,7 @@ export const ControllerUpdateRegistration = () => {
     requestPreRegistrationMutation,
     requestDeleteRegistrationClassroomMutation,
     requestRegistrationClassroomMutation,
-    requestDeleteRegistrationMutation
+    requestDeleteRegistrationMutation,
+    requestCHangeAvatarRegistrationMutation
   };
 };
