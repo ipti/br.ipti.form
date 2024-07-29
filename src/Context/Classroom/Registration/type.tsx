@@ -32,6 +32,7 @@ export interface UpdateRegister
     kinship: string | undefined | null
 }
 export interface RegistrationType {
+  avatar_url: string
   id: number
   registration_fk: number
   classroom_fk: number
