@@ -18,6 +18,9 @@ import {
 } from "../../../../../Controller/controllerGlobal";
 import { useFetchRequestClassroomOne } from "../../../../../Services/Classroom/query";
 import { Padding } from "../../../../../Styles/styles";
+import { Avatar } from "../../../../Beneficiaries/BeneficiariesEdit";
+import avatar from "../../../../../Assets/images/avatar.svg"
+
 
 const Registration = () => {
   return (
@@ -40,6 +43,8 @@ const RegistrationPage = () => {
   return (
     <ContentPage title={classroom?.name} description="Detalhes da matricula do beneficiário">
       <Padding padding="16px" />
+
+
       {props.registration ? (
         <Formik
           initialValues={props.initialValue}
@@ -74,6 +79,10 @@ const RegistrationPage = () => {
                   </div>
                 </div>{" "}
                 <Padding padding="8px" />
+                <Avatar>
+                  <img alt="" src={props.registration?.avatar_url ? props.registration?.avatar_url : avatar} />
+                </Avatar>
+                <Padding padding="16px" />
                 <h3>Dados basicos</h3>
                 <Padding />
                 <div className="grid">

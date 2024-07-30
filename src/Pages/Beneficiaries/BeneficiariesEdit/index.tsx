@@ -33,7 +33,7 @@ const BeneficiariesEdit = () => {
   );
 };
 
-const Avatar = styled.div`
+export const Avatar = styled.div`
   border: 1px solid ${styles.colors.colorBorderCard};
   height: 128px;
   width: 128px;

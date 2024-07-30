@@ -39,6 +39,8 @@ const RegistrationListPage = () => {
     return props.registrations;
   };
 
+
+  console.log(props.registrations)
   return (
     <ContentPage title={classroom?.name} description="Visualização das matriculas realizadas na turma.">
       <Row id="space-between">
@@ -64,6 +66,7 @@ const RegistrationListPage = () => {
                   subtitle={item.registration.name}
                   idRegistration={item.id}
                   status={item.status}
+                  avatar_url={item.registration.avatar_url}
                 />
               </div>
             );

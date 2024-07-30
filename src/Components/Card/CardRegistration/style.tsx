@@ -2,9 +2,14 @@ import styled from "styled-components";
 import styles from "../../../Styles";
 
 export const Container = styled.div`
-  color: ${styles.colors.grayClear};
   font-size: ${styles.typography.font.extraSmall};
   justify-content: space-between;
+  cursor: pointer;
+
+  border: 1.22px solid rgba(219, 230, 255, 1);
+  background: ${styles.colors.colorCard};
+  
+  border-radius: 16px;
 
   .boxQuantity {
     display: flex;
