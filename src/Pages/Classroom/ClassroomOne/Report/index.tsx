@@ -5,9 +5,10 @@ import { useParams } from "react-router-dom";
 import Present from "../../../../Assets/images/status-approved.svg";
 import NotPresent from "../../../../Assets/images/status-desapproved.svg";
 import { useFetchRequestClassroomReport } from "../../../../Services/Classroom/query";
-import { Container } from "../../../../Styles/styles";
+import { Container, Row } from "../../../../Styles/styles";
 import color from "../../../../Styles/colors";
 import { ReportClassroom } from "./Pdf";
+import ContentPage from "../../../../Components/ContentPage";
 
 const Report = () => {
   return <ReportPage />;
@@ -81,12 +82,13 @@ const ReportPage = () => {
     </div>
   );
   return (
-    <Container>
+    <ContentPage title="Relatório de Frequencia " description="Consulte ou gere um relatório pre presença dos alunos da sua turma.">
+      <div id="center" style={{width: "90%", maxWidth: "95vw"}}>
       <DataTable
         value={data?.register_classroom}
         header={header}
-        tableStyle={{ minWidth: "50rem" }}
-      >
+        tableStyle={{ width: "50rem" }}
+        >
         <Column field={"registration.name"} header={"Beneficiário"} />
         {data?.meeting?.map((item: any, index: number) => (
           <Column
@@ -95,11 +97,12 @@ const ReportPage = () => {
             columnKey={index.toString()}
             body={bodyMeeting}
             header={item.name}
-          />
-        ))}
+            />
+          ))}
         <Column body={bodyTotal} header={"Total"} />
       </DataTable>
-    </Container>
+          </div>
+    </ContentPage>
   );
 };
 
