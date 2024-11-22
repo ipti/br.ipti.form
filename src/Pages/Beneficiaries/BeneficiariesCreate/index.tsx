@@ -152,6 +152,7 @@ const RegistrationPage = () => {
                     <Padding />
                     <CalendarComponent
                       value={values.birthday}
+                      dateFormat="dd/mm/yy"
                       placeholder="Data de Nascimento"
                       name="birthday"
                       onChange={handleChange}

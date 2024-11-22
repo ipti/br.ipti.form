@@ -105,8 +105,11 @@ const Beneficiarios = () => {
     for (const foul of fouls) {
       array.push(foul.id);
     }
+
     return array;
   };
+
+  console.log(FilterId(selectedProducts))
 
   const bodyRegisterFouls = (dataRow: RegisterClassroom) => {
     return (
@@ -338,6 +341,7 @@ const Beneficiarios = () => {
                 Swal.fire({title: "Para conseguir salvar a lista, é necessario adicionar um arquivo como uma evidência da aula", icon: 'error',})
             } else{
 
+              console.log()
               props.CreateFouls({
                 meeting: props.meeting?.id!,
                 registration: FilterId(selectedProducts),
