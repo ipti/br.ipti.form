@@ -27,12 +27,12 @@ const ListArchivesAttendanceList = ({ item }: { item: MeetingArc }) => {
           marginBottom: "8px",
         }}
         onClick={() => {
-          window.open(
-            item.archive_url ??
-              process.env.REACT_APP_API_PATH +
-                `archive-meeting-bff/${item.id}/` +
-                item.original_name
-          );
+          // window.open(
+          //   item.archive_url ??
+          //     process.env.REACT_APP_API_PATH +
+          //       `archive-meeting-bff/${item.id}/` +
+          //       item.original_name
+          // );
         }}
       >
         <Row id="space-between">
