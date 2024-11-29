@@ -19,6 +19,7 @@ import { ProjectOneTypes } from "../../../Context/Project/ProjectOne/type";
 import { ROLE } from "../../../Controller/controllerGlobal";
 import { Column, Padding, Row } from "../../../Styles/styles";
 import { PropsAplicationContext } from "../../../Types/types";
+import { ConfirmDialog } from "primereact/confirmdialog";
 
 
 const ProjectOne = () => {
@@ -36,6 +37,8 @@ const ProjectOnePage = () => {
     AplicationContext
   ) as PropsAplicationContext;
   const [edit, setEdit] = useState(false);
+
+  const [visible, setVisible] = useState(false)
 
   const { id } = useParams();
 
@@ -148,7 +151,6 @@ const ProjectOnePage = () => {
         <Column>
           <Row id="end">
             <Row id="end">
-              <Padding />
               {propsAplication.user?.role ===
                 (ROLE.ADMIN || ROLE.COORDINATORS) && (
                   <Button
@@ -156,6 +158,17 @@ const ProjectOnePage = () => {
                     label="Editar"
                     icon="pi pi-pencil"
                     onClick={() => setEdit(true)}
+                  />
+                )}
+              <Padding />
+              {propsAplication.user?.role ===
+                (ROLE.ADMIN || ROLE.COORDINATORS) && (
+                  <Button
+                    text
+                    severity="danger"
+                    label="Excluir"
+                    icon="pi pi-trash"
+                    onClick={() => setVisible(true)}
                   />
                 )}
             </Row>
@@ -220,6 +233,15 @@ const ProjectOnePage = () => {
       ) : (
         <Empty title="Turmas" />
       )}
+      <ConfirmDialog
+        visible={visible}
+        onHide={() => setVisible(false)}
+        message="Tem certeza de que deseja prosseguir?"
+        header="Confirmation"
+        icon="pi pi-exclamation-triangle"
+        accept={() => props.deleteProject(props.project?.project?.id!)}
+        reject={() => setVisible(false)}
+      />
     </ContentPage>
   );
 };

@@ -9,13 +9,14 @@ import meeting from "../../../Assets/images/school_teacher.svg";
 import TextInput from "../../../Components/TextInput";
 
 import ContentPage from "../../../Components/ContentPage";
+import DropdownComponent from "../../../Components/Dropdown";
 import Loading from "../../../Components/Loading";
 import { AplicationContext } from "../../../Context/Aplication/context";
 import ClassroomProvider, {
   ClassroomContext,
 } from "../../../Context/Classroom/context";
 import { ClassroomTypes } from "../../../Context/Classroom/type";
-import { ROLE } from "../../../Controller/controllerGlobal";
+import { getStatusClassroomList, ROLE } from "../../../Controller/controllerGlobal";
 import { useFetchRequestClassroomOne } from "../../../Services/Classroom/query";
 import { Column, Padding, Row } from "../../../Styles/styles";
 import { PropsAplicationContext } from "../../../Types/types";
@@ -50,31 +51,47 @@ const ClassroomOnePage = () => {
         <>
           {classroom ? (
             <Formik
-              initialValues={{ name: classroom?.name }}
+              initialValues={{ name: classroom?.name, status: getStatusClassroomList().find(props => props.id === classroom?.status) }}
               onSubmit={(values) => {
-                props.UpdateClassroom(values, parseInt(id!));
+                props.UpdateClassroom({ name: values.name, status: values.status?.id! }, parseInt(id!));
                 setEdit(false);
               }}
             >
               {({ values, handleChange }) => {
+
                 return (
                   <Form>
-                    <Row>
-                      <TextInput
-                        name="name"
-                        onChange={handleChange}
-                        value={values.name}
-                      />
+                    <Column>
+                      <div className="grid">
+                        <div className="col-12 md:col-6">
+                          <label>Nome da turma</label>
+                          <Padding />
+                          <TextInput
+                            name="name"
+                            placeholder="Nome da turma"
+                            onChange={handleChange}
+                            value={values.name}
+                          />
+                        </div>
+                        <div className="col-12 md:col-6">
+                          <label>Status da turma</label>
+                          <Padding />
+                          <DropdownComponent options={getStatusClassroomList()} name="status" value={values.status} placerholder="Status da turma" onChange={handleChange} />
+                        </div>
+                      </div>
                       <Padding />
-                      <Button label="Salvar" icon={"pi pi-save"} />
-                      <Padding />
-                      <Button
-                        label="Cancelar"
-                        severity="secondary"
-                        type="button"
-                        onClick={() => setEdit(false)}
-                      />
-                    </Row>
+                      <Row>
+
+                        <Button label="Salvar" icon={"pi pi-save"} />
+                        <Padding />
+                        <Button
+                          label="Cancelar"
+                          severity="secondary"
+                          type="button"
+                          onClick={() => setEdit(false)}
+                        />
+                      </Row>
+                    </Column>
                   </Form>
                 );
               }}
@@ -88,23 +105,23 @@ const ClassroomOnePage = () => {
               <Padding />
               {propsAplication.user?.role ===
                 (ROLE.ADMIN || ROLE.COORDINATORS) && (
-                <Button
-                  text
-                  label="Editar"
-                  icon="pi pi-pencil"
-                  onClick={() => setEdit(true)}
-                />
-              )}
+                  <Button
+                    text
+                    label="Editar"
+                    icon="pi pi-pencil"
+                    onClick={() => setEdit(true)}
+                  />
+                )}
             </Row>
             {propsAplication.user?.role ===
               (ROLE.ADMIN || ROLE.COORDINATORS) && (
-              <Button
-                text
-                label="Tranferir turma"
-                icon="pi pi-sync"
-                onClick={() => setVisible(true)}
-              />
-            )}
+                <Button
+                  text
+                  label="Tranferir turma"
+                  icon="pi pi-sync"
+                  onClick={() => setVisible(true)}
+                />
+              )}
           </Row>
         </Column>
       )}
@@ -146,7 +163,7 @@ const ClassroomOnePage = () => {
             title="Relatório"
             description="Acesse o relatório da turma"
             icon={report}
-            // count={classroom?.register_classroom?.length}
+          // count={classroom?.register_classroom?.length}
           />
         </div>
       </div>

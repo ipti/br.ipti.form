@@ -59,6 +59,24 @@ export const getStatus = (id: string) => {
   return status.find((props) => props.id === id);
 };
 
+export const getStatusList = () => {
+  const status = [
+    { id: Status.APPROVED, name: "Aprovado" },
+    { id: Status.REPROVED, name: "Reprovado" },
+    { id: Status.PENDING, name: "Pedente" },
+  ];
+  return status;
+};
+
+
+export const getStatusClassroomList = () => {
+  const status = [
+    { id: Status.APPROVED, name: "Aprovado" },
+    { id: Status.PENDING, name: "Pedente" },
+  ];
+  return status;
+};
+
 export var typesex = [
   { id: 0, type: "Não Declarada" },
   { id: 2, type: "Feminino" },
