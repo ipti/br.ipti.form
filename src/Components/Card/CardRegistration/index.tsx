@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import avatar from "../../../Assets/images/avatar.svg"
 import { RegistrationClassroomContext } from "../../../Context/Classroom/RegistrationsList/context";
 import { RegistrationClassroomTypes } from "../../../Context/Classroom/RegistrationsList/type";
-import { ROLE, Status } from "../../../Controller/controllerGlobal";
+import { ROLE, Status, StatusEnum } from "../../../Controller/controllerGlobal";
 import { Column, Padding, Row } from "../../../Styles/styles";
 import Icon from "../../Icon";
 import { Container } from "./style";
@@ -80,22 +80,16 @@ const CardRegistration = ({
           </div>
           <Padding />
           <Column>
-            <div style={{fontWeight: "500",
-              padding: 4, textAlign: "center", width: "96px", color: "white", borderRadius: "16px", backgroundColor: `${status === statuGlobal.APPROVED
+            <div className="status" style={{fontWeight: "500",
+              padding: 4, textAlign: "center", minWidth: "96px", maxWidth: "128px", color: "white", borderRadius: "16px", backgroundColor: `${status === statuGlobal.APPROVED
                 ? color.green
                 : status === statuGlobal.PENDING
                   ? color.colorCardOrange
                   : status === statuGlobal.REPROVED
                     ? color.red
-                    : ""}`
+                    : color.colorCardOrange}`
             }}>
-              {status === statuGlobal.APPROVED
-                ? "Aprovado"
-                : status === statuGlobal.PENDING
-                  ? "Pendente"
-                  : status === statuGlobal.REPROVED
-                    ? "Reprovado"
-                    : ""}
+              {StatusEnum[status]}
             </div>
             <Padding />
             <h4>{subtitle}</h4>

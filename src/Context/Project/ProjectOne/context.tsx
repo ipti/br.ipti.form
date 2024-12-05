@@ -5,11 +5,11 @@ import { ProjectOneTypes } from "./type";
 export const ProjectOneContext = createContext<ProjectOneTypes | null>(null);
 
 const ProjectOneProvider = ({ children }: { children: React.ReactNode }) => {
-  const { isLoading, project, updateProject, rulerProject } = ProjectOneState();
+  const { isLoading, project, updateProject, rulerProject, deleteProject } = ProjectOneState();
 
   return (
     <ProjectOneContext.Provider
-      value={{ isLoading, project, updateProject, rulerProject }}
+      value={{ isLoading, project, updateProject, rulerProject, deleteProject }}
     >
       {children}
     </ProjectOneContext.Provider>

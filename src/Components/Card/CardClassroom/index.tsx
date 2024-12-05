@@ -10,19 +10,23 @@ import { Container } from "./style";
 
 import pessoas from "../../../Assets/images/pessoasgray.svg";
 import { AplicationContext } from "../../../Context/Aplication/context";
-import { ROLE } from "../../../Controller/controllerGlobal";
+import { ROLE, Status } from "../../../Controller/controllerGlobal";
 import { menuItem } from "../../../Services/localstorage";
 import styles from "../../../Styles";
 import { PropsAplicationContext } from "../../../Types/types";
+import IconStatus from "./../../../Assets/images/published_with_changes.svg";
+
 
 const CardClassroom = ({
   title,
   meetingCount,
   registrationCount,
   id,
+  status
 }: {
   title: string;
   meetingCount?: number;
+  status?: string
   registrationCount?: number;
   id: number;
 }) => {
@@ -56,21 +60,21 @@ const CardClassroom = ({
           </Row>
           {(propsAplication.user?.role === ROLE.ADMIN ||
             propsAplication.user?.role === ROLE.COORDINATORS) && (
-            <div
-              className="cursor-pointer"
-              onClick={(e) => {
-                e.stopPropagation();
-                setVisible(true);
-              }}
-            >
-              <Icon
-                icon="pi pi-trash"
-                color={styles.colors.colorGrayElephant}
-                size="1rem"
-                fontWeight="900"
-              />
-            </div>
-          )}
+              <div
+                className="cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setVisible(true);
+                }}
+              >
+                <Icon
+                  icon="pi pi-trash"
+                  color={styles.colors.colorGrayElephant}
+                  size="1rem"
+                  fontWeight="900"
+                />
+              </div>
+            )}
         </Row>
         <Padding padding="8px" />
         <Row style={{ gap: 16 }}>
@@ -78,6 +82,25 @@ const CardClassroom = ({
             <img src={pessoas} alt="" style={{ width: 24 }} />
             <p>Participantes: {registrationCount}</p>
           </Row>
+          <Column id="center">
+            <Row>
+              <img
+                src={IconStatus}
+                alt=""
+                style={{ height: 16, marginRight: 2 }}
+              />
+              <Row style={{ fontSize: "14px" }}>
+                Status: {" "}<Padding padding="2px" />
+                {status === Status.PENDING ? (
+                  <p style={{ fontWeight: "600" }}> Pendente</p>
+                ) : status === Status.APPROVED ? (
+                  <p style={{ fontWeight: "600" }}> Finalizado</p>
+                ) : status === Status.REPROVED ? (
+                  <p style={{ fontWeight: "600" }}> Reprovado</p>
+                ) : null}
+              </Row>
+            </Row>
+          </Column>
         </Row>
       </Container>
       <ConfirmDialog

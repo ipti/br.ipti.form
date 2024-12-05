@@ -67,6 +67,7 @@ const ListClassroomPage = () => {
                   meetingCount={item._count.meeting}
                   registrationCount={item._count.register_classroom}
                   id={item.id}
+                  status={item.status}
                 />
               </div>
             );
