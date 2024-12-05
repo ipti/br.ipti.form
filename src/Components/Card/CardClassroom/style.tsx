@@ -10,6 +10,10 @@ export const Container = styled.div`
   background: ${styles.colors.colorCard};
   
   border-radius: 16px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 
   .boxQuantity {
     display: flex;

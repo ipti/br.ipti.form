@@ -7,6 +7,10 @@ export const Container = styled.div`
 
   border: 1.22px solid rgba(219, 230, 255, 1);
   background: ${styles.colors.colorCard};
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   
   border-radius: 16px;
 

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Buffer } from 'buffer'; 
+import { Buffer } from 'buffer';
 
 
 export const gerarIdAleatorio = (tamanho: number) => {
@@ -24,15 +24,15 @@ export function formatarData(data: string): string {
 export function converterData(data: string) {
   // Divide a string pelo separador "/"
   const partes = data.split('/');
-  
+
   // As partes serão: partes[0] = dia, partes[1] = mês, partes[2] = ano
   const dia = partes[0];
   const mes = partes[1];
   const ano = partes[2];
-  
+
   // Reorganiza no formato YYYY-MM-DD
   const dataFormatada = `${ano}-${mes}-${dia}`;
-  
+
   return dataFormatada;
 }
 
@@ -51,11 +51,7 @@ export const VerifyColor = (color_race_number: number) => {
 };
 
 export const getStatus = (id: string) => {
-  const status = [
-    { id: Status.APPROVED, name: "Aprovado" },
-    { id: Status.REPROVED, name: "Reprovado" },
-    { id: Status.PENDING, name: "Pedente" },
-  ];
+  const status = getStatusList();
   return status.find((props) => props.id === id);
 };
 
@@ -63,7 +59,10 @@ export const getStatusList = () => {
   const status = [
     { id: Status.APPROVED, name: "Aprovado" },
     { id: Status.REPROVED, name: "Reprovado" },
-    { id: Status.PENDING, name: "Pedente" },
+    { id: Status.PENDING, name: "Pendente" },
+    { id: Status.PENDING_DOCUMENTATION, name: "Pendente de documentação" },
+    { id: Status.PENDING_TERM, name: "Pendente de termo" },
+
   ];
   return status;
 };
@@ -72,7 +71,7 @@ export const getStatusList = () => {
 export const getStatusClassroomList = () => {
   const status = [
     { id: Status.APPROVED, name: "Aprovado" },
-    { id: Status.PENDING, name: "Pedente" },
+    { id: Status.PENDING, name: "Pendente" },
   ];
   return status;
 };
@@ -96,6 +95,17 @@ export const Status = {
   APPROVED: "APPROVED",
   PENDING: "PENDING",
   REPROVED: "REPROVED",
+  PENDING_TERM: "PENDING_TERM",
+  PENDING_DOCUMENTATION: "PENDING_DOCUMENTATION"
+};
+
+
+export const StatusEnum: any = {
+  APPROVED: "Aprovado",
+  PENDING: "Pendente",
+  REPROVED: "Reprovado",
+  PENDING_TERM: "Pend. de termo",
+  PENDING_DOCUMENTATION: "Pend. de documentação"
 };
 
 export const ROLE = {

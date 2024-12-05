@@ -8,6 +8,10 @@ export const Container = styled.div`
 
   border: 1.22px solid rgba(219, 230, 255, 1);
   background: ${styles.colors.colorCard};
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   
   border-radius: 16px;
 
@@ -15,6 +19,16 @@ export const Container = styled.div`
     display: flex;
     color: white;
     font-size: ${styles.typography.font.extraSmall};
+  }
+
+  .status {
+    display: inline-block; /* Permite que a largura seja ajustada pelo conteúdo */
+      padding: 10px; /* Espaçamento interno */
+      border: 1px solid #ccc; /* Borda para destacar o div */
+      min-width: 150px; /* Largura mínima */
+      max-width: 300px; /* Largura máxima */
+      word-wrap: break-word; /* Quebra o texto se ele ultrapassar a largura máxima */
+      text-align: center;
   }
 
 `;
