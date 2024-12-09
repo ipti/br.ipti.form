@@ -12,6 +12,9 @@ import { PropsAplicationContext } from "../../Types/types";
 import http from "../../Services/axios";
 import { getYear } from "../../Services/localstorage";
 import { ROLE } from "../../Controller/controllerGlobal";
+import { Calendar } from 'primereact/calendar';
+import { Nullable } from "primereact/ts-helpers";
+
 
 const State = () => {
   const [ts, setTs] = useState<number | undefined>();
@@ -30,12 +33,17 @@ const InitialPage = () => {
   const propsAplication = useContext(AplicationContext) as PropsAplicationContext;
   const props = State();
   const [chartData, setChartData] = useState<any>(null);
+  const [dates, setDates] = useState<Nullable<(Date | null)[]>>(null);
+
+  console.log(dates);
 
   useEffect(() => {
     const fetchChartData = async () => {
       try {
-        const response = await http.get('/user-bff/chart?year=' + getYear());
-        const { totalRegisterClassrooms, approvedRegisterClassrooms } = response.data;
+        //const response = await http.get('localhost:3000/chart-bff/chart-matriculated-month?startDate='+ dates![0] + '&endDate=' + dates![1]);
+        const response = await http.get('localhost:3000/chart-bff/chart-matriculated-month?startDate=2021-01-01&endDate=2021-12-31');
+        const { n_registers, approvedRegisterClassrooms } = response.data;
+        console.log(response.data);
 
         setChartData({
           labels: [
@@ -46,7 +54,7 @@ const InitialPage = () => {
             {
               label: 
               "Total de Matrículas",
-              data: totalRegisterClassrooms, // Assumindo um array com valores por mês
+              data: n_registers, // Assumindo um array com valores por mês
               borderColor: "#42A5F5",
               fill: false,
             },
@@ -101,6 +109,8 @@ const InitialPage = () => {
           />
         </Row>
       )}
+
+
       <Padding padding="16px" />
       <div className="grid">
         <div className="col-12 md:col-4 lg:col-4">
@@ -127,6 +137,10 @@ const InitialPage = () => {
 
       <Padding padding="20px" />
       {/* Gráfico de Linhas */}
+      <div className="card flex justify-content-center">
+            <Calendar value={dates} onChange={(e) => setDates(e.value)} selectionMode="range" readOnlyInput hideOnDateTimeSelect />
+      </div>
+
       <div className="grid">
         <div className="col-12">
           {chartData && (
