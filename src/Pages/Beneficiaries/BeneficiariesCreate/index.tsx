@@ -20,6 +20,7 @@ import {
 } from "../../../Controller/controllerGlobal";
 import { validaCPF } from "../../../Controller/controllerValidCPF";
 import { Column, Padding, Row } from "../../../Styles/styles";
+import InputAddress from "../../../Components/InputsAddress";
 
 const BeneficiariesCreate = () => {
   return (
@@ -361,6 +362,10 @@ const RegistrationPage = () => {
                     </div>
                   ) : null}
                 </div>{" "}
+
+                <h3>Endereço</h3>
+                <Padding padding="8px" />
+                <InputAddress errors={errors} handleChange={handleChange} setFieldValue={setFieldValue} touched={touched} values={values} />
                 {/* <h3>Endereço</h3>
                 <Padding />
                 <div className="grid">
