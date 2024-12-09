@@ -24,7 +24,6 @@ import {
 } from "../../../../../../Controller/controllerGlobal";
 import styles from "../../../../../../Styles";
 import { Padding, Row } from "../../../../../../Styles/styles";
-import Swal from "sweetalert2";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 const StyleComponent = styled.div`
@@ -333,20 +332,13 @@ const Beneficiarios = () => {
           icon="pi pi-save"
           tooltip={(props.meeting?.meeting_archives?.length! === 0 ||
             props.meeting?.status === Status.APPROVED) ? "Para conseguir salvar a lista, é necessario adicionar um arquivo como uma evidencia da aula" : "Salvar as faltas do encontro"}
-          tooltipOptions={{disabled: true}}
-
+          tooltipOptions={{ disabled: true }}
           onClick={() => {
-            if((props.meeting?.meeting_archives?.length! === 0 ||
-              props.meeting?.status === Status.APPROVED)){
-                Swal.fire({title: "Para conseguir salvar a lista, é necessario adicionar um arquivo como uma evidência da aula", icon: 'error',})
-            } else{
+            props.CreateFouls({
+              meeting: props.meeting?.id!,
+              registration: FilterId(selectedProducts),
+            });
 
-              console.log()
-              props.CreateFouls({
-                meeting: props.meeting?.id!,
-                registration: FilterId(selectedProducts),
-              });
-            }
           }}
         />
         <Button

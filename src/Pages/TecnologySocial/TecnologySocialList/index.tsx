@@ -9,6 +9,7 @@ import { AplicationContext } from "../../../Context/Aplication/context";
 import { ROLE } from "../../../Controller/controllerGlobal";
 import { Padding, Row } from "../../../Styles/styles";
 import { PropsAplicationContext } from "../../../Types/types";
+import { idTs, menuItem } from "../../../Services/localstorage";
 
 const TecnologySocial = () => {
   const history = useNavigate();
@@ -35,7 +36,12 @@ const TecnologySocial = () => {
       <div className="grid">
         {propsAplication.project?.map((item, index) => {
           return (
-            <div className="col-12 md:col-6 lg:col-4">
+            <div className="col-12 md:col-6 lg:col-4" onClick={() => {
+              idTs(item.id.toString());
+              history("/projetos");
+              menuItem("3");
+              // window.location.reload();
+            }}>
               <CardTs title={item.name} id={item.id} />
             </div>
           );
