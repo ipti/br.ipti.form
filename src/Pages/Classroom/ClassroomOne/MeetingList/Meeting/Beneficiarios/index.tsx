@@ -44,9 +44,11 @@ const Beneficiarios = () => {
 
 
   const FilterRegistration = (fouls: any) => {
-    const array = [];
+    const array: any = [];
     for (const foul of fouls) {
-      array.push(foul.registration);
+      if (!array!.find((props: any) => props === foul.id)) {
+        array.push(foul.registration);
+      }
     }
     return array;
   };
@@ -100,9 +102,10 @@ const Beneficiarios = () => {
   }, [props.meeting]);
 
   const FilterId = (fouls: any) => {
-    const array = [];
+    const array: any = [];
     for (const foul of fouls) {
-      array.push(foul.id);
+      if (!array!.find((props: any) => props === foul.id))
+        array.push(foul.id);
     }
 
     return array;
