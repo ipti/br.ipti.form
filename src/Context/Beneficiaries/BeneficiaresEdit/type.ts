@@ -18,24 +18,32 @@ export interface BeneficiariesEditType {
 }
 
 export interface Registration {
-  id: number;
-  name: string;
-  birthday: string;
-  cpf: string;
-  sex: number;
-  avatar_url: string | null
-  color_race: number;
-  deficiency: boolean;
-  deficiency_description: string;
-  responsable_name: any;
-  responsable_cpf: any;
-  responsable_telephone: string;
-  zone: number;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-  register_classroom: RegisterClassroom[];
+  id: number
+  avatar_url: string
+  name: string
+  birthday: string
+  cpf: string
+  sex: number
+  color_race: number
+  deficiency: boolean
+  deficiency_description: string
+  responsable_name: string
+  responsable_cpf: string
+  responsable_telephone: string
+  zone: number
   kinship: string
+  kinship_description: any
+  status: string
+  createdAt: string
+  updatedAt: string
+  cep: string
+  address: any
+  number: any
+  complement: string
+  neighborhood: string
+  city_fk: number
+  state_fk: number
+  register_classroom: RegisterClassroom[]
 }
 
 export interface RegisterClassroom {

@@ -16,6 +16,8 @@ import { ControllerUpdateRegistration } from "../../../Services/PreRegistration/
 import { CreateRegistrationClassroomType } from "../../../Services/PreRegistration/types";
 import { UpdateRegister } from "../../Classroom/Registration/type";
 import { useFetchRequestClassroom } from "../../../Services/Classroom/query";
+import { StateList } from "../../../Services/Address/type";
+import { useFetchRequestState } from "../../../Services/Address/query";
 
 export const BeneficiariesEditState = () => {
   const [project, setProject] = useState<any | undefined>();
@@ -23,6 +25,19 @@ export const BeneficiariesEditState = () => {
   const { data: classroomsFetch } = useFetchRequestClassroom(project!);
   const [classrooms, setClassrooms] = useState<any>();
   const [file, setFile] = useState<File[] | undefined>();
+
+  const [state, setState] = useState<StateList | undefined>();
+
+
+
+  const { data: stateRequest } = useFetchRequestState()
+
+
+  useEffect(() => {
+    if (stateRequest) {
+      setState(stateRequest)
+    }
+  }, [stateRequest])
 
   const { id } = useParams();
   const {
@@ -68,6 +83,14 @@ export const BeneficiariesEditState = () => {
     status: getStatus(registrations?.status!),
     deficiency_description: registrations?.deficiency_description,
     kinship: registrations?.kinship,
+    address: registrations?.address ?? "",
+    cep: registrations?.cep ?? "",
+    neighborhood: registrations?.neighborhood ?? "",
+    number: registrations?.number ?? "",
+    complement: registrations?.complement ?? "",
+    state: state?.find(props => props.id === registrations?.state_fk) ?? "",
+    city: registrations?.city_fk ?? ""
+
   };
 
   const CreateRegisterClassroom = (data: CreateRegistrationClassroomType) => {

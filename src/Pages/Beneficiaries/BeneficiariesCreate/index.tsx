@@ -214,7 +214,7 @@ const RegistrationPage = () => {
                       placeholder="Telefone para contato"
                     />
                     {errors.responsable_telephone &&
-                    touched.responsable_telephone ? (
+                      touched.responsable_telephone ? (
                       <div style={{ color: "red", marginTop: "8px" }}>
                         {errors.responsable_telephone}
                       </div>
@@ -362,7 +362,7 @@ const RegistrationPage = () => {
                     </div>
                   ) : null}
                 </div>{" "}
-
+                <Padding />
                 <h3>Endereço</h3>
                 <Padding padding="8px" />
                 <InputAddress errors={errors} handleChange={handleChange} setFieldValue={setFieldValue} touched={touched} values={values} />
