@@ -24,6 +24,7 @@ import ModalCreateRegisterClassroom from "./ModalCreateRegisterClassroom";
 import styled from "styled-components";
 import styles from "../../../Styles";
 import avatar from "../../../Assets/images/avatar.svg"
+import InputAddress from "../../../Components/InputsAddress";
 
 const BeneficiariesEdit = () => {
   return (
@@ -104,12 +105,12 @@ const BeneficiariesEditPage = () => {
             );
           }}
         >
-          {({ values, handleChange }) => {
+          {({ values, handleChange, errors, touched, setFieldValue }) => {
             return (
               <Form>
                 <div>
                   <Row id="end">
-                    <Button label="Salvar"  type="submit"/>
+                    <Button label="Salvar" type="submit" />
                   </Row>
                 </div>
                 <Padding padding="8px" />
@@ -271,6 +272,10 @@ const BeneficiariesEditPage = () => {
                   </div>
 
                 </div>{" "}
+                <Padding />
+                <h3>Endereço</h3>
+                <Padding padding="8px" />
+                <InputAddress errors={errors} handleChange={handleChange} setFieldValue={setFieldValue} touched={touched} values={values} />
                 <Padding padding="8px" />
                 <h3>Matriculas</h3>
                 <Padding padding="8px" />
