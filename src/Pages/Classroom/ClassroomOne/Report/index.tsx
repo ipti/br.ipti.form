@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import Present from "../../../../Assets/images/status-approved.svg";
 import NotPresent from "../../../../Assets/images/status-desapproved.svg";
 import { useFetchRequestClassroomReport } from "../../../../Services/Classroom/query";
-import { Container, Row } from "../../../../Styles/styles";
+//import { Container, Row } from "../../../../Styles/styles";
 import color from "../../../../Styles/colors";
 import { ReportClassroom } from "./Pdf";
 import ContentPage from "../../../../Components/ContentPage";
