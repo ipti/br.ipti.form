@@ -49,7 +49,14 @@ export const BeneficiariesCreateState = () => {
     status: "",
     classroom: 0,
     deficiency_description: "",
-    kinship: ""
+    kinship: "", 
+    address: "",
+    cep: "",
+    neighborhood: "",
+    number: "",
+    complement: "",
+    state: undefined,
+    city: undefined
   };
 
   

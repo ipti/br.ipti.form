@@ -1,23 +1,23 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
-  useFetchRequestProjectList,
-  useFetchRequestRegistrationOne,
-} from "../../../Services/PreRegistration/query";
-import { Registration } from "./type";
-import {
   converterData,
   formatarData,
   getStatus,
   VerifyColor,
   VerifySex,
 } from "../../../Controller/controllerGlobal";
+import { useFetchRequestState } from "../../../Services/Address/query";
+import { StateList } from "../../../Services/Address/type";
+import { useFetchRequestClassroom } from "../../../Services/Classroom/query";
 import { ControllerUpdateRegistration } from "../../../Services/PreRegistration/controller";
+import {
+  useFetchRequestProjectList,
+  useFetchRequestRegistrationOne,
+} from "../../../Services/PreRegistration/query";
 import { CreateRegistrationClassroomType } from "../../../Services/PreRegistration/types";
 import { UpdateRegister } from "../../Classroom/Registration/type";
-import { useFetchRequestClassroom } from "../../../Services/Classroom/query";
-import { StateList } from "../../../Services/Address/type";
-import { useFetchRequestState } from "../../../Services/Address/query";
+import { Registration } from "./type";
 
 export const BeneficiariesEditState = () => {
   const [project, setProject] = useState<any | undefined>();
@@ -28,17 +28,17 @@ export const BeneficiariesEditState = () => {
 
   const [state, setState] = useState<StateList | undefined>();
 
-
-
+  
+  
   const { data: stateRequest } = useFetchRequestState()
-
-
+  
+  
   useEffect(() => {
     if (stateRequest) {
       setState(stateRequest)
     }
   }, [stateRequest])
-
+  
   const { id } = useParams();
   const {
     requestRegistrationClassroomMutation,
@@ -47,11 +47,11 @@ export const BeneficiariesEditState = () => {
     requestCHangeAvatarRegistrationMutation,
   } = ControllerUpdateRegistration();
   const { data: registrationsRequests, isLoading } =
-    useFetchRequestRegistrationOne(id!);
+  useFetchRequestRegistrationOne(id!);
   const [registrations, setRegistrations] = useState<
-    Registration | undefined
+  Registration | undefined
   >();
-
+  
   useEffect(() => {
     if (classroomsFetch) {
       setClassrooms(classroomsFetch);
@@ -65,7 +65,7 @@ export const BeneficiariesEditState = () => {
   }, [registrationsRequests]);
 
   const date = new Date(registrations?.birthday!);
-
+const stateList = state?.find(props => props.id === registrations?.state_fk)
   const initialValue = {
     name: registrations?.name,
     sex: VerifySex(registrations?.sex!),
@@ -89,8 +89,7 @@ export const BeneficiariesEditState = () => {
     number: registrations?.number ?? "",
     complement: registrations?.complement ?? "",
     state: state?.find(props => props.id === registrations?.state_fk) ?? "",
-    city: registrations?.city_fk ?? ""
-
+    city: stateList?.city.find(props => props.id === registrations?.city_fk) ?? ""
   };
 
   const CreateRegisterClassroom = (data: CreateRegistrationClassroomType) => {

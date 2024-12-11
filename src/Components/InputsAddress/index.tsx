@@ -1,34 +1,27 @@
 import axios from "axios";
-import { Padding } from "../../Styles/styles";
-import TextInput from "../TextInput";
-import MaskInput from "../InputMask";
 import { useEffect, useState } from "react";
-import { useFetchRequestCity, useFetchRequestState } from "../../Services/Address/query";
-import { CityList, StateList } from "../../Services/Address/type";
+import { useFetchRequestState } from "../../Services/Address/query";
+import { StateList } from "../../Services/Address/type";
+import { Padding } from "../../Styles/styles";
 import DropdownComponent from "../Dropdown";
+import MaskInput from "../InputMask";
+import TextInput from "../TextInput";
 
 
 const InputAddressState = () => {
 
-    const [stateId, setStateId] = useState<number | undefined>()
     const [state, setState] = useState<StateList | undefined>();
 
-    const [city, setCity] = useState<CityList>([])
 
 
     const { data: stateRequest } = useFetchRequestState()
 
-    const { data: cityRequest } = useFetchRequestCity(stateId)
 
     useEffect(() => {
         if (stateRequest) {
             setState(stateRequest)
         }
-
-        if (cityRequest) {
-            setCity(cityRequest)
-        }
-    }, [stateRequest, cityRequest])
+    }, [stateRequest])
 
 
     const dadosCep = async (value: string, setFieldValue: any) => {
@@ -37,15 +30,13 @@ const InputAddressState = () => {
             const cep = value.replace(/[^a-zA-Z0-9 ]/g, '');
 
             await axios.get("https://viacep.com.br/ws/" + cep + "/json/").then((data) => {
-                console.log(data)
                 const stateCep = state?.find(props => props.acronym === data.data.uf)
-                const cityCep = city?.find(props => props.name === data.data.localidade.toUpperCase())
+                const cityCep = stateCep?.city.find(props => props.name === data.data.localidade.toUpperCase())
 
                 setFieldValue("address", data.data.logradouro);
                 setFieldValue("neighborhood", data.data.bairro);
                 setFieldValue("complement", data.data.complemento);
                 setFieldValue("state", stateCep)
-                setStateId(stateCep?.id)
                 setFieldValue("city", cityCep)
             }).catch(
                 (error) => {
@@ -53,29 +44,21 @@ const InputAddressState = () => {
                 }
             )
         }
-
-
     }
 
-    return { dadosCep, state, setStateId, city }
+    return { dadosCep, state }
 }
 
 const InputAddress = ({ errors, handleChange, touched, values, setFieldValue }: { values: any, handleChange: any, errors: any, touched: any, setFieldValue: any }) => {
 
     const props = InputAddressState();
 
-    // useEffect(() => {
-    //     if(values.state){
-    //         props.setStateId(values.state.id);
-    //         setFieldValue("city",props.city.find(props => props.id === values.city));
-    //     }
-        
-    // }, [])
+  
 
     return (
         <div className="grid">
             <div className="col-12 md:col-6">
-                <label>CEP *</label>
+                <label>CEP </label>
                 <Padding />
                 <MaskInput
                     value={values.cep}
@@ -94,7 +77,7 @@ const InputAddress = ({ errors, handleChange, touched, values, setFieldValue }: 
                 ) : null}
             </div>
             <div className="col-12 md:col-6">
-                <label>Endereço *</label>
+                <label>Endereço </label>
                 <Padding />
                 <TextInput
                     value={values.address}
@@ -109,7 +92,7 @@ const InputAddress = ({ errors, handleChange, touched, values, setFieldValue }: 
                 ) : null}
             </div>
             <div className="col-12 md:col-6">
-                <label>Bairro *</label>
+                <label>Bairro </label>
                 <Padding />
                 <TextInput
                     value={values.neighborhood}
@@ -124,7 +107,7 @@ const InputAddress = ({ errors, handleChange, touched, values, setFieldValue }: 
                 ) : null}
             </div>
             <div className="col-12 md:col-6">
-                <label>Complemento *</label>
+                <label>Complemento </label>
                 <Padding />
                 <TextInput
                     value={values.complement}
@@ -147,13 +130,12 @@ const InputAddress = ({ errors, handleChange, touched, values, setFieldValue }: 
                     name="state"
                     onChange={(e) => {
                         setFieldValue("state", e.target.value)
-                        props.setStateId(e.target.value.id)
                     }}
                     options={props.state}
                 />
-                {errors.neighborhood && touched.neighborhood ? (
+                {errors.state ? (
                     <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.neighborhood}
+                        {errors.state}
                     </div>
                 ) : null}
             </div>
@@ -165,11 +147,11 @@ const InputAddress = ({ errors, handleChange, touched, values, setFieldValue }: 
                     placerholder="Cidade"
                     name="city"
                     onChange={handleChange}
-                    options={props.city}
+                    options={values.state.city}
                 />
-                {errors.neighborhood && touched.neighborhood ? (
+                {errors.city ? (
                     <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.neighborhood}
+                        {errors.city}
                     </div>
                 ) : null}
             </div>

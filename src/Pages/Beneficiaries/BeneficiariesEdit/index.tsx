@@ -4,8 +4,12 @@ import { Column } from "primereact/column";
 import { ConfirmDialog } from "primereact/confirmdialog";
 import { DataTable } from "primereact/datatable";
 import { useContext, useState } from "react";
+import styled from "styled-components";
+import * as Yup from "yup";
+import avatar from "../../../Assets/images/avatar.svg";
 import DropdownComponent from "../../../Components/Dropdown";
 import MaskInput from "../../../Components/InputMask";
+import InputAddress from "../../../Components/InputsAddress";
 import Loading from "../../../Components/Loading";
 import TextInput from "../../../Components/TextInput";
 import BeneficiariesEditProvider, {
@@ -18,13 +22,12 @@ import {
   kinship,
   typesex,
 } from "../../../Controller/controllerGlobal";
+import styles from "../../../Styles";
 import color from "../../../Styles/colors";
 import { Container, Padding, Row } from "../../../Styles/styles";
 import ModalCreateRegisterClassroom from "./ModalCreateRegisterClassroom";
-import styled from "styled-components";
-import styles from "../../../Styles";
-import avatar from "../../../Assets/images/avatar.svg"
-import InputAddress from "../../../Components/InputsAddress";
+import { validaCPF } from "../../../Controller/controllerValidCPF";
+
 
 const BeneficiariesEdit = () => {
   return (
@@ -50,6 +53,32 @@ export const Avatar = styled.div`
 const BeneficiariesEditPage = () => {
   const props = useContext(BeneficiariesEditContext) as BeneficiariesEditType;
   const [visible, setVisible] = useState<any>();
+
+  const schema = Yup.object().shape({
+
+    name: Yup.string().required("Nome é obrigatório"),
+    color_race: Yup.object().required("Raça/cor é obrigatório"),
+    deficiency: Yup.object().required("Deficiência é obrigatória"),
+    cpf: Yup.string().test("cpf-valid", "CPF inválido", (value) => {
+      if (value && value.trim() !== "") {
+        return validaCPF(value);
+      }
+      return true;
+    }).required("CPF é obrigatório"),
+    responsable_cpf: Yup.string().test("cpf-valid", "CPF inválido", (value) => {
+      if (value && value.trim() !== "") {
+        return validaCPF(value);
+      }
+      return true;
+    }),
+    responsable_telephone: Yup.string().required("Telefone é obrigatório"),
+    birthday: Yup.string()
+      .nullable()
+      .required("Data de nascimento é obrigatória"),
+    state: Yup.object().nullable().required("Estado é obrigatório"),
+    city: Yup.object().nullable().required("Cidade é obrigatório"),
+    sex: Yup.object().nullable().required("Sexo é obrigatória"),
+  });
 
 
   const [visibleDelete, setVisibleDelete] = useState<any>();
@@ -98,6 +127,7 @@ const BeneficiariesEditPage = () => {
       {props.registrations ? (
         <Formik
           initialValues={props.initialValue}
+          validationSchema={schema}
           onSubmit={(values) => {
             props.handleUpdateRegistration(
               { ...values },
@@ -106,6 +136,7 @@ const BeneficiariesEditPage = () => {
           }}
         >
           {({ values, handleChange, errors, touched, setFieldValue }) => {
+            console.log(errors)
             return (
               <Form>
                 <div>
@@ -113,11 +144,27 @@ const BeneficiariesEditPage = () => {
                     <Button label="Salvar" type="submit" />
                   </Row>
                 </div>
+                <Column>
+                  <div style={{ color: "red", marginTop: "8px" }}>
+                    {typeof errors === "string" ? (
+                      errors
+                    ) : Array.isArray(errors) ? (
+                      errors.map((error, index) => <div key={index}>{error}</div>)
+                    ) : typeof errors === "object" && errors !== null ? (
+                      Object.entries(errors).map(([key, value]) => (
+                        <div key={key}>{value as string}</div>
+                      ))
+                    ) : null}
+                  </div>
+                </Column>
+
+
                 <Padding padding="8px" />
                 <Avatar>
                   <img alt="" src={props.file ? (URL.createObjectURL(props.file![0]) ?? undefined) : props.registrations?.avatar_url ? props.registrations?.avatar_url : avatar} />
                 </Avatar>
                 <Padding padding="8px" />
+
                 <div className="grid">
                   <div className="col-12 md:col-6">
                     <label>Avatar </label>
@@ -144,6 +191,12 @@ const BeneficiariesEditPage = () => {
                       onChange={handleChange}
                       name="name"
                     />
+
+                    {errors.name && touched.name ? (
+                      <div style={{ color: "red", marginTop: "8px" }}>
+                        {errors.name}
+                      </div>
+                    ) : null}
                   </div>
                   <div className="col-12 md:col-6">
                     <label>Sexo</label>
@@ -155,6 +208,12 @@ const BeneficiariesEditPage = () => {
                       name="sex"
                       onChange={handleChange}
                     />
+
+                    {errors.sex && touched.sex ? (
+                      <div style={{ color: "red", marginTop: "8px" }}>
+                        {errors.sex}
+                      </div>
+                    ) : null}
                   </div>
                 </div>{" "}
                 <div className="grid">
@@ -168,6 +227,12 @@ const BeneficiariesEditPage = () => {
                       name="birthday"
                       onChange={handleChange}
                     />
+
+                    {errors.birthday && touched.birthday ? (
+                      <div style={{ color: "red", marginTop: "8px" }}>
+                        {errors.birthday}
+                      </div>
+                    ) : null}
                   </div>
                   <div className="col-12 md:col-6">
                     <label>Cor de raça</label>
@@ -178,6 +243,11 @@ const BeneficiariesEditPage = () => {
                       name="color_race"
                       onChange={handleChange}
                     />{" "}
+                    {errors.color_race && touched.color_race ? (
+                      <div style={{ color: "red", marginTop: "8px" }}>
+                        {errors.color_race}
+                      </div>
+                    ) : null}
                   </div>
                 </div>{" "}
                 <div className="grid">
@@ -191,6 +261,11 @@ const BeneficiariesEditPage = () => {
                       onChange={handleChange}
                       name="cpf"
                     />
+                    {errors.cpf && touched.cpf ? (
+                      <div style={{ color: "red", marginTop: "8px" }}>
+                        {errors.cpf}
+                      </div>
+                    ) : null}
                   </div>
                   <div className="col-12 md:col-6">
                     <label>Telefone para contato </label>
@@ -202,6 +277,11 @@ const BeneficiariesEditPage = () => {
                       onChange={handleChange}
                       placeholder="name"
                     />
+                    {errors.responsable_telephone && touched.responsable_telephone ? (
+                      <div style={{ color: "red", marginTop: "8px" }}>
+                        {errors.responsable_telephone}
+                      </div>
+                    ) : null}
                   </div>
                 </div>{" "}
                 <div className="grid">
@@ -218,6 +298,11 @@ const BeneficiariesEditPage = () => {
                         { id: false, name: "Não" },
                       ]}
                     />
+                    {errors.deficiency && touched.deficiency ? (
+                      <div style={{ color: "red", marginTop: "8px" }}>
+                        {errors.deficiency.toString()}
+                      </div>
+                    ) : null}
                   </div>
                   {values.deficiency && (
                     <div className="col-12 md:col-6">
@@ -245,6 +330,11 @@ const BeneficiariesEditPage = () => {
                       onChange={handleChange}
                       placeholder="Nome do Resposável"
                     />
+                    {errors.responsable_name && touched.responsable_name ? (
+                      <div style={{ color: "red", marginTop: "8px" }}>
+                        {errors.responsable_name.toString()}
+                      </div>
+                    ) : null}
                   </div>
                   <div className="col-12 md:col-6">
                     <label>CPF Responsavel</label>
@@ -256,6 +346,11 @@ const BeneficiariesEditPage = () => {
                       placeholder="CPF do Responsável"
                       onChange={handleChange}
                     />
+                    {errors.responsable_cpf && touched.responsable_cpf ? (
+                      <div style={{ color: "red", marginTop: "8px" }}>
+                        {errors.responsable_cpf.toString()}
+                      </div>
+                    ) : null}
                   </div>
                   <div className="col-12 md:col-6">
                     <label>Parentesco</label>
@@ -269,6 +364,11 @@ const BeneficiariesEditPage = () => {
                       optionsLabel="name"
                       value={values.kinship}
                     />
+                    {errors.kinship && touched.kinship ? (
+                      <div style={{ color: "red", marginTop: "8px" }}>
+                        {errors.kinship.toString()}
+                      </div>
+                    ) : null}
                   </div>
 
                 </div>{" "}

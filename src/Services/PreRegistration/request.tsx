@@ -4,7 +4,7 @@ import { CreatePreRegistration, CreateRegistrationClassroomType } from "./types"
 
 export const requestPreRegistration = (data: CreatePreRegistration | any) => {
 
-  const body = {...data, state_fk: data.state.id, city_fk: data.city.id, cep: data.cep.replace(/[^a-zA-Z0-9 ]/g, '')}
+  const body = {...data, state_fk: data?.state?.id, city_fk: data?.city?.id, cep: data?.cep?.replace(/[^a-zA-Z0-9 ]/g, '')}
 
   delete body.state
   delete body.city
