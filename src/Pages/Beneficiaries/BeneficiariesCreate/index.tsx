@@ -44,7 +44,7 @@ const RegistrationPage = () => {
         return validaCPF(value);
       }
       return true;
-    }),
+    }).required("CPF é obrigatório"),
     responsable_cpf: Yup.string().test("cpf-valid", "CPF inválido", (value) => {
       if (value && value.trim() !== "") {
         return validaCPF(value);
@@ -58,7 +58,8 @@ const RegistrationPage = () => {
     zone: Yup.string().nullable().required("Zona é obrigatório"),
     project: Yup.string().nullable().required("Projeto é obrigatório"),
     classroom: Yup.string().nullable().required("Classroom é obrigatório"),
-
+    state: Yup.object().nullable().required("Estado é obrigatório"),
+    city: Yup.object().nullable().required("Cidade é obrigatório"),
     sex: Yup.string().nullable().required("Sexo é obrigatória"),
   });
 

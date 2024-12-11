@@ -4,10 +4,8 @@ export interface State {
   id: number
   acronym: string
   name: string
+  city: City[]
 }
-
-
-export type CityList = City[]
 
 export interface City {
   id: number
@@ -18,3 +16,4 @@ export interface City {
   ddd1: number
   ddd2: number
 }
+
