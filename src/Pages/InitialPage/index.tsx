@@ -37,12 +37,33 @@ const InitialPage = () => {
 
   console.log(dates);
 
+
   useEffect(() => {
     const fetchChartData = async () => {
+      if (!dates || dates.length < 2) {
+        console.error("Datas inválidas");
+        return;
+      }
+  
+      // Função para formatar a data
+      const formatDate = (date: any) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0"); // Ajusta o mês
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+      };
+  
+      // Formatar as datas selecionadas
+      const startDate = formatDate(dates[0]);
+      const endDate = formatDate(dates[1]);
+
       try {
         //const response = await http.get('localhost:3000/chart-bff/chart-matriculated-month?startDate='+ dates![0] + '&endDate=' + dates![1]);
-        const response = await http.get('localhost:3000/chart-bff/chart-matriculated-month?startDate=2021-01-01&endDate=2021-12-31');
-        const { n_registers, approvedRegisterClassrooms } = response.data;
+        //const response = await http.get('localhost:3000/chart-bff/chart-matriculated-month?startDate=2021-01-01&endDate=2021-12-31');
+        const response = await http.get(
+          `http://localhost:3000/chart-bff/chart-matriculated-month?startDate=${startDate}&endDate=${endDate}`
+        );
+        const { n_registers, n_approved } = response.data;
         console.log(response.data);
 
         setChartData({
@@ -60,7 +81,7 @@ const InitialPage = () => {
             },
             {
               label: "Matrículas Confirmadas",
-              data: approvedRegisterClassrooms, // Assumindo um array com valores por mês
+              data: n_approved, // Assumindo um array com valores por mês
               borderColor: "orange",
               fill: false,
             },
@@ -72,7 +93,7 @@ const InitialPage = () => {
     };
 
     fetchChartData();
-  }, []);
+  }, [dates]);
 
   const downloadCSV = async () => {
     try {
