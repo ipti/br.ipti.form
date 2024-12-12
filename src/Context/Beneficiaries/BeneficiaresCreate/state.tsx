@@ -47,7 +47,7 @@ export const BeneficiariesCreateState = () => {
     zone: undefined,
     project: undefined,
     status: "",
-    classroom: 0,
+    classroom: undefined,
     deficiency_description: "",
     kinship: "", 
     address: "",

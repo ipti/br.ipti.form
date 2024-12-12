@@ -22,7 +22,7 @@ const ModalCreateRegisterClassroom = ({
 
 
   return (
-    <Dialog onHide={onHide} visible={visible} style={{ width: "30vw" }}>
+    <Dialog onHide={onHide} visible={visible} style={{ width: window.innerWidth > 800 ? "30vw" : "50vw" }}>
       <Formik
         initialValues={{ classroom: "", registration: id, project: "" }}
         onSubmit={(values) => {

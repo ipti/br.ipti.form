@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Buffer } from 'buffer';
+import { FormikErrors } from "formik";
 
 
 export const gerarIdAleatorio = (tamanho: number) => {
@@ -14,6 +15,23 @@ export const gerarIdAleatorio = (tamanho: number) => {
 
   return id;
 };
+
+export const getErrorsAsArray = (errors: FormikErrors<any>): string[] => {
+  const flattenErrors = (obj: any): string[] => {
+    let messages: string[] = [];
+    Object.entries(obj).forEach(([key, value]) => {
+      if (typeof value === 'string') {
+        messages.push(value);
+      } else if (typeof value === 'object' && value !== null) {
+        messages = [...messages, ...flattenErrors(value)];
+      }
+    });
+    return messages;
+  };
+
+  return flattenErrors(errors);
+};
+
 
 export function formatarData(data: string): string {
   var date = data.toString().split("T")[0];

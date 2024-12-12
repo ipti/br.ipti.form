@@ -4,7 +4,7 @@ import { CreatePreRegistration, CreateRegistrationClassroomType } from "./types"
 
 export const requestPreRegistration = (data: CreatePreRegistration | any) => {
 
-  const body = {...data, state_fk: data?.state?.id, city_fk: data?.city?.id, cep: data?.cep?.replace(/[^a-zA-Z0-9 ]/g, '')}
+  const body = {...data, state_fk: data?.state, city_fk: data?.city, cep: data?.cep?.replace(/[^a-zA-Z0-9 ]/g, '')}
 
   delete body.state
   delete body.city
@@ -40,7 +40,7 @@ export const requestRegistrationClassroom = (data: CreateRegistrationClassroomTy
 export const requestUpdateRegistration = (data: any, id: number) => {
 
 
-  const body = { ...data, color_race: data.color_race?.id, sex: data.sex?.id, deficiency: data.deficiency.id, status: data.status?.id, state_fk: data.state.id, city_fk: data.city.id, cep: data.cep.replace(/[^a-zA-Z0-9 ]/g, '') }
+  const body = { ...data, color_race: data.color_race?.id, sex: data.sex?.id, deficiency: data.deficiency.id, status: data.status?.id, state_fk: data.state, city_fk: data.city, cep: data.cep.replace(/[^a-zA-Z0-9 ]/g, '') }
 
   delete body.city
 

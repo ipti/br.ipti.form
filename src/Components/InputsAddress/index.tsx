@@ -11,7 +11,7 @@ import TextInput from "../TextInput";
 const InputAddressState = () => {
 
     const [state, setState] = useState<StateList | undefined>();
-
+    const [stateId, setStateId] = useState<number | undefined>()
 
 
     const { data: stateRequest } = useFetchRequestState()
@@ -46,14 +46,19 @@ const InputAddressState = () => {
         }
     }
 
-    return { dadosCep, state }
+    return { dadosCep, state, setStateId, stateId }
 }
 
 const InputAddress = ({ errors, handleChange, touched, values, setFieldValue }: { values: any, handleChange: any, errors: any, touched: any, setFieldValue: any }) => {
 
     const props = InputAddressState();
 
-  
+    useEffect(() => {
+        if (values.state) {
+            props.setStateId(values.state)
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [values.state])
 
     return (
         <div className="grid">
@@ -121,40 +126,45 @@ const InputAddress = ({ errors, handleChange, touched, values, setFieldValue }: 
                     </div>
                 ) : null}
             </div>
-            <div className="col-12 md:col-6">
-                <label>Estado *</label>
-                <Padding />
-                <DropdownComponent
-                    value={values.state}
-                    placerholder="Estado"
-                    name="state"
-                    onChange={(e) => {
-                        setFieldValue("state", e.target.value)
-                    }}
-                    options={props.state}
-                />
-                {errors.state ? (
-                    <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.state}
-                    </div>
-                ) : null}
-            </div>
-            <div className="col-12 md:col-6">
-                <label>Cidade *</label>
-                <Padding />
-                <DropdownComponent
-                    value={values.city}
-                    placerholder="Cidade"
-                    name="city"
-                    onChange={handleChange}
-                    options={values.state.city}
-                />
-                {errors.city ? (
-                    <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.city}
-                    </div>
-                ) : null}
-            </div>
+            {props.state && <>
+                <div className="col-12 md:col-6">
+                    <label>Estado *</label>
+                    <Padding />
+                    <DropdownComponent
+                        value={values.state}
+                        placerholder="Estado"
+                        name="state"
+                        optionsValue="id"
+                        onChange={(e) => {
+                            setFieldValue("state", e.target.value)
+                            props.setStateId(e.target.value.id)
+                        }}
+                        options={props.state}
+                    />
+                    {errors.state ? (
+                        <div style={{ color: "red", marginTop: "8px" }}>
+                            {errors.state}
+                        </div>
+                    ) : null}
+                </div>
+                {props.stateId && <div className="col-12 md:col-6">
+                    <label>Cidade *</label>
+                    <Padding />
+                    <DropdownComponent
+                        value={values.city}
+                        placerholder="Cidade"
+                        name="city"
+                        optionsValue="id"
+                        onChange={handleChange}
+                        options={props.state.find(item => item.id === props.stateId)?.city}
+                    />
+                    {errors.city ? (
+                        <div style={{ color: "red", marginTop: "8px" }}>
+                            {errors.city}
+                        </div>
+                    ) : null}
+                </div>}
+            </>}
         </div>
     )
 }

@@ -13,7 +13,7 @@ export interface BeneficiariesCreateType {
     responsable_cpf: string;
     responsable_telephone: string;
     status: string;
-    classroom: number;
+    classroom: number | undefined;
     zone: number | undefined, 
     project: number | undefined,
     deficiency_description: string | undefined
