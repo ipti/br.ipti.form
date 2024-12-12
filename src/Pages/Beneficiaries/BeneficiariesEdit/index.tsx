@@ -18,6 +18,7 @@ import BeneficiariesEditProvider, {
 import { BeneficiariesEditType } from "../../../Context/Beneficiaries/BeneficiaresEdit/type";
 import {
   color_race,
+  getErrorsAsArray,
   getStatus,
   kinship,
   typesex,
@@ -75,8 +76,8 @@ const BeneficiariesEditPage = () => {
     birthday: Yup.string()
       .nullable()
       .required("Data de nascimento é obrigatória"),
-    state: Yup.object().nullable().required("Estado é obrigatório"),
-    city: Yup.object().nullable().required("Cidade é obrigatório"),
+    state: Yup.string().nullable().required("Estado é obrigatório"),
+    city: Yup.string().nullable().required("Cidade é obrigatório"),
     sex: Yup.object().nullable().required("Sexo é obrigatória"),
   });
 
@@ -136,7 +137,8 @@ const BeneficiariesEditPage = () => {
           }}
         >
           {({ values, handleChange, errors, touched, setFieldValue }) => {
-            console.log(errors)
+
+            const errorArray = getErrorsAsArray(errors);
             return (
               <Form>
                 <div>
@@ -144,21 +146,16 @@ const BeneficiariesEditPage = () => {
                     <Button label="Salvar" type="submit" />
                   </Row>
                 </div>
-                <Column>
-                  <div style={{ color: "red", marginTop: "8px" }}>
-                    {typeof errors === "string" ? (
-                      errors
-                    ) : Array.isArray(errors) ? (
-                      errors.map((error, index) => <div key={index}>{error}</div>)
-                    ) : typeof errors === "object" && errors !== null ? (
-                      Object.entries(errors).map(([key, value]) => (
-                        <div key={key}>{value as string}</div>
-                      ))
-                    ) : null}
-                  </div>
-                </Column>
-
-
+                <Padding padding="8px" />
+                {errorArray.length > 0 && <div>
+                  <h3>Erros encontrados no formulários</h3>
+                  <Padding />
+                  {errorArray.map((error, index) => (
+                    <div key={index} style={{ color: 'red' }}>
+                      {error}
+                    </div>
+                  ))}
+                </div>}
                 <Padding padding="8px" />
                 <Avatar>
                   <img alt="" src={props.file ? (URL.createObjectURL(props.file![0]) ?? undefined) : props.registrations?.avatar_url ? props.registrations?.avatar_url : avatar} />

@@ -15,6 +15,7 @@ import BeneficiariesCreateProvider, {
 import { BeneficiariesCreateType } from "../../../Context/Beneficiaries/BeneficiaresCreate/type";
 import {
   color_race,
+  getErrorsAsArray,
   kinship,
   typesex,
 } from "../../../Controller/controllerGlobal";
@@ -57,9 +58,9 @@ const RegistrationPage = () => {
       .required("Data de nascimento é obrigatória"),
     zone: Yup.string().nullable().required("Zona é obrigatório"),
     project: Yup.string().nullable().required("Projeto é obrigatório"),
-    classroom: Yup.string().nullable().required("Classroom é obrigatório"),
-    state: Yup.object().nullable().required("Estado é obrigatório"),
-    city: Yup.object().nullable().required("Cidade é obrigatório"),
+    classroom: Yup.string().nullable().required("Turma é obrigatório"),
+    state: Yup.string().nullable().required("Estado é obrigatório"),
+    city: Yup.string().nullable().required("Cidade é obrigatório"),
     sex: Yup.string().nullable().required("Sexo é obrigatória"),
   });
 
@@ -81,7 +82,8 @@ const RegistrationPage = () => {
           }}
         >
           {({ values, handleChange, errors, touched, setFieldValue }) => {
-            console.log(errors);
+            const errorArray = getErrorsAsArray(errors);
+
             return (
               <Form>
                 <Column>
@@ -89,6 +91,18 @@ const RegistrationPage = () => {
                     <Button label="Criar" type="submit" />
                   </Row>
                 </Column>
+                <Padding padding="8px" />
+                {errorArray.length > 0 && <div>
+                  <h3>Erros encontrados no formulários</h3>
+                  <Padding />
+                  {errorArray.map((error, index) => (
+                    <div key={index} style={{ color: 'red' }}>
+                      {error}
+                    </div>
+                  ))}
+                </div>}
+
+
                 <Padding padding="8px" />
                 <h3>Verificar Cadastro</h3>
                 <Padding padding="8px" />

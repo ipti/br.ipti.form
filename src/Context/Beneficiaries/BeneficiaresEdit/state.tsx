@@ -7,8 +7,6 @@ import {
   VerifyColor,
   VerifySex,
 } from "../../../Controller/controllerGlobal";
-import { useFetchRequestState } from "../../../Services/Address/query";
-import { StateList } from "../../../Services/Address/type";
 import { useFetchRequestClassroom } from "../../../Services/Classroom/query";
 import { ControllerUpdateRegistration } from "../../../Services/PreRegistration/controller";
 import {
@@ -26,19 +24,6 @@ export const BeneficiariesEditState = () => {
   const [classrooms, setClassrooms] = useState<any>();
   const [file, setFile] = useState<File[] | undefined>();
 
-  const [state, setState] = useState<StateList | undefined>();
-
-  
-  
-  const { data: stateRequest } = useFetchRequestState()
-  
-  
-  useEffect(() => {
-    if (stateRequest) {
-      setState(stateRequest)
-    }
-  }, [stateRequest])
-  
   const { id } = useParams();
   const {
     requestRegistrationClassroomMutation,
@@ -47,11 +32,11 @@ export const BeneficiariesEditState = () => {
     requestCHangeAvatarRegistrationMutation,
   } = ControllerUpdateRegistration();
   const { data: registrationsRequests, isLoading } =
-  useFetchRequestRegistrationOne(id!);
+    useFetchRequestRegistrationOne(id!);
   const [registrations, setRegistrations] = useState<
-  Registration | undefined
+    Registration | undefined
   >();
-  
+
   useEffect(() => {
     if (classroomsFetch) {
       setClassrooms(classroomsFetch);
@@ -65,7 +50,6 @@ export const BeneficiariesEditState = () => {
   }, [registrationsRequests]);
 
   const date = new Date(registrations?.birthday!);
-const stateList = state?.find(props => props.id === registrations?.state_fk)
   const initialValue = {
     name: registrations?.name,
     sex: VerifySex(registrations?.sex!),
@@ -88,10 +72,11 @@ const stateList = state?.find(props => props.id === registrations?.state_fk)
     neighborhood: registrations?.neighborhood ?? "",
     number: registrations?.number ?? "",
     complement: registrations?.complement ?? "",
-    state: state?.find(props => props.id === registrations?.state_fk) ?? "",
-    city: stateList?.city.find(props => props.id === registrations?.city_fk) ?? ""
+    state: registrations?.state_fk ?? "",
+    city: registrations?.city_fk ?? ""
   };
 
+  console.log(initialValue)
   const CreateRegisterClassroom = (data: CreateRegistrationClassroomType) => {
     requestRegistrationClassroomMutation.mutate(data);
   };
