@@ -45,6 +45,7 @@ export interface PropsInputCalendar {
     name?: string,
     view?: "date" | "month" | "year",
     dateFormat?: string
+    selectionMode?: "range" | "multiple" | "single" | undefined
 }
 
 export interface PropsInputArea {

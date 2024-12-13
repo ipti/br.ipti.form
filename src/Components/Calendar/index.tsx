@@ -11,6 +11,8 @@ const CalendarComponent = ({
   name,
   view,
   dateFormat,
+  selectionMode
+  
 }: PropsInputCalendar) => {
   addLocale("pt-br", {
     firstDayOfWeek: 1,
@@ -61,7 +63,7 @@ const CalendarComponent = ({
       value={value}
       onChange={onChange}
       dateFormat={dateFormat}
-      
+      selectionMode={selectionMode}
       style={{ width: "100%" }}
       locale="pt-br"
       name={name}
