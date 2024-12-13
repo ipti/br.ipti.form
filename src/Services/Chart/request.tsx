@@ -4,12 +4,11 @@ import { logout } from "../localstorage";
 
 export const requestChartMatriculated = (startDate: any, endDate:any) => {
 
-  let path =
-    "/chart-bff/chart-matriculated-month?startDate=${startDate}&endDate=${endDate}";
+  let path = `/chart-bff/chart-matriculated-month?startDate=${startDate}&endDate=${endDate}`;
 
     if (startDate && endDate) {
-        return http.get("/chart-bff/chart-matriculated-month?startDate=${startDate}&endDate=${endDate}")
-        .then((response) => response.data)
+        return http.get(`/chart-bff/chart-matriculated-month?startDate=${startDate}&endDate=${endDate}`)
+        .then((response) => response)
           .catch((err) => {
             if (err.response.status === 401) {
               logout();
@@ -21,7 +20,7 @@ export const requestChartMatriculated = (startDate: any, endDate:any) => {
 
   return http
     .get(path)
-    .then((response) => response.data)
+    .then((response) => response)
     .catch((err) => {
       if (err.response.status === 401) {
         logout();
