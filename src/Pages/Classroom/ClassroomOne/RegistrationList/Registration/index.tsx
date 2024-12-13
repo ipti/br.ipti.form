@@ -2,6 +2,7 @@ import { Form, Formik } from "formik";
 import { Button } from "primereact/button";
 import { useContext } from "react";
 import { useParams } from "react-router-dom";
+import avatar from "../../../../../Assets/images/avatar.svg";
 import ContentPage from "../../../../../Components/ContentPage";
 import DropdownComponent from "../../../../../Components/Dropdown";
 import MaskInput from "../../../../../Components/InputMask";
@@ -12,14 +13,13 @@ import RegistartionDetailsProvider, {
 } from "../../../../../Context/Classroom/Registration/context";
 import { RegistrationDetailsTypes } from "../../../../../Context/Classroom/Registration/type";
 import {
-  Status,
   color_race,
-  typesex,
+  getStatusList,
+  typesex
 } from "../../../../../Controller/controllerGlobal";
 import { useFetchRequestClassroomOne } from "../../../../../Services/Classroom/query";
 import { Padding } from "../../../../../Styles/styles";
 import { Avatar } from "../../../../Beneficiaries/BeneficiariesEdit";
-import avatar from "../../../../../Assets/images/avatar.svg"
 
 
 const Registration = () => {
@@ -70,11 +70,9 @@ const RegistrationPage = () => {
                       name="status"
                       placerholder="Status"
                       optionsLabel="name"
-                      options={[
-                        { id: Status.APPROVED, name: "Aprovado" },
-                        { id: Status.REPROVED, name: "Reprovado" },
-                        { id: Status.PENDING, name: "Pedente" },
-                      ]}
+                      options={
+                        getStatusList()
+                      }
                     />
                   </div>
                 </div>{" "}

@@ -43,6 +43,14 @@ const Menu = ({ viewdMenu }: { viewdMenu: boolean }) => {
   const [active, setActive] = useState(parseInt(getMenuItem()!));
   const [visibleModal, setVisibleModal] = useState(false);
   const props = useContext(AplicationContext) as PropsAplicationContext;
+
+  const itemMenu = getMenuItem()
+
+  useEffect(() => {
+    setActive(parseInt(getMenuItem()!))
+  }, [itemMenu])
+  
+
   return (
     <Container active={viewdMenu}>
       <Padding padding="4px" />

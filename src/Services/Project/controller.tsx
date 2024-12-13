@@ -8,6 +8,7 @@ import {
 } from "../../Context/Project/CreateList/type";
 import {
   requestCreateProject,
+  requestDeleteProject,
   requestRemoveRulerProject,
   requestRulerProject,
   requestUpdateProject,
@@ -26,7 +27,7 @@ export const ProjectController = () => {
           title: error.response.data.message,
           confirmButtonColor: styles.colors.colorsBaseProductNormal,
         })
-       },
+      },
       onSuccess: (data) => {
         Swal.fire({
           icon: "success",
@@ -51,7 +52,7 @@ export const ProjectController = () => {
           title: error.response.data.message,
           confirmButtonColor: styles.colors.colorsBaseProductNormal,
         })
-       },
+      },
       onSuccess: (data) => {
         Swal.fire({
           icon: "success",
@@ -76,8 +77,8 @@ export const ProjectController = () => {
           title: error.response.data.message,
           confirmButtonColor: styles.colors.colorsBaseProductNormal,
         })
-       },
-      onSuccess: (data) => {},
+      },
+      onSuccess: (data) => { },
     }
   );
   const requestRemoveRulerprojectMutation = useMutation(
@@ -89,14 +90,33 @@ export const ProjectController = () => {
           title: error.response.data.message,
           confirmButtonColor: styles.colors.colorsBaseProductNormal,
         })
-       },
-      onSuccess: (data) => {},
+      },
+      onSuccess: (data) => { },
     }
   );
+
+  const requestDeleteprojectMutation = useMutation(
+    ({ id }: { id: number }) => requestDeleteProject(id),
+    {
+      onError: (error: any) => {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+      },
+      onSuccess: (data) => {
+
+        history("/projetos")
+       },
+    }
+  );
+
   return {
     requestCreateprojectMutation,
     requestUpdateprojectMutation,
     requestRulerprojectMutation,
     requestRemoveRulerprojectMutation,
+    requestDeleteprojectMutation
   };
 };

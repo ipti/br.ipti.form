@@ -8,7 +8,7 @@ export const ProjectOneState = () => {
   const { id } = useParams();
   const { data, isLoading } = useFetchRequestProjectOne(parseInt(id!));
   const [project, setProject] = useState();
-  const { requestUpdateprojectMutation, requestRulerprojectMutation } =
+  const { requestUpdateprojectMutation, requestRulerprojectMutation, requestDeleteprojectMutation } =
     ProjectController();
 
   useEffect(() => {
@@ -19,6 +19,10 @@ export const ProjectOneState = () => {
 
   const updateProject = (data: UpdateProject, id: number) => {
     requestUpdateprojectMutation.mutate({ data: data, id: id });
+  };
+
+  const deleteProject = (id: number) => {
+    requestDeleteprojectMutation.mutate({ id: id });
   };
 
   const rulerProject = (file: File, id: number) => {
@@ -32,6 +36,7 @@ export const ProjectOneState = () => {
     project,
     isLoading,
     updateProject,
-    rulerProject
+    rulerProject,
+    deleteProject
   };
 };

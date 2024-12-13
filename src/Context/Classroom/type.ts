@@ -8,6 +8,7 @@ export interface ClassroomTypes {
   UpdateClassroom: (
     body: {
       name: string;
+      status: string
     },
     id: number
   ) => void;

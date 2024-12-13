@@ -19,6 +19,20 @@ export const requestCreateProject = (data: CreateProject) => {
     });
 };
 
+export const requestDeleteProject = (id: number) => {
+  return http
+    .delete("/project/" + id)
+    .then((response) => response.data)
+    .catch((err) => {
+      if (err.response.status === 401) {
+        logout();
+        window.location.reload();
+      }
+      throw err;
+    });
+};
+
+
 export const requestUpdateProject = (data: UpdateProject, id: number) => {
   return http
     .put("/project/" + id, data)
@@ -35,7 +49,7 @@ export const requestUpdateProject = (data: UpdateProject, id: number) => {
 
 export const requestRulerProject = (file: FormData, id: number) => {
   return http
-    .put("/archive-project-bff?projectId="+id, file)
+    .put("/archive-project-bff?projectId=" + id, file)
     .then((response) => response.data)
     .catch((err) => {
       if (err.response.status === 401) {
@@ -49,7 +63,7 @@ export const requestRulerProject = (file: FormData, id: number) => {
 
 export const requestRemoveRulerProject = (id: number) => {
   return http
-    .put("/archive-project-bff/remove?projectId="+id)
+    .put("/archive-project-bff/remove?projectId=" + id)
     .then((response) => response.data)
     .catch((err) => {
       if (err.response.status === 401) {

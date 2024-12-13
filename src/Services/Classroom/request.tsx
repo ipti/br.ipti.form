@@ -65,7 +65,7 @@ export const requestClassroomReport = (id: number) => {
     });
 };
 
-export const requestUpdateClassroom = (id: number, data: { name: string }) => {
+export const requestUpdateClassroom = (id: number, data: { name: string, status: string }) => {
   let path = "/classroom/";
   return http
     .put(path + id, data)

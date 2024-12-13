@@ -5,6 +5,7 @@ export interface ProjectOneTypes {
   isLoading: boolean;
   updateProject: (data: UpdateProject, id: number) => void;
   rulerProject: (file: File, id: number) => void
+  deleteProject: (id: number) => void
 }
 
 export interface ApiProject {
