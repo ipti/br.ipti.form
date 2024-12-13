@@ -19,6 +19,7 @@ import { useFetchRequestUsersChart } from "../../Services/Users/query";
 import { Column, Padding, Row } from "../../Styles/styles";
 import { PropsAplicationContext } from "../../Types/types";
 import { requestChartMatriculated } from "../../Services/Chart/request";
+import color from "../../Styles/colors";
 
 export interface Chart {
   year: number;
@@ -62,7 +63,10 @@ const InitialPage = () => {
   ) as PropsAplicationContext;
 
   const [dates, setDates] = useState<Nullable<(Date | null)[]>>(null);
-  const [formattedDates, setFormattedDates] = useState<{ start: string; end: string }>({
+  const [formattedDates, setFormattedDates] = useState<{
+    start: string;
+    end: string;
+  }>({
     start: "",
     end: "",
   });
@@ -74,7 +78,6 @@ const InitialPage = () => {
     setDates([subtractMonths(new Date(Date.now()), 6), new Date(Date.now())]);
   }, []);
 
-  // Sempre que as datas mudam, formata e faz a requisição
   useEffect(() => {
     if (!dates || dates.length < 2 || !dates[0] || !dates[1]) return;
 
@@ -90,12 +93,10 @@ const InitialPage = () => {
 
     setFormattedDates({ start, end });
 
-    // Faz a requisição aqui mesmo, assim que as datas forem formatadas
     const fetchData = async () => {
       try {
         const response = await requestChartMatriculated(start, end);
-        // const response = await http.get(`/chart-matriculated-month?startDate=${start}&endDate=${end}`);]
-        
+
         const data: Chart[] = response.data;
         const updatedChartData = {
           labels: month,
@@ -103,13 +104,13 @@ const InitialPage = () => {
             {
               label: "Total de Matrículas Confirmadas",
               data: renderChart(data, 1),
-              borderColor: "#42A5F5",
+              borderColor: color.blue,
               fill: false,
             },
             {
               label: "Total de Matrículas",
               data: renderChart(data, 2),
-              borderColor: "#FCAD09",
+              borderColor: color.colorCardOrange,
               fill: false,
             },
           ],
@@ -123,8 +124,11 @@ const InitialPage = () => {
     fetchData();
   }, [dates]);
 
-  // Continua usando o hook para outras requisições
-  const { data: chart, isLoading, isError } = useFetchRequestUsersChart(ts?.toString());
+  const {
+    data: chart,
+    isLoading,
+    isError,
+  } = useFetchRequestUsersChart(ts?.toString());
 
   const downloadCSV = async () => {
     try {
@@ -177,42 +181,42 @@ const InitialPage = () => {
 
       <Padding padding="16px" />
       <div className="grid">
-        <div className="col-12 md:col-2 lg:col-2">
+        <div className="col-12 md:col-4 lg:col-2">
           <CardQuant
             title="Total de Ts"
             quant={chart?.totalUserSocialTechnologies!}
             color="navy_blue"
           />
         </div>
-        <div className="col-12 md:col-2 lg:col-2">
+        <div className="col-12 md:col-4 lg:col-2">
           <CardQuant
             title="Total de Projetos"
             quant={chart?.totalProjects!}
             color="blue"
           />
         </div>
-        <div className="col-12 md:col-2 lg:col-2">
+        <div className="col-12 md:col-4 lg:col-2">
           <CardQuant
             title="Total de Turmas"
             quant={chart?.totalClassrooms!}
             color="orange"
           />
         </div>
-        <div className="col-12 md:col-2 lg:col-2">
+        <div className="col-12 md:col-4 lg:col-2">
           <CardQuant
             title="Total de matrículas"
             quant={chart?.totalRegisterClassrooms!}
             color="navy_blue"
           />
         </div>
-        <div className="col-12 md:col-2 lg:col-2">
+        <div className="col-12 md:col-4 lg:col-2">
           <CardQuant
             title="Total de matrículas confirmadas"
             quant={chart?.approvedRegisterClassrooms!}
             color="blue"
           />
         </div>
-        <div className="col-12 md:col-2 lg:col-2">
+        <div className="col-12 md:col-4 lg:col-2">
           <CardQuant
             title="Total de encontros"
             quant={chart?.totalMeetings!}
@@ -222,28 +226,33 @@ const InitialPage = () => {
       </div>
 
       <Padding padding="20px" />
-      <div className="card col-12 md:col-6 lg:col-6" style={{ padding: "20px" }}>
+      <div
+        className="card col-12 md:col-12 lg:col-6"
+        style={{ padding: "20px" }}
+      >
         <Row id="start">
           <Column>
             <h2>Gráfico de Matrículas</h2>
             <Padding padding="8px" />
-            <CalendarComponent
-              value={dates}
-              onChange={(e: any) => setDates(e.value)}
-              selectionMode="range"
-              placeholder="Selecione o período"
-              dateFormat="dd/mm/yy"
-              name="dates"
-            />
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <p style={{ marginBottom: "0", whiteSpace: "nowrap" }}>
+                Selecione o período:
+              </p>
+              <CalendarComponent
+                value={dates}
+                onChange={(e: any) => setDates(e.value)}
+                selectionMode="range"
+                placeholder="Selecione o período"
+                dateFormat="dd/mm/yy"
+                name="dates"
+              />
+            </div>
           </Column>
         </Row>
-        <div>
-          {chartData && <ChartPrime type="line" data={chartData} />}
-        </div>
+        <div>{chartData && <ChartPrime type="line" data={chartData} />}</div>
       </div>
     </ContentPage>
   );
 };
 
 export default InitialPage;
-
