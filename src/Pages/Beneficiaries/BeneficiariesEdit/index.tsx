@@ -28,6 +28,7 @@ import color from "../../../Styles/colors";
 import { Container, Padding, Row } from "../../../Styles/styles";
 import ModalCreateRegisterClassroom from "./ModalCreateRegisterClassroom";
 import { validaCPF } from "../../../Controller/controllerValidCPF";
+import ModalAddTerm from "./ModalAddTerm";
 
 
 const BeneficiariesEdit = () => {
@@ -54,6 +55,8 @@ export const Avatar = styled.div`
 const BeneficiariesEditPage = () => {
   const props = useContext(BeneficiariesEditContext) as BeneficiariesEditType;
   const [visible, setVisible] = useState<any>();
+  const [visibleTerm, setVisibleTerm] = useState<any>();
+
 
   const schema = Yup.object().shape({
 
@@ -100,6 +103,23 @@ const BeneficiariesEditPage = () => {
       </div>
     );
   };
+
+  const renderHeaderTerm = () => {
+    return (
+      <div
+        className="flex justify-content-between"
+        style={{ background: color.colorCard }}
+      >
+        <Button
+          label="Novo termo"
+          icon="pi pi-plus"
+          type="button"
+          onClick={() => setVisibleTerm(true)}
+        />
+      </div>
+    );
+  };
+
 
   const StatusBody = (rowData: any) => {
     return <div>{getStatus(rowData?.status)?.name}</div>;
@@ -374,6 +394,19 @@ const BeneficiariesEditPage = () => {
                 <Padding padding="8px" />
                 <InputAddress errors={errors} handleChange={handleChange} setFieldValue={setFieldValue} touched={touched} values={values} />
                 <Padding padding="8px" />
+                <h3>Termo</h3>
+                <Padding padding="8px" />
+
+                <DataTable
+                  value={props.registrations?.register_term}
+                  tableStyle={{ minWidth: "50rem" }}
+                  header={renderHeaderTerm}
+                >
+                  <Column field="dataterm" header="Data de assinatura"></Column>
+                  <Column field="dataterm" header="Status"></Column>
+
+                </DataTable>
+                <Padding padding="8px" />
                 <h3>Matriculas</h3>
                 <Padding padding="8px" />
                 {/* <h3>Endereço</h3>
@@ -436,6 +469,10 @@ const BeneficiariesEditPage = () => {
       <ModalCreateRegisterClassroom
         onHide={() => setVisible(false)}
         visible={visible}
+      />
+      <ModalAddTerm
+        onHide={() => setVisibleTerm(false)}
+        visible={visibleTerm}
       />
       <ConfirmDialog
         visible={visibleDelete}

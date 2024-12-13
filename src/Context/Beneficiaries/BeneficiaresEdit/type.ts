@@ -44,6 +44,7 @@ export interface Registration {
   city_fk: number
   state_fk: number
   register_classroom: RegisterClassroom[]
+  register_term: any
 }
 
 export interface RegisterClassroom {
