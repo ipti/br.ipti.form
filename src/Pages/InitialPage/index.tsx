@@ -152,32 +152,36 @@ const InitialPage = () => {
       title={`Bem vindo, ${propsAplication.user?.name}!`}
       description="Visualização dos dados gerais do meuBen."
     >
-      {propsAplication.user?.role === ROLE.ADMIN && (
-        <Row id="end">
-          <Button
-            label="Baixar CSV"
-            icon="pi pi-download"
-            iconPos="left"
-            onClick={downloadCSV}
-          />
-        </Row>
-      )}
-      <Padding padding="8px" />
+
+      <Row id="space-between" style={{width: "100%"}}> 
+        {/* todo: deixar a barra com o tamanho maior */}
       {propsAplication.project && (
-        <Row id="end">
-          <DropdownComponent
-            options={[
-              ...propsAplication.project,
-              { id: undefined, name: "Todos" },
-            ]}
-            optionsLabel="name"
-            optionsValue="id"
-            value={ts}
-            onChange={(e) => setTs(e.target.value)}
-            placerholder="Filtrar por Tecnologia"
-          />
-        </Row>
-      )}
+          <Row id="end">
+            <DropdownComponent
+              options={[
+                ...propsAplication.project,
+                { id: undefined, name: "Todos" },
+              ]}
+              optionsLabel="name"
+              optionsValue="id"
+              value={ts}
+              onChange={(e) => setTs(e.target.value)}
+              placerholder="Filtrar por Tecnologia"
+            />
+          </Row>
+        )}
+        {propsAplication.user?.role === ROLE.ADMIN && (
+          <Row id="end">
+            <Button
+              label="Baixar CSV"
+              icon="pi pi-download"
+              iconPos="left"
+              onClick={downloadCSV}
+            />
+          </Row>
+        )}
+        
+      </Row>
 
       <Padding padding="16px" />
       <div className="grid">
@@ -225,7 +229,7 @@ const InitialPage = () => {
         </div>
       </div>
 
-      <Padding padding="20px" />
+      <Padding padding="10px" />
       <div
         className="card col-12 md:col-12 lg:col-6"
         style={{ padding: "20px" }}
