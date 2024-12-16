@@ -7,8 +7,9 @@ import { RegisterContext } from "../../../../../../Context/Register/context"
 import { RegisterTypes } from "../../../../../../Context/Register/type"
 import { Padding, Row } from "../../../../../../Styles/styles"
 import { typesex } from "../../../../../../Controller/controllerGlobal"
+import InputAddress from "../../../../../../Components/InputsAddress"
 
-const InputsEquals = ({ values, handleChange, errors, touched }: { values: any, handleChange: any, errors: any, touched: any }) => {
+const InputsEquals = ({ values, handleChange, errors, touched, setFieldValue }: { values: any, handleChange: any, errors: any, touched: any, setFieldValue: any }) => {
 
     const props = useContext(RegisterContext) as RegisterTypes;
     return (
@@ -54,6 +55,7 @@ const InputsEquals = ({ values, handleChange, errors, touched }: { values: any, 
                 <div style={{ color: "red", marginTop: "8px" }}>{errors.zone}</div>
             ) : null}
             <Padding padding={props.padding} />
+            <InputAddress errors={errors} handleChange={handleChange} setFieldValue={setFieldValue} touched={touched} values={values} />
         </>
     )
 }

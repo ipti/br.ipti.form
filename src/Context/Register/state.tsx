@@ -74,6 +74,8 @@ export const RegisterState = () => {
     responsable_cpf: "",
     responsable_name: "",
     responsable_telephone: "",
+    city: null,
+    state: null
   };
 
   return {
