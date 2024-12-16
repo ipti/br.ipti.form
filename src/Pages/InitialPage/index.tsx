@@ -63,13 +63,7 @@ const InitialPage = () => {
   ) as PropsAplicationContext;
 
   const [dates, setDates] = useState<Nullable<(Date | null)[]>>(null);
-  const [formattedDates, setFormattedDates] = useState<{
-    start: string;
-    end: string;
-  }>({
-    start: "",
-    end: "",
-  });
+
   const [ts, setTs] = useState<number | undefined>();
   const [chartData, setChartData] = useState<any>(null);
 
@@ -90,8 +84,6 @@ const InitialPage = () => {
 
     const start = formatDate(dates[0]);
     const end = formatDate(dates[1]);
-
-    setFormattedDates({ start, end });
 
     const fetchData = async () => {
       try {
@@ -152,32 +144,40 @@ const InitialPage = () => {
       title={`Bem vindo, ${propsAplication.user?.name}!`}
       description="Visualização dos dados gerais do meuBen."
     >
-      {propsAplication.user?.role === ROLE.ADMIN && (
-        <Row id="end">
-          <Button
-            label="Baixar CSV"
-            icon="pi pi-download"
-            iconPos="left"
-            onClick={downloadCSV}
-          />
-        </Row>
-      )}
-      <Padding padding="8px" />
-      {propsAplication.project && (
-        <Row id="end">
-          <DropdownComponent
-            options={[
-              ...propsAplication.project,
-              { id: undefined, name: "Todos" },
-            ]}
-            optionsLabel="name"
-            optionsValue="id"
-            value={ts}
-            onChange={(e) => setTs(e.target.value)}
-            placerholder="Filtrar por Tecnologia"
-          />
-        </Row>
-      )}
+      <Row
+        id="space-between"
+        style={{
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        {propsAplication.project && (
+          <Row id="end" style={{ flex: 1, marginRight: "10px" }}>
+            <DropdownComponent
+              options={[
+                ...propsAplication.project,
+                { id: undefined, name: "Todos" },
+              ]}
+              optionsLabel="name"
+              optionsValue="id"
+              value={ts}
+              onChange={(e) => setTs(e.target.value)}
+              placerholder="Filtrar por Tecnologia"
+            />
+          </Row>
+        )}
+        {propsAplication.user?.role === ROLE.ADMIN && (
+          <Row id="end"> 
+            <Button
+              label="Baixar CSV"
+              icon="pi pi-download"
+              iconPos="left"
+              onClick={downloadCSV}
+            />
+          </Row>
+        )}
+      </Row>
 
       <Padding padding="16px" />
       <div className="grid">
@@ -225,7 +225,7 @@ const InitialPage = () => {
         </div>
       </div>
 
-      <Padding padding="20px" />
+      <Padding padding="10px" />
       <div
         className="card col-12 md:col-12 lg:col-6"
         style={{ padding: "20px" }}
