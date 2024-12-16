@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { CreateRegistrationClassroomType } from "../../../Services/PreRegistration/types";
+import { CreateRegistrationClassroomType, CreateRegistrationTermType } from "../../../Services/PreRegistration/types";
 import { UpdateRegister } from "../../Classroom/Registration/type";
 
 export interface BeneficiariesEditType {
@@ -15,6 +15,7 @@ export interface BeneficiariesEditType {
   classrooms: any
   file: any | undefined
   setFile: Dispatch<SetStateAction<any | undefined>>
+  CreateRegisterTerm: (data: CreateRegistrationTermType) => void
 }
 
 export interface Registration {

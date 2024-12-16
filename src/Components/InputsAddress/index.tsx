@@ -36,8 +36,8 @@ const InputAddressState = () => {
                 setFieldValue("address", data.data.logradouro);
                 setFieldValue("neighborhood", data.data.bairro);
                 setFieldValue("complement", data.data.complemento);
-                setFieldValue("state", stateCep)
-                setFieldValue("city", cityCep)
+                setFieldValue("state", stateCep?.id)
+                setFieldValue("city", cityCep?.id)
             }).catch(
                 (error) => {
                     return error

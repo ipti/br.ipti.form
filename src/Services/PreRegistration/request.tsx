@@ -58,6 +58,22 @@ export const requestUpdateRegistration = (data: any, id: number) => {
     });
 };
 
+
+export const requestCreateRegistrationTerm = (data: any) => {
+
+  return http
+    .post("/registration-term-bff", data)
+    .then(response => response.data)
+    .catch(err => {
+      if (err.response.status === 401) {
+        window.location.reload()
+      }
+      alert(err.response.message)
+
+      throw err;
+    });
+};
+
 export const requestUpdateAvatarRegistration = (id: number, file: File) => {
 
   const formData = new FormData()

@@ -108,12 +108,12 @@ const RegistrationPage = () => {
                 <Padding padding="8px" />
                 <div className="grid">
                   <div className="col-12 md:col-6">
-                    <label>CPF</label>
+                    <label>CPF *</label>
                     <Padding />
                     <MaskInput
                       value={values.cpf}
                       mask="999.999.999-99"
-                      placeholder="CPF"
+                      placeholder="CPF *"
                       onChange={handleChange}
                       name="cpf"
                     />
@@ -129,7 +129,7 @@ const RegistrationPage = () => {
                 <Padding />
                 <div className="grid">
                   <div className="col-12 md:col-6">
-                    <label>Name *</label>
+                    <label>Nome *</label>
                     <Padding />
                     <TextInput
                       value={values.name}
