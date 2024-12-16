@@ -63,13 +63,7 @@ const InitialPage = () => {
   ) as PropsAplicationContext;
 
   const [dates, setDates] = useState<Nullable<(Date | null)[]>>(null);
-  const [formattedDates, setFormattedDates] = useState<{
-    start: string;
-    end: string;
-  }>({
-    start: "",
-    end: "",
-  });
+
   const [ts, setTs] = useState<number | undefined>();
   const [chartData, setChartData] = useState<any>(null);
 
@@ -90,8 +84,6 @@ const InitialPage = () => {
 
     const start = formatDate(dates[0]);
     const end = formatDate(dates[1]);
-
-    setFormattedDates({ start, end });
 
     const fetchData = async () => {
       try {
@@ -152,11 +144,16 @@ const InitialPage = () => {
       title={`Bem vindo, ${propsAplication.user?.name}!`}
       description="Visualização dos dados gerais do meuBen."
     >
-
-      <Row id="space-between" style={{width: "100%"}}> 
-        {/* todo: deixar a barra com o tamanho maior */}
-      {propsAplication.project && (
-          <Row id="end">
+      <Row
+        id="space-between"
+        style={{
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+        }}
+      >
+        {propsAplication.project && (
+          <Row id="end" style={{ flex: 1, marginRight: "10px" }}>
             <DropdownComponent
               options={[
                 ...propsAplication.project,
@@ -171,7 +168,7 @@ const InitialPage = () => {
           </Row>
         )}
         {propsAplication.user?.role === ROLE.ADMIN && (
-          <Row id="end">
+          <Row id="end"> 
             <Button
               label="Baixar CSV"
               icon="pi pi-download"
@@ -180,7 +177,6 @@ const InitialPage = () => {
             />
           </Row>
         )}
-        
       </Row>
 
       <Padding padding="16px" />
