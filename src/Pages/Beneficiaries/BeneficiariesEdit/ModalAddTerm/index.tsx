@@ -1,34 +1,38 @@
 import { Form, Formik } from "formik";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
-import { useContext } from "react";
-import { useParams } from "react-router-dom";
 import CalendarComponent from "../../../../Components/Calendar";
-import { BeneficiariesEditContext } from "../../../../Context/Beneficiaries/BeneficiaresEdit/context";
-import { BeneficiariesEditType } from "../../../../Context/Beneficiaries/BeneficiaresEdit/type";
+import { ControllerUpdateRegistration } from "../../../../Services/PreRegistration/controller";
+import { CreateRegistrationTermType } from "../../../../Services/PreRegistration/types";
 import { Column, Padding, Row } from "../../../../Styles/styles";
 
 const ModalAddTerm = ({
   onHide,
   visible,
+  id
 }: {
   onHide(): void;
   visible?: boolean | undefined;
+  id: number
 }) => {
-  const props = useContext(BeneficiariesEditContext) as BeneficiariesEditType;
 
-  const { id } = useParams();
-
+    const {
+      
+      requestRegisterTermMutation
+    } = ControllerUpdateRegistration();
+   const CreateRegisterTerm = (data: CreateRegistrationTermType) => {
+      requestRegisterTermMutation.mutate({data: data});
+    };
 
 
   return (
     <Dialog onHide={onHide}  header="Novo termo" visible={visible} style={{ width: window.innerWidth > 800 ? "30vw" : "50vw" }}>
       <Formik
-        initialValues={{ classroom: "", registration: id, dateTerm: new Date(Date.now()) }}
+        initialValues={{  dateTerm: new Date(Date.now()) }}
         onSubmit={(values) => {
-          props.CreateRegisterClassroom({
-            classroom: parseInt(values.classroom),
-            registration: parseInt(values.registration!),
+          CreateRegisterTerm({
+            data_term: values.dateTerm,
+            registration: id!,
           });
           onHide();
         }}

@@ -13,7 +13,7 @@ import {
   useFetchRequestProjectList,
   useFetchRequestRegistrationOne,
 } from "../../../Services/PreRegistration/query";
-import { CreateRegistrationClassroomType } from "../../../Services/PreRegistration/types";
+import { CreateRegistrationClassroomType, CreateRegistrationTermType } from "../../../Services/PreRegistration/types";
 import { UpdateRegister } from "../../Classroom/Registration/type";
 import { Registration } from "./type";
 
@@ -30,6 +30,7 @@ export const BeneficiariesEditState = () => {
     requestDeleteRegistrationClassroomMutation,
     requestPreRegistrationMutation,
     requestCHangeAvatarRegistrationMutation,
+    requestRegisterTermMutation
   } = ControllerUpdateRegistration();
   const { data: registrationsRequests, isLoading } =
     useFetchRequestRegistrationOne(id!);
@@ -76,10 +77,14 @@ export const BeneficiariesEditState = () => {
     city: registrations?.city_fk ?? ""
   };
 
-  console.log(initialValue)
   const CreateRegisterClassroom = (data: CreateRegistrationClassroomType) => {
     requestRegistrationClassroomMutation.mutate(data);
   };
+
+  const CreateRegisterTerm = (data: CreateRegistrationTermType) => {
+    requestRegisterTermMutation.mutate({data: data});
+  };
+
 
   const DeleteRegistration = (id: number) => {
     requestDeleteRegistrationClassroomMutation.mutate(id);
@@ -121,5 +126,6 @@ export const BeneficiariesEditState = () => {
     classrooms,
     file,
     setFile,
+    CreateRegisterTerm
   };
 };

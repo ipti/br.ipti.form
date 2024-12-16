@@ -39,6 +39,13 @@ export function formatarData(data: string): string {
   return dataEdit;
 }
 
+export function isWithinOneYear(date1: any, date2: any) {
+  const oneYearInMilliseconds = 365 * 24 * 60 * 60 * 1000; // Um ano em milissegundos
+
+  const timeDifference = Math.abs(new Date(date1).getUTCMilliseconds() - new Date(date2).getUTCMilliseconds()); // Diferença absoluta em ms
+  return timeDifference <= oneYearInMilliseconds; // Verifica se está dentro de um ano
+}
+
 export function converterData(data: string) {
   // Divide a string pelo separador "/"
   const partes = data.split('/');

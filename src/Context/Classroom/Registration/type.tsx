@@ -59,4 +59,5 @@ export interface Registration {
   createdAt: string
   updatedAt: string
   kinship: string
+  register_term?: any
 }

@@ -28,6 +28,7 @@ const UnderAge = () => {
       "Nome do responsável é obrigatório"
     ),
     kinship: Yup.string().required("Parentesco é obrigatório"),
+   
   });
 
   return (

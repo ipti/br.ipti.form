@@ -18,8 +18,10 @@ import BeneficiariesEditProvider, {
 import { BeneficiariesEditType } from "../../../Context/Beneficiaries/BeneficiaresEdit/type";
 import {
   color_race,
+  formatarData,
   getErrorsAsArray,
   getStatus,
+  isWithinOneYear,
   kinship,
   typesex,
 } from "../../../Controller/controllerGlobal";
@@ -111,9 +113,10 @@ const BeneficiariesEditPage = () => {
         style={{ background: color.colorCard }}
       >
         <Button
-          label="Novo termo"
+          label={isWithinOneYear(new Date(Date.now()), props.registrations?.register_term[props.registrations?.register_term.length - 1]?.dateTerm!) ? "Termo ativo" : "Novo termo"  }
           icon="pi pi-plus"
           type="button"
+          disabled={isWithinOneYear(new Date(Date.now()), props.registrations?.register_term[props.registrations?.register_term.length - 1]?.dateTerm!)}
           onClick={() => setVisibleTerm(true)}
         />
       </div>
@@ -269,12 +272,12 @@ const BeneficiariesEditPage = () => {
                 </div>{" "}
                 <div className="grid">
                   <div className="col-12 md:col-6">
-                    <label>CPF</label>
+                    <label>CPF *</label>
                     <Padding />
                     <MaskInput
                       value={values.cpf}
                       mask="999.999.999-99"
-                      placeholder="CPF"
+                      placeholder="CPF *"
                       onChange={handleChange}
                       name="cpf"
                     />
@@ -402,8 +405,8 @@ const BeneficiariesEditPage = () => {
                   tableStyle={{ minWidth: "50rem" }}
                   header={renderHeaderTerm}
                 >
-                  <Column field="dataterm" header="Data de assinatura"></Column>
-                  <Column field="dataterm" header="Status"></Column>
+                  <Column body={(row) => { return (<>{formatarData(row?.dateTerm!)}</>) }} header="Data de assinatura"></Column>
+                  <Column body={(row) => { return (<>{isWithinOneYear(new Date(Date.now()), row?.dateTerm!) ? "Termo ativo" : "Termo vencido"  }</>) }} header="Status"></Column>
 
                 </DataTable>
                 <Padding padding="8px" />
@@ -473,6 +476,7 @@ const BeneficiariesEditPage = () => {
       <ModalAddTerm
         onHide={() => setVisibleTerm(false)}
         visible={visibleTerm}
+        id={props.registrations?.id!}
       />
       <ConfirmDialog
         visible={visibleDelete}
