@@ -13,7 +13,7 @@ import {
   useFetchRequestProjectList,
   useFetchRequestRegistrationOne,
 } from "../../../Services/PreRegistration/query";
-import { CreateRegistrationClassroomType, CreateRegistrationTermType } from "../../../Services/PreRegistration/types";
+import { CreateRegistrationClassroomType } from "../../../Services/PreRegistration/types";
 import { UpdateRegister } from "../../Classroom/Registration/type";
 import { Registration } from "./type";
 
@@ -81,7 +81,7 @@ export const BeneficiariesEditState = () => {
     requestRegistrationClassroomMutation.mutate(data);
   };
 
-  const CreateRegisterTerm = (data: CreateRegistrationTermType) => {
+  const CreateRegisterTerm = (data: FormData) => {
     requestRegisterTermMutation.mutate({data: data});
   };
 

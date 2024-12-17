@@ -15,8 +15,7 @@ import {
 } from "./request";
 import {
   CreatePreRegistration,
-  CreateRegistrationClassroomType,
-  CreateRegistrationTermType,
+  CreateRegistrationClassroomType
 } from "./types";
 
 export const ControllerPreRegistration = () => {
@@ -100,7 +99,7 @@ export const ControllerUpdateRegistration = () => {
   );
 
   const requestRegisterTermMutation = useMutation(
-    ({ data}: { data: CreateRegistrationTermType}) =>
+    ({ data}: { data: FormData}) =>
       requestCreateRegistrationTerm(data),
     {
       onError: (error: any) => {

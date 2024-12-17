@@ -31,6 +31,7 @@ import { Container, Padding, Row } from "../../../Styles/styles";
 import ModalCreateRegisterClassroom from "./ModalCreateRegisterClassroom";
 import { validaCPF } from "../../../Controller/controllerValidCPF";
 import ModalAddTerm from "./ModalAddTerm";
+import Icon from "../../../Components/Icon";
 
 
 const BeneficiariesEdit = () => {
@@ -113,10 +114,9 @@ const BeneficiariesEditPage = () => {
         style={{ background: color.colorCard }}
       >
         <Button
-          label={isWithinOneYear(new Date(Date.now()), props.registrations?.register_term[props.registrations?.register_term.length - 1]?.dateTerm!) ? "Termo ativo" : "Novo termo"  }
+          label={"Novo termo"}
           icon="pi pi-plus"
           type="button"
-          disabled={isWithinOneYear(new Date(Date.now()), props.registrations?.register_term[props.registrations?.register_term.length - 1]?.dateTerm!)}
           onClick={() => setVisibleTerm(true)}
         />
       </div>
@@ -406,7 +406,10 @@ const BeneficiariesEditPage = () => {
                   header={renderHeaderTerm}
                 >
                   <Column body={(row) => { return (<>{formatarData(row?.dateTerm!)}</>) }} header="Data de assinatura"></Column>
-                  <Column body={(row) => { return (<>{isWithinOneYear(new Date(Date.now()), row?.dateTerm!) ? "Termo ativo" : "Termo vencido"  }</>) }} header="Status"></Column>
+                  <Column body={(row) => { return (<>{formatarData(row?.dateValid ?? "")}</>) }} header="Data de validade"></Column>
+
+                  <Column body={(row) => { return (<>{isWithinOneYear(new Date(Date.now()), row?.dateTerm!, row?.dateValid!) ? "Termo ativo" : "Termo vencido"}</>) }} header="Status"></Column>
+                  <Column align={"center"} body={(row) => { return (<Row id="center" onClick={() => {window.open(row.blob_file.blob_url)}} style={{cursor: "pointer"}}><Icon icon="pi pi-download" /></Row>) }} header="Ações"></Column>
 
                 </DataTable>
                 <Padding padding="8px" />

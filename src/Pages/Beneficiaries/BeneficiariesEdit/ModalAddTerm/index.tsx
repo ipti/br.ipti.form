@@ -1,10 +1,12 @@
 import { Form, Formik } from "formik";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
+import * as Yup from "yup";
 import CalendarComponent from "../../../../Components/Calendar";
+import TextInput from "../../../../Components/TextInput";
 import { ControllerUpdateRegistration } from "../../../../Services/PreRegistration/controller";
-import { CreateRegistrationTermType } from "../../../../Services/PreRegistration/types";
 import { Column, Padding, Row } from "../../../../Styles/styles";
+
 
 const ModalAddTerm = ({
   onHide,
@@ -16,32 +18,46 @@ const ModalAddTerm = ({
   id: number
 }) => {
 
-    const {
-      
-      requestRegisterTermMutation
-    } = ControllerUpdateRegistration();
-   const CreateRegisterTerm = (data: CreateRegistrationTermType) => {
-      requestRegisterTermMutation.mutate({data: data});
-    };
 
+  const {
+    requestRegisterTermMutation
+  } = ControllerUpdateRegistration();
+  const CreateRegisterTerm = (data: FormData) => {
+    requestRegisterTermMutation.mutate({ data: data });
+  };
+
+  const schema = Yup.object().shape({
+    dateTerm: Yup.string().required("Data de assinatura é obrigatório"),
+    dateValid: Yup.string().required("Data de validade é obrigatório"),
+    file: Yup.string().required("Arquivo com termo é obrigatório"),
+
+   
+  });
 
   return (
-    <Dialog onHide={onHide}  header="Novo termo" visible={visible} style={{ width: window.innerWidth > 800 ? "30vw" : "50vw" }}>
+    <Dialog onHide={onHide} header="Novo termo" visible={visible} style={{ width: window.innerWidth > 800 ? "50vw" : "70vw" }}>
       <Formik
-        initialValues={{  dateTerm: new Date(Date.now()) }}
+        initialValues={{ dateTerm: new Date(Date.now()), dateValid: "", file: undefined}}
+        validationSchema={schema}
         onSubmit={(values) => {
-          CreateRegisterTerm({
-            data_term: values.dateTerm,
-            registration: id!,
-          });
+          if (values.file) {
+
+            const formData = new FormData();
+             formData.append("dateTerm",values.dateTerm.toString() )
+             formData.append("dateValid",values.dateValid?.toString() )
+             formData.append("registration", id?.toString())
+             formData.append("file", values.file[0])
+
+            CreateRegisterTerm(formData);
+          }
           onHide();
         }}
       >
-        {({ values, handleChange, errors, touched }) => {
+        {({ values, handleChange, errors, touched, setFieldValue }) => {
           return (
             <Form>
               <div className="grid">
-                <div className="col-12">
+                <div className="col-12 md:col-6">
                   <label>Data de assinatura</label>
                   <Padding />
                   <CalendarComponent
@@ -50,13 +66,44 @@ const ModalAddTerm = ({
                     dateFormat="dd/mm/yy"
                     onChange={handleChange}
                   />
-                  {/* {errors.dateTerm && touched.dateTerm ? (
+                  {errors.dateTerm && touched.dateTerm ? (
                     <div style={{ color: "red", marginTop: "8px" }}>
-                      {errors.dateTerm.toString()}
+                      {String(errors.dateTerm)}
                     </div>
-                  ) : null} */}
+                  ) : null}
                 </div>
-
+                <div className="col-12 md:col-6">
+                  <label>Data de validade</label>
+                  <Padding />
+                  <CalendarComponent
+                    value={values.dateValid}
+                    name="dateValid"
+                    dateFormat="dd/mm/yy"
+                    placeholder="Data de validade"
+                    onChange={handleChange}
+                  />
+                  {errors.dateValid && touched.dateValid ? (
+                    <div style={{ color: "red", marginTop: "8px" }}>
+                      {String(errors.dateValid)}
+                    </div>
+                  ) : null}
+                </div>
+                <div className="col-12 md:col-6">
+                  <label>Termo </label>
+                  <Padding />
+                  <TextInput
+                    // value={file}
+                    type="file"
+                    placeholder="Termo"
+                    onChange={(e) => setFieldValue("file", e.target.files)}
+                    name="file"
+                  />
+                  {errors.file && touched.file ? (
+                    <div style={{ color: "red", marginTop: "8px" }}>
+                      {String(errors.file)}
+                    </div>
+                  ) : null}
+                </div>
               </div>{" "}
               <Padding padding="16px" />
               <Column style={{ width: "100%" }}>
