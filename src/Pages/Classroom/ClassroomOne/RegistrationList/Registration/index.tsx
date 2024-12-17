@@ -40,8 +40,8 @@ const RegistrationPage = () => {
   const props = useContext(
     RegistrationDetailsContext
   ) as RegistrationDetailsTypes;
-    const [visibleTerm, setVisibleTerm] = useState<any>();
-  
+  const [visibleTerm, setVisibleTerm] = useState<any>();
+
 
   const { id } = useParams();
   const { data: classroom } = useFetchRequestClassroomOne(parseInt(id!));
@@ -53,10 +53,9 @@ const RegistrationPage = () => {
         style={{ background: color.colorCard }}
       >
         <Button
-          label={isWithinOneYear(new Date(Date.now()), props.registration?.registration?.register_term[props.registration?.registration?.register_term.length - 1]?.dateTerm!) ? "Termo ativo" : "Novo termo"  }
+          label={"Novo termo"}
           icon="pi pi-plus"
           type="button"
-          disabled={isWithinOneYear(new Date(Date.now()), props.registration?.registration?.register_term[props.registration?.registration?.register_term.length - 1]?.dateTerm!)}
           onClick={() => setVisibleTerm(true)}
         />
       </div>
@@ -232,18 +231,18 @@ const RegistrationPage = () => {
                   </div>
                 </div>{" "}
                 <Padding padding="8px" />
-                                <h3>Termo</h3>
-                                <Padding padding="8px" />
-                
-                                <DataTable
-                                  value={props.registration?.registration?.register_term}
-                                  tableStyle={{ minWidth: "50rem" }}
-                                  header={renderHeaderTerm}
-                                >
-                                  <Column body={(row) => { return (<>{formatarData(row?.dateTerm!)}</>) }} header="Data de assinatura"></Column>
-                                  <Column body={(row) => { return (<>{isWithinOneYear(new Date(Date.now()), row?.dateTerm!) ? "Termo ativo" : "Termo vencido"  }</>) }} header="Status"></Column>
-                
-                                </DataTable>
+                <h3>Termo</h3>
+                <Padding padding="8px" />
+
+                <DataTable
+                  value={props.registration?.registration?.register_term}
+                  tableStyle={{ minWidth: "50rem" }}
+                  header={renderHeaderTerm}
+                >
+                  <Column body={(row) => { return (<>{formatarData(row?.dateTerm!)}</>) }} header="Data de assinatura"></Column>
+                  <Column body={(row) => { return (<>{isWithinOneYear(new Date(Date.now()), row?.dateTerm!) ? "Termo ativo" : "Termo vencido"}</>) }} header="Status"></Column>
+
+                </DataTable>
                 {/* <h3>Endereço</h3>
                 <Padding />
                 <div className="grid">

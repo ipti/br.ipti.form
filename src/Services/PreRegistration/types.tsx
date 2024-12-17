@@ -23,6 +23,7 @@ export interface CreatePreRegistration {
   
   export interface CreateRegistrationTermType {
     registration: number;
-    data_term: string | Date;
+    dataValid: string | Date;
+    dataTerm: string | Date;
   }
   
