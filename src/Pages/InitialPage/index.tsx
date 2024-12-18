@@ -66,6 +66,7 @@ const InitialPage = () => {
 
   const [ts, setTs] = useState<number | undefined>();
   const [chartData, setChartData] = useState<any>(null);
+  //const [chartDataFrequency, setChartDataFrequency] = useState<any>(null);
 
   // Ao carregar o componente, seleciona por padrão os últimos 6 meses
   useEffect(() => {
@@ -153,7 +154,7 @@ const InitialPage = () => {
         }}
       >
         {propsAplication.project && (
-          <Row id="end" style={{ flex: 1, marginRight: "10px" }}>
+          <Row id="end">
             <DropdownComponent
               options={[
                 ...propsAplication.project,
@@ -168,7 +169,7 @@ const InitialPage = () => {
           </Row>
         )}
         {propsAplication.user?.role === ROLE.ADMIN && (
-          <Row id="end"> 
+          <Row id="end">
             <Button
               label="Baixar CSV"
               icon="pi pi-download"
@@ -225,32 +226,63 @@ const InitialPage = () => {
         </div>
       </div>
 
-      <Padding padding="10px" />
-      <div
-        className="card col-12 md:col-12 lg:col-6"
-        style={{ padding: "20px" }}
-      >
-        <Row id="start">
-          <Column>
-            <h2>Gráfico de Matrículas</h2>
-            <Padding padding="8px" />
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <p style={{ marginBottom: "0", whiteSpace: "nowrap" }}>
-                Selecione o período:
-              </p>
-              <CalendarComponent
-                value={dates}
-                onChange={(e: any) => setDates(e.value)}
-                selectionMode="range"
-                placeholder="Selecione o período"
-                dateFormat="dd/mm/yy"
-                name="dates"
-              />
-            </div>
-          </Column>
-        </Row>
-        <div>{chartData && <ChartPrime type="line" data={chartData} />}</div>
-      </div>
+      {/* grafico 1 */}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
+  <div
+    className="card col-12 md:col-6 lg:col-6"
+    style={{ padding: "20px", flex: "1" }}
+  >
+    <Row id="start">
+      <Column>
+        <h2>Gráfico de Matrículas</h2>
+        <p>Matriculas realizadas no período</p>
+        <Padding padding="8px" />
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <p style={{ marginBottom: "0", whiteSpace: "nowrap" }}>
+            Selecione o período:
+          </p>
+          <CalendarComponent
+            value={dates}
+            onChange={(e: any) => setDates(e.value)}
+            selectionMode="range"
+            placeholder="Selecione o período"
+            dateFormat="dd/mm/yy"
+            name="dates"
+          />
+        </div>
+      </Column>
+    </Row>
+    <div>{chartData && <ChartPrime type="line" data={chartData} />}</div>
+  </div>
+
+  <div
+    className="card col-12 md:col-6 lg:col-6"
+    style={{ padding: "20px", flex: "1" }}
+  >
+    <Row id="start">
+      <Column>
+        <h2>Gráfico de Frequência</h2>
+        <p>Presença em encontros</p>
+        <Padding padding="8px" />
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <p style={{ marginBottom: "0", whiteSpace: "nowrap" }}>
+            Selecione o período:
+          </p>
+          <CalendarComponent
+            value={dates}
+            onChange={(e: any) => setDates(e.value)}
+            selectionMode="range"
+            placeholder="Selecione o período"
+            dateFormat="dd/mm/yy"
+            name="dates"
+          />
+        </div>
+      </Column>
+    </Row>
+    <div>{chartData && <ChartPrime type="line" data={chartData} />}</div>
+  </div>
+</div>
+
     </ContentPage>
   );
 };
