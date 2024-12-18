@@ -467,7 +467,7 @@ const BeneficiariesEditPage = () => {
         tableStyle={{ minWidth: "50rem" }}
         header={renderHeader}
       >
-        <Column field="classroom.project.name" header="Projeto"></Column>
+        <Column field="classroom.project.name" header="Plano de trabalho"></Column>
         <Column field="classroom.name" header="Turma"></Column>
         <Column body={StatusBody} header="Status"></Column>
         <Column header="Ações" body={ActionBeneficiariesBody}></Column>

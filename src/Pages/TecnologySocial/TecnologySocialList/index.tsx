@@ -1,4 +1,3 @@
-import { Button } from "primereact/button";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import CardTs from "../../../Components/Card/CardTs";
@@ -7,9 +6,9 @@ import Empty from "../../../Components/Empty";
 import Loading from "../../../Components/Loading";
 import { AplicationContext } from "../../../Context/Aplication/context";
 import { ROLE } from "../../../Controller/controllerGlobal";
-import { Padding, Row } from "../../../Styles/styles";
-import { PropsAplicationContext } from "../../../Types/types";
 import { idTs, menuItem } from "../../../Services/localstorage";
+import { Padding } from "../../../Styles/styles";
+import { PropsAplicationContext } from "../../../Types/types";
 
 const TecnologySocial = () => {
   const history = useNavigate();
@@ -19,18 +18,7 @@ const TecnologySocial = () => {
 
   if (!propsAplication.project) return <Loading />;
   return (
-    <ContentPage title="Tecnologias" description="Visualização das tecnologias sociais.">
-      <Padding padding="16px" />
-
-      {propsAplication.user?.role === ROLE.ADMIN && (
-        <Row id="end" style={{ width: "100%" }}>
-          <Button
-            label="Criar Tecnologia Social"
-            icon={"pi pi-plus"}
-            onClick={() => history("/tecnologias/criar")}
-          />
-        </Row>
-      )}
+    <ContentPage title="Tecnologias" description="Visualização das tecnologias sociais." permissionButton={propsAplication.user?.role === ROLE.ADMIN} addButton onClick={() => history("/tecnologias/criar")} >
       <Padding padding="16px" />
       {propsAplication.project.length > 0 ? (
       <div className="grid">

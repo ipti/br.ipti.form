@@ -18,13 +18,13 @@ const Start = () => {
   return (
     <>
       <Column className="contentStart" id="center">
-        <ImageTextSteps img={homeImg} title="Matrícula Online" subTitle={<p style={{ textAlign: "center" }}>Bem-vindo ao Matrícula online, para <br /> iniciar escolha o projeto
+        <ImageTextSteps img={homeImg} title="Matrícula Online" subTitle={<p style={{ textAlign: "center" }}>Bem-vindo ao Matrícula online, para <br /> iniciar escolha o plano de trabalho
           e clique no botão abaixo</p>} />
         <Row id="center">
           <div className="col-12 md:col-4">
-            <DropdownComponent placerholder="Escolha o projeto" onChange={(e) => {props.setClassroom(e.target.value)}} options={props.project} optionsLabel="name" value={props.classroom} />
+            <DropdownComponent placerholder="Escolha o plano de trabalho" onChange={(e) => {props.setClassroom(e.target.value)}} options={props.project} optionsLabel="name" value={props.classroom} />
             {!props.classroom && true ? (
-              <div style={{ color: "red", marginTop: "8px" }}>Projeto é obrigatório</div>
+              <div style={{ color: "red", marginTop: "8px" }}>Plano de trabalho é obrigatório</div>
             ) : null}
           </div>
         </Row>

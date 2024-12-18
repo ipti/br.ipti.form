@@ -45,7 +45,7 @@ const CreateTechnologySocialPage = () => {
           return (
             <Form>
               <Row id="end">
-                <Button label="Criar" />
+                <Button label="Criar" icon={"pi pi-plus"} />
               </Row>
               <div className="col-12 md:col-6">
                 <label>Nome*</label>

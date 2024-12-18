@@ -24,7 +24,7 @@ const ModalChange = ({
   const { data: tsOneRequest } = useFetchRequestTsLists(undefined);
 
   const schema = Yup.object().shape({
-    idProject: Yup.string().nullable().required("Projeto é obrigatório"),
+    idProject: Yup.string().nullable().required("Plano de trabalho é obrigatório"),
   });
 
   return (
@@ -52,7 +52,7 @@ const ModalChange = ({
             <Form>
               <div className="grid">
                 <div className="col-12 md:col-6">
-                  <label>Escolha um projeto</label>
+                  <label>Escolha um Plano de trabalho</label>
                   <Padding />
                   <DropdownComponent
                     value={values.idProject}
