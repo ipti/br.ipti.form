@@ -89,7 +89,7 @@ const ListUsersPage = () => {
         className="flex justify-content-between"
         // style={{ background: color.colorCard }}
       >
-        <Button label="Criar usuário" onClick={() => history("/users/criar")} />
+        <Button label="Criar usuário" onClick={() => history("/users/criar")} icon={"pi pi-plus"} />
 
         <div>
           <DropdownComponent optionsLabel="name" value={props.role} onChange={(e) => props.setRole(e.target.value)} optionsValue="id" placerholder="Filtrar tipo de usuário" options={propsAplication.user?.role === ROLE.ADMIN
@@ -116,7 +116,7 @@ const ListUsersPage = () => {
   return (
     <>
       <ContentPage title="Usuários" description="Lista usuários do MeuBen.">
-        <Padding padding="16px" />
+        <Padding padding="8px" />
         <DataTable value={props.users} header={renderHeader} paginator rows={10} rowsPerPageOptions={[5, 10, 25, 50]} tableStyle={{ minWidth: "50rem" }}>
           <Column field="name" header="Nome"></Column>
           <Column field="username" header="Usuário"></Column>

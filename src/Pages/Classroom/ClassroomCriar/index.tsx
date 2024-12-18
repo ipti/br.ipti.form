@@ -47,7 +47,7 @@ const FormClassroomPage = () => {
                             ) : null}
                             <Padding padding="16px" />
                             <Row id="end">
-                                <Button label="Criar" />
+                                <Button label="Criar" icon={"pi pi-plus"} />
                             </Row>
                         </Form>
                     )

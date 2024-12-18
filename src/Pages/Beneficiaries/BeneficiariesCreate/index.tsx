@@ -57,7 +57,7 @@ const RegistrationPage = () => {
       .nullable()
       .required("Data de nascimento é obrigatória"),
     zone: Yup.string().nullable().required("Zona é obrigatório"),
-    project: Yup.string().nullable().required("Projeto é obrigatório"),
+    project: Yup.string().nullable().required("Plano de Trabalho é obrigatório"),
     classroom: Yup.string().nullable().required("Turma é obrigatório"),
     state: Yup.string().nullable().required("Estado é obrigatório"),
     city: Yup.string().nullable().required("Cidade é obrigatório"),
@@ -88,7 +88,7 @@ const RegistrationPage = () => {
               <Form>
                 <Column>
                   <Row id="end">
-                    <Button label="Criar" type="submit" />
+                    <Button label="Criar" type="submit" icon={"pi pi-plus"} />
                   </Row>
                 </Column>
                 <Padding padding="8px" />
@@ -341,7 +341,7 @@ const RegistrationPage = () => {
                     <Padding />
                     <DropdownComponent
                       value={props.project}
-                      placerholder="Selecione o projeto"
+                      placerholder="Selecione o plano de trabalho"
                       name="project"
                       onChange={(e) => {
                         props.setProject(e.target.value);

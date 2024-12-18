@@ -61,7 +61,7 @@ const TopBar = ({
           <Column className="w-12rem md:w-20rem">
             {props.project ? (
               <DropdownComponent
-                placerholder="Projetos"
+                placerholder="Plano de trabalho"
                 options={props.project}
                 value={verifyValueProject(parseInt(GetIdTs()!))}
                 onChange={(e) => {
