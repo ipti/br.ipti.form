@@ -44,6 +44,7 @@ export interface Registration {
   neighborhood: any
   city_fk: any
   state_fk: any
+  date_registration: any
   register_term: RegisterTerm[]
   register_classroom: RegisterClassroom[]
 }

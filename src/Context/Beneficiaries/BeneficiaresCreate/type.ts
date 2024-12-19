@@ -18,6 +18,7 @@ export interface BeneficiariesCreateType {
     project: number | undefined,
     deficiency_description: string | undefined
     kinship: string
+    date_registration: string | undefined | any
   };
   tsOne: Tsone | undefined;
   project: any | undefined;

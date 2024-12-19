@@ -56,7 +56,8 @@ export const BeneficiariesCreateState = () => {
     number: "",
     complement: "",
     state: undefined,
-    city: undefined
+    city: undefined,
+    date_registration: new Date(Date.now())
   };
 
   

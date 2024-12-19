@@ -37,8 +37,8 @@ export const RegistrationClassroomState = () => {
     responsable_telephone: registration?.registration.responsable_telephone,
     status: getStatus(registration?.status!),
     deficiency_description: registration?.registration.deficiency_description,
-    kinship: registration?.registration.kinship
-
+    kinship: registration?.registration.kinship,
+    date_registration: registration?.registration.date_registration ?? ""
   };
 
   const handleUpdateRegistration = (data: UpdateRegister, id: number) => {

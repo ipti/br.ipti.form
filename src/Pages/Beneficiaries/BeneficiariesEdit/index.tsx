@@ -32,6 +32,7 @@ import ModalCreateRegisterClassroom from "./ModalCreateRegisterClassroom";
 import { validaCPF } from "../../../Controller/controllerValidCPF";
 import ModalAddTerm from "./ModalAddTerm";
 import Icon from "../../../Components/Icon";
+import CalendarComponent from "../../../Components/Calendar";
 
 
 const BeneficiariesEdit = () => {
@@ -160,7 +161,7 @@ const BeneficiariesEditPage = () => {
           }}
         >
           {({ values, handleChange, errors, touched, setFieldValue }) => {
-
+            console.log(values)
             const errorArray = getErrorsAsArray(errors);
             return (
               <Form>
@@ -303,6 +304,21 @@ const BeneficiariesEditPage = () => {
                       </div>
                     ) : null}
                   </div>
+                  <div className="col-12 md:col-6">
+                  <label>Data de matricula</label>
+                  <Padding />
+                  <CalendarComponent
+                    value={values.date_registration}
+                    name="date_registration"
+                    dateFormat="dd/mm/yy"
+                    onChange={handleChange}
+                  />
+                  {errors.date_registration && touched.date_registration ? (
+                    <div style={{ color: "red", marginTop: "8px" }}>
+                      {String(errors.date_registration)}
+                    </div>
+                  ) : null}
+                </div>
                 </div>{" "}
                 <div className="grid">
                   <div className="col-12 md:col-6">
@@ -399,7 +415,7 @@ const BeneficiariesEditPage = () => {
                 <Padding padding="8px" />
                 <h3>Termo</h3>
                 <Padding padding="8px" />
-
+                
                 <DataTable
                   value={props.registrations?.register_term}
                   tableStyle={{ minWidth: "50rem" }}

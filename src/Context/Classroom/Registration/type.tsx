@@ -30,6 +30,7 @@ export interface UpdateRegister
     registration_classroom_id?: number
     deficiency_description: any
     kinship: string | undefined | null
+    date_registration: any
 }
 export interface RegistrationType {
   avatar_url: string
@@ -60,4 +61,5 @@ export interface Registration {
   updatedAt: string
   kinship: string
   register_term?: any
+  date_registration: any
 }

@@ -81,7 +81,7 @@ const CardRegistration = ({
           <Padding />
           <Column>
             <div className="status" style={{fontWeight: "500",
-              padding: 4, textAlign: "center", minWidth: "96px", maxWidth: "128px", color: "white", borderRadius: "16px", backgroundColor: `${status === statuGlobal.APPROVED
+              padding: 4, textAlign: "center", minWidth: "96px", maxWidth: "150px",color: "white", borderRadius: "16px", backgroundColor: `${status === statuGlobal.APPROVED
                 ? color.green
                 : status === statuGlobal.PENDING
                   ? color.colorCardOrange

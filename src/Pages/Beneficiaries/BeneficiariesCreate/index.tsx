@@ -376,6 +376,21 @@ const RegistrationPage = () => {
                       ) : null}
                     </div>
                   ) : null}
+                 {values.project && <div className="col-12 md:col-6">
+                  <label>Data de matricula</label>
+                  <Padding />
+                  <CalendarComponent
+                    value={values.date_registration}
+                    name="date_registration"
+                    dateFormat="dd/mm/yy"
+                    onChange={handleChange}
+                  />
+                  {errors.date_registration && touched.date_registration ? (
+                    <div style={{ color: "red", marginTop: "8px" }}>
+                      {String(errors.date_registration)}
+                    </div>
+                  ) : null}
+                </div>}
                 </div>{" "}
                 <Padding />
                 <h3>Endereço</h3>

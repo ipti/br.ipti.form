@@ -156,7 +156,7 @@ const BeneficiariesListPage = () => {
             body={(rowData) => {
               return <>{formatarData(rowData.createdAt)}</>;
             }}
-            header="Data de criação"
+            header="Data de matricula"
           ></Column>
           <Column header="Ações" body={ActionBeneficiariesBody}></Column>
         </DataTable>
