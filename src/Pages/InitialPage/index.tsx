@@ -22,6 +22,7 @@ import { requestChartMatriculated } from "../../Services/Chart/request";
 import { requestChartMeetingFrequency } from "../../Services/Chart/request";
 import color from "../../Styles/colors";
 
+
 export interface Chart {
   year: number;
   month: number;
@@ -29,7 +30,8 @@ export interface Chart {
   n_approved: number;
 }
 
-export const socialTechnologyId = "1"; //teste //todo: pegar id da tecnologia social
+const id_ts = "id-ts";
+export const socialTechnologyId = localStorage.getItem(id_ts); //teste //todo: pegar id da tecnologia social
 
 export interface ChartFrequency {
   year: number;
@@ -170,8 +172,6 @@ const InitialPage = () => {
           frequencia.push(porcentagemFrequencia);
 
         }
-
-        console.log("ts:", ts);
 
 
         const updatedChartDataFrequency = {
