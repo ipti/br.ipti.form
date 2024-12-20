@@ -19,13 +19,28 @@ import { useFetchRequestUsersChart } from "../../Services/Users/query";
 import { Column, Padding, Row } from "../../Styles/styles";
 import { PropsAplicationContext } from "../../Types/types";
 import { requestChartMatriculated } from "../../Services/Chart/request";
+import { requestChartMeetingFrequency } from "../../Services/Chart/request";
 import color from "../../Styles/colors";
+
 
 export interface Chart {
   year: number;
   month: number;
   n_registers: number;
   n_approved: number;
+}
+
+const id_ts = "id-ts";
+export const socialTechnologyId = localStorage.getItem(id_ts); //teste //todo: pegar id da tecnologia social
+
+export interface ChartFrequency {
+  year: number;
+  month: number;
+  day: number;
+  t_encontros: number;
+  beneficiarios: number;
+  n_faltas: number;
+  social_technology_name: string;
 }
 
 const month = [
@@ -66,6 +81,7 @@ const InitialPage = () => {
 
   const [ts, setTs] = useState<number | undefined>();
   const [chartData, setChartData] = useState<any>(null);
+  const [chartDataFrequency, setChartDataFrequency] = useState<any>(null);
 
   // Ao carregar o componente, seleciona por padrão os últimos 6 meses
   useEffect(() => {
@@ -116,11 +132,76 @@ const InitialPage = () => {
     fetchData();
   }, [dates]);
 
+
+  useEffect(() => {
+    if (!dates || dates.length < 2 || !dates[0] || !dates[1]) return;
+
+    const formatDate = (date: Date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    };
+
+    const start = formatDate(dates[0]);
+    const end = formatDate(dates[1]);
+
+    const fetchDataChartFrequency = async () => {
+      try {
+        const response = await requestChartMeetingFrequency(socialTechnologyId, start, end);
+
+        const data: ChartFrequency[] = response.data;
+        const month = data.map((item: ChartFrequency) => {
+          return item.month;
+        });
+
+        const uniqueMonth = Array.from(new Set(month));
+        console.log(uniqueMonth);
+
+        let frequencia = [];
+
+        for (let i = 0; i < uniqueMonth.length; i++) {
+          const faltas = data.filter((item: ChartFrequency) => item.month === uniqueMonth[i]);
+          let somaFaltas = faltas.reduce((acc: number, item: ChartFrequency) => acc + item.n_faltas, 0);
+          let somaBeneficiarios = faltas.reduce((acc: number, item: ChartFrequency) => acc + item.beneficiarios, 0);
+
+          let porcentagemFrequencia = somaBeneficiarios > 0
+            ? ((somaBeneficiarios - somaFaltas) / somaBeneficiarios) * 100
+            : 0;
+          console.log("freq:", porcentagemFrequencia);
+          frequencia.push(porcentagemFrequencia);
+
+        }
+
+
+        const updatedChartDataFrequency = {
+          labels: uniqueMonth,
+          datasets: [
+            {
+              label: "Presença em encontros",
+              data: frequencia, //todo: porcentagem de frequencia, simbolo
+              borderColor: color.blue,
+              fill: false,
+            }
+          ],
+        };
+
+
+        setChartDataFrequency(updatedChartDataFrequency);
+      } catch (error) {
+        console.error("Erro ao buscar dados do gráfico:", error);
+      }
+    };
+
+    fetchDataChartFrequency();
+  }, [dates]);
+
   const {
     data: chart,
     isLoading,
     isError,
   } = useFetchRequestUsersChart(ts?.toString());
+  
 
   const downloadCSV = async () => {
     try {
@@ -153,7 +234,7 @@ const InitialPage = () => {
         }}
       >
         {propsAplication.project && (
-          <Row id="end" style={{ flex: 1, marginRight: "10px" }}>
+          <Row id="end">
             <DropdownComponent
               options={[
                 ...propsAplication.project,
@@ -168,7 +249,7 @@ const InitialPage = () => {
           </Row>
         )}
         {propsAplication.user?.role === ROLE.ADMIN && (
-          <Row id="end"> 
+          <Row id="end">
             <Button
               label="Baixar CSV"
               icon="pi pi-download"
@@ -225,32 +306,64 @@ const InitialPage = () => {
         </div>
       </div>
 
-      <Padding padding="10px" />
-      <div
-        className="card col-12 md:col-12 lg:col-6"
-        style={{ padding: "20px" }}
-      >
-        <Row id="start">
-          <Column>
-            <h2>Gráfico de Matrículas</h2>
-            <Padding padding="8px" />
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <p style={{ marginBottom: "0", whiteSpace: "nowrap" }}>
-                Selecione o período:
-              </p>
-              <CalendarComponent
-                value={dates}
-                onChange={(e: any) => setDates(e.value)}
-                selectionMode="range"
-                placeholder="Selecione o período"
-                dateFormat="dd/mm/yy"
-                name="dates"
-              />
-            </div>
-          </Column>
-        </Row>
-        <div>{chartData && <ChartPrime type="line" data={chartData} />}</div>
+      {/* grafico 1 */}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
+        <div
+          className="card col-12 md:col-6 lg:col-6"
+          style={{ padding: "20px", flex: "1" }}
+        >
+          <Row id="start">
+            <Column>
+              <h2>Gráfico de Matrículas</h2>
+              <p>Matriculas realizadas no período</p>
+              <Padding padding="8px" />
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <p style={{ marginBottom: "0", whiteSpace: "nowrap" }}>
+                  Selecione o período:
+                </p>
+                <CalendarComponent
+                  value={dates}
+                  onChange={(e: any) => setDates(e.value)}
+                  selectionMode="range"
+                  placeholder="Selecione o período"
+                  dateFormat="dd/mm/yy"
+                  name="dates"
+                />
+              </div>
+            </Column>
+          </Row>
+          <div>{chartData && <ChartPrime type="line" data={chartData} />}</div>
+        </div>
+
+        <div
+          className="card col-12 md:col-6 lg:col-6"
+          style={{ padding: "20px", flex: "1" }}
+        >
+          <Row id="start">
+            <Column>
+              <h2>Gráfico de Frequência</h2>
+              <p>Presença em encontros</p>
+              <Padding padding="8px" />
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <p style={{ marginBottom: "0", whiteSpace: "nowrap" }}>
+                  Selecione o período:
+                </p>
+                <CalendarComponent
+                  value={dates}
+                  onChange={(e: any) => setDates(e.value)}
+                  selectionMode="range"
+                  placeholder="Selecione o período"
+                  dateFormat="dd/mm/yy"
+                  name="dates"
+                />
+              </div>
+             
+            </Column>
+          </Row>
+          <div>{chartDataFrequency && <ChartPrime type="line" data={chartDataFrequency} />}</div>
+        </div>
       </div>
+
     </ContentPage>
   );
 };
