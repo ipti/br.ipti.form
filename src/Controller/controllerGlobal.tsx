@@ -83,8 +83,7 @@ export const getStatus = (id: string) => {
 export const getStatusList = () => {
   const status = [
     { id: Status.APPROVED, name: "Aprovado" },
-    { id: Status.REPROVED, name: "Reprovado" },
-    { id: Status.PENDING, name: "Pendente" },
+    { id: Status.PENDING, name: "Pendente de análise" },
     { id: Status.PENDING_DOCUMENTATION, name: "Pendente de documentação" },
     { id: Status.PENDING_TERM, name: "Pendente de termo" },
 
@@ -95,8 +94,9 @@ export const getStatusList = () => {
 
 export const getStatusClassroomList = () => {
   const status = [
-    { id: Status.APPROVED, name: "Aprovado" },
-    { id: Status.PENDING, name: "Pendente" },
+    { id: Status.APPROVED, name: "Finalizada" },
+    { id: Status.PENDING, name: "Em andamento" },
+    { id: Status.CANCELED, name: "Cancelado" },
   ];
   return status;
 };
@@ -121,7 +121,8 @@ export const Status = {
   PENDING: "PENDING",
   REPROVED: "REPROVED",
   PENDING_TERM: "PENDING_TERM",
-  PENDING_DOCUMENTATION: "PENDING_DOCUMENTATION"
+  PENDING_DOCUMENTATION: "PENDING_DOCUMENTATION",
+  CANCELED: "CANCELED"
 };
 
 
