@@ -33,7 +33,9 @@ const BeneficiariesList = () => {
 
 const BeneficiariesListPage = () => {
   const props = useContext(BeneficiariesListContext) as BeneficiariesListType;
-  const propsAplication = useContext(AplicationContext) as PropsAplicationContext;
+  const propsAplication = useContext(
+    AplicationContext
+  ) as PropsAplicationContext;
   const history = useNavigate();
 
   const [visible, setVisible] = useState<any>();
@@ -94,24 +96,31 @@ const BeneficiariesListPage = () => {
 
   return (
     <>
-      <ContentPage title="Beneficiários" description="Visualização dos beneficiários da tecnologia.">
-        <Row id="end">
-
-          {propsAplication.project
-            ? (
+      <ContentPage
+        title="Beneficiários"
+        description="Visualização dos beneficiários da tecnologia."
+      >
+        <Padding padding="4px" />
+        {propsAplication.project ? (
+          <div className="grid">
+            <div className="col-12 md:col-6">
+              <label>Filtrar por tecnologia</label>
+              <Padding />
               <DropdownComponent
                 placerholder="Escolha uma tecnologia"
-                options={[{ name: "Todos", id: undefined }, ...propsAplication.project]}
+                options={[
+                  { name: "Todos", id: undefined },
+                  ...propsAplication.project,
+                ]}
                 value={props.tsId}
                 optionsValue="id"
-
                 onChange={(e) => {
                   props.setTsId(e.target.value);
                 }}
               />
-            ) : null}{" "}
-        </Row>
-        <Padding padding="16px" />
+            </div>
+          </div>
+        ) : null}{" "}
         <Row style={{ gap: 8 }}>
           {props.nameFilter?.length! > 0 && (
             <Chip label={"Nome: " + props.nameFilter} />
@@ -147,7 +156,7 @@ const BeneficiariesListPage = () => {
             body={(rowData) => {
               return <>{formatarData(rowData.createdAt)}</>;
             }}
-            header="Data de criação"
+            header="Data de matricula"
           ></Column>
           <Column header="Ações" body={ActionBeneficiariesBody}></Column>
         </DataTable>

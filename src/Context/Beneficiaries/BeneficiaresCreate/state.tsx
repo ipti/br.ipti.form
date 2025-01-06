@@ -47,9 +47,17 @@ export const BeneficiariesCreateState = () => {
     zone: undefined,
     project: undefined,
     status: "",
-    classroom: 0,
+    classroom: undefined,
     deficiency_description: "",
-    kinship: ""
+    kinship: "", 
+    address: "",
+    cep: "",
+    neighborhood: "",
+    number: "",
+    complement: "",
+    state: undefined,
+    city: undefined,
+    date_registration: new Date(Date.now())
   };
 
   

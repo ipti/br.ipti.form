@@ -80,7 +80,7 @@ const CardClassroom = ({
         <Row style={{ gap: 16 }}>
           <Row style={{ gap: 8, alignItems: "center" }}>
             <img src={pessoas} alt="" style={{ width: 24 }} />
-            <p>Participantes: {registrationCount}</p>
+            <p style={{fontSize: "10px"}}>Participantes: {registrationCount}</p>
           </Row>
           <Column id="center">
             <Row>
@@ -89,7 +89,7 @@ const CardClassroom = ({
                 alt=""
                 style={{ height: 16, marginRight: 2 }}
               />
-              <Row style={{ fontSize: "14px" }}>
+              <Row style={{ fontSize: "10px" }}>
                 Status: {" "}<Padding padding="2px" />
                 {status === Status.PENDING ? (
                   <p style={{ fontWeight: "600" }}> Pendente</p>

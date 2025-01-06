@@ -35,7 +35,7 @@ const CreateProjectsPage = () => {
   };
 
   return (
-    <ContentPage title="Criar projeto" description="Criar um novo projeto.">
+    <ContentPage title="Criar plano de trabalho" description="Criar um novo plano de trabalho.">
       <Padding padding="16px" />
       <Formik
         initialValues={initialValues}
@@ -54,17 +54,17 @@ const CreateProjectsPage = () => {
           return (
             <Form>
               <Row id="end">
-                <Button label="Criar" />
+                <Button label="Criar" icon={"pi pi-plus"} />
               </Row>
               <Padding padding="32px" />
               <div className="grid">
                 <div className="col-12 md:col-6">
-                  <label>Nome do projeto *</label>
+                  <label>Nome do plano de trabalho *</label>
                   <Padding />
                   <TextInput
                     name="name"
                     onChange={handleChange}
-                    placeholder="Nome do Projeto*"
+                    placeholder="Nome do plano de trabalho*"
                     value={values.name}
                   />
                   <Padding />
@@ -75,13 +75,13 @@ const CreateProjectsPage = () => {
                   ) : null}
                 </div>
                 <div className="col-12 md:col-6">
-                  <label>Porcentagem de aprovação do projeto *</label>
+                  <label>Porcentagem de aprovação do plano de trabalho *</label>
                   <Padding />
                   <InputNumberComponent
                     name="approval_percentage"
                     onChange={handleChange}
                     suffix="%"
-                    placeholder="Porcentagem de aprovação do projeto *"
+                    placeholder="Porcentagem de aprovação do plano de trabalho *"
                     value={values.approval_percentage}
                   />
                   <Padding />

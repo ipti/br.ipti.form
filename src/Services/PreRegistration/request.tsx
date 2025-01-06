@@ -2,9 +2,14 @@ import http from "../axios";
 import { getYear, logout } from "../localstorage";
 import { CreatePreRegistration, CreateRegistrationClassroomType } from "./types";
 
-export const requestPreRegistration = (data: CreatePreRegistration) => {
+export const requestPreRegistration = (data: CreatePreRegistration | any) => {
+
+  const body = {...data, state_fk: data?.state, city_fk: data?.city, cep: data?.cep?.replace(/[^a-zA-Z0-9 ]/g, '')}
+
+  delete body.state
+  delete body.city
   return http
-    .post("/registration-bff", data)
+    .post("/registration-bff", body)
     .then(response => response.data)
     .catch(err => {
       if (err.response.status === 401) {
@@ -34,8 +39,12 @@ export const requestRegistrationClassroom = (data: CreateRegistrationClassroomTy
 
 export const requestUpdateRegistration = (data: any, id: number) => {
 
-  const body = { ...data, color_race: data.color_race?.id, sex: data.sex?.id, deficiency: data.deficiency.id, status: data.status?.id }
 
+  const body = { ...data, color_race: data.color_race?.id, sex: data.sex?.id, deficiency: data.deficiency.id, status: data.status?.id, state_fk: data.state, city_fk: data.city, cep: data?.cep?.replace(/[^a-zA-Z0-9 ]/g, '') }
+
+  delete body.city
+
+  delete body.state
   return http
     .put("/registration/" + id, body)
     .then(response => response.data)
@@ -49,7 +58,23 @@ export const requestUpdateRegistration = (data: any, id: number) => {
     });
 };
 
-export const requestUpdateAvatarRegistration = ( id: number, file: File) => {
+
+export const requestCreateRegistrationTerm = (data: any) => {
+
+  return http
+    .post("/registration-term-bff", data)
+    .then(response => response.data)
+    .catch(err => {
+      if (err.response.status === 401) {
+        window.location.reload()
+      }
+      alert(err.response.message)
+
+      throw err;
+    });
+};
+
+export const requestUpdateAvatarRegistration = (id: number, file: File) => {
 
   const formData = new FormData()
 

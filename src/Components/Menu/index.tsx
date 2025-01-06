@@ -112,7 +112,7 @@ const Menu = ({ viewdMenu }: { viewdMenu: boolean }) => {
           />
           <Padding />
           <Item
-            text={"Projetos"}
+            text={"Planos de trabalho"}
             funcActiv={() => {
               setActive(3);
               menuItem("3");

@@ -57,7 +57,7 @@ const ProjectOnePage = () => {
   });
 
   return (
-    <ContentPage title={props.project?.project.name!} description="Detalhes do seu projeto">
+    <ContentPage title={props.project?.project.name!} description="Detalhes do seu plano de trabalho">
       {edit ? (
         <Formik
           initialValues={initialValues}
@@ -90,12 +90,12 @@ const ProjectOnePage = () => {
                 <Padding padding="32px" />
                 <div className="grid">
                   <div className="col-12 md:col-6">
-                    <label>Nome do projeto *</label>
+                    <label>Nome do plano de trabalho *</label>
                     <Padding />
                     <TextInput
                       name="name"
                       onChange={handleChange}
-                      placeholder="Nome do Projeto*"
+                      placeholder="Nome do plano de trabalho*"
                       value={values.name}
                     />
                     <Padding />
@@ -106,13 +106,13 @@ const ProjectOnePage = () => {
                     ) : null}
                   </div>
                   <div className="col-12 md:col-6">
-                    <label>Parâmetro para aprovação do projeto *</label>
+                    <label>Parâmetro para aprovação do plano de trabalho *</label>
                     <Padding />
                     <InputNumberComponent
                       name="approval_percentage"
                       onChange={handleChange}
                       suffix="%"
-                      placeholder="Parâmetro para aprovação do projeto *"
+                      placeholder="Parâmetro para aprovação do plano de trabalho *"
                       value={values.approval_percentage}
                     />
                     <Padding />
@@ -124,14 +124,14 @@ const ProjectOnePage = () => {
                     ) : null}
                   </div>
                   <div className="col-12 md:col-6">
-                    <label>Adicionar ou mudar Régua do projeto</label>
+                    <label>Adicionar ou mudar Régua do plano de trabalho</label>
                     <Padding />
                     <label>* Imagem para adicionar aos relatórios</label>
                     <Padding />
                     <TextInput
                       onChange={(e) => setFieldValue("file", e.target?.files![0])}
                       name="file"
-                      placeholder="Régua do projeto*"
+                      placeholder="Régua do plano de trabalho*"
                       type="file"
                     />
                     <Padding />
@@ -175,7 +175,7 @@ const ProjectOnePage = () => {
           </Row>
           {props.project?.project.ruler_url && <div>
             <Padding />
-            <h4>Régua de marca do projeto</h4>
+            <h4>Régua de marca do plano de trabalho</h4>
             <Padding />
             <Column>
               <label>* Imagem para adicionar aos relatórios</label>
@@ -190,7 +190,7 @@ const ProjectOnePage = () => {
         <div className="col-12 md:col-6">
           <CardQuant
             quant={props.project?.project.approval_percentage + "%"}
-            title="Parâmetro para aprovação do projeto"
+            title="Parâmetro para aprovação do plano de trabalho"
             color="navy_blue"
           />
         </div>

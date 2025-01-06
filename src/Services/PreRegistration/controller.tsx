@@ -5,6 +5,7 @@ import { UpdateRegister } from "../../Context/Classroom/Registration/type";
 import styles from "../../Styles";
 import queryClient from "../reactquery";
 import {
+  requestCreateRegistrationTerm,
   requestDeleteRegistration,
   requestDeleteRegistrationClassroom,
   requestPreRegistration,
@@ -14,7 +15,7 @@ import {
 } from "./request";
 import {
   CreatePreRegistration,
-  CreateRegistrationClassroomType,
+  CreateRegistrationClassroomType
 } from "./types";
 
 export const ControllerPreRegistration = () => {
@@ -91,6 +92,30 @@ export const ControllerUpdateRegistration = () => {
         Swal.fire({
           icon: "success",
           title: "Alteração realizada com sucesso!",
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        });
+      },
+    }
+  );
+
+  const requestRegisterTermMutation = useMutation(
+    ({ data}: { data: FormData}) =>
+      requestCreateRegistrationTerm(data),
+    {
+      onError: (error: any) => {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
+      onSuccess: (data) => {
+
+        queryClient.refetchQueries("useRequestsClassroomRegistrationOne")
+        queryClient.refetchQueries("useRequestsRegistrationOne")
+        Swal.fire({
+          icon: "success",
+          title: "Termo adicionado com sucesso!",
           confirmButtonColor: styles.colors.colorsBaseProductNormal,
         });
       },
@@ -176,6 +201,7 @@ export const ControllerUpdateRegistration = () => {
     requestDeleteRegistrationClassroomMutation,
     requestRegistrationClassroomMutation,
     requestDeleteRegistrationMutation,
-    requestCHangeAvatarRegistrationMutation
+    requestCHangeAvatarRegistrationMutation,
+    requestRegisterTermMutation
   };
 };

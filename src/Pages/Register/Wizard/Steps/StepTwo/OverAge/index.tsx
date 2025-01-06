@@ -21,21 +21,22 @@ const OverAge = () => {
     responsable_telephone: Yup.string().required('Telefone para contato é obrigatório'),
     birthday: Yup.string().nullable().required('Data de nascimento é obrigatória'),
     zone: Yup.string().nullable().required('Zona é obrigatória'),
-    sex: Yup.string().nullable().required('Sexo é obrigatória')
+    sex: Yup.string().nullable().required('Sexo é obrigatória'),
+    state: Yup.string().nullable().required("Estado é obrigatório"),
+    city: Yup.string().nullable().required("Cidade é obrigatório"),
   });
 
   return (
     <>
       <Column className="contentStart" id="center">
-        <Formik initialValues={initialValue} validationSchema={schema} onSubmit={(values) =>
-          {props.NextStep(values)}
+        <Formik initialValues={initialValue} validationSchema={schema} onSubmit={(values) => { props.NextStep(values) }
         }>
-          {({ values, handleChange, errors, touched }) => {
+          {({ values, handleChange, errors, touched, setFieldValue }) => {
             return (
               <Form>
                 <Row id="center">
                   <div className="col-12 md:col-4">
-                    <InputsEquals values={values} errors={errors} handleChange={handleChange} touched={touched} />
+                    <InputsEquals values={values} errors={errors} handleChange={handleChange} touched={touched} setFieldValue={setFieldValue} />
                   </div>
                 </Row>
                 <Padding padding={props.padding} />

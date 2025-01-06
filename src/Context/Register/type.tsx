@@ -37,6 +37,8 @@ export interface Registration {
     responsable_telephone?: string;
     kinship?: string | null;
     zone: number | null;
+    city: number | null,
+    state: number | null
 }
 
 

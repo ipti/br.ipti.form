@@ -25,6 +25,8 @@ const StepOne = () => {
     zone: props.dataValues.zone ?? null,
     sex: props.dataValues.sex ?? null,
     deficiency_description: props.dataValues.deficiency_description ?? "",
+    city: props.dataValues.city ?? "",
+    state: props.dataValues.state ?? ""
   };
 
   const schema = Yup.object().shape({
@@ -43,11 +45,16 @@ const StepOne = () => {
     responsable_telephone: Yup.string().required(
       "Telefone para contato é obrigatório"
     ),
+    cpf: Yup.string()
+    .test("cpf-valid", "CPF inválido", (value) => validaCPF(value!))
+    .required("CPF é obrigatório"),
     birthday: Yup.string()
       .nullable()
       .required("Data de nascimento é obrigatória"),
     zone: Yup.string().nullable().required("Zona é obrigatória"),
     sex: Yup.string().nullable().required("Sexo é obrigatória"),
+    state: Yup.string().nullable().required("Estado é obrigatório"),
+    city: Yup.string().nullable().required("Cidade é obrigatório"),
   });
 
   return (
@@ -57,7 +64,7 @@ const StepOne = () => {
         validationSchema={props.isOverAge ? schema : schemaNotCpf}
         onSubmit={(values) => props.NextStep(values)}
       >
-        {({ values, handleChange, errors, touched }) => {
+        {({ values, handleChange, errors, touched, setFieldValue }) => {
           return (
             <Form>
               <Column className="contentStart" id="center">
@@ -65,11 +72,11 @@ const StepOne = () => {
                   <div className="col-12 md:col-4">
                     <Padding />
                     <div>
-                      <label>{props.isOverAge ? "CPF *" : "CPF"}</label>
+                      <label>{"CPF *"}</label>
                       <Padding />
                       <MaskInput
                         mask="999.999.999-99"
-                        placeholder={props.isOverAge ? "CPF *" : "CPF"}
+                        placeholder={"CPF *"}
                         name="cpf"
                         value={values.cpf}
                         onChange={handleChange}
@@ -82,10 +89,10 @@ const StepOne = () => {
                     ) : null}{" "}
                     <Padding padding={props.padding} />
                     <div>
-                      <label>Name *</label>
+                      <label>Nome *</label>
                       <Padding />
                       <TextInput
-                        placeholder="Name *"
+                        placeholder="Nome *"
                         name="name"
                         onChange={handleChange}
                         value={values.name}
@@ -169,6 +176,7 @@ const StepOne = () => {
                         handleChange={handleChange}
                         touched={touched}
                         values={values}
+                        setFieldValue={setFieldValue}
                       />
                     )}
                   </div>

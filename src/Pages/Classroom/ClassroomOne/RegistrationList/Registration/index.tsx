@@ -1,6 +1,6 @@
 import { Form, Formik } from "formik";
 import { Button } from "primereact/button";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useParams } from "react-router-dom";
 import avatar from "../../../../../Assets/images/avatar.svg";
 import ContentPage from "../../../../../Components/ContentPage";
@@ -14,12 +14,18 @@ import RegistartionDetailsProvider, {
 import { RegistrationDetailsTypes } from "../../../../../Context/Classroom/Registration/type";
 import {
   color_race,
+  formatarData,
   getStatusList,
+  isWithinOneYear,
   typesex
 } from "../../../../../Controller/controllerGlobal";
 import { useFetchRequestClassroomOne } from "../../../../../Services/Classroom/query";
 import { Padding } from "../../../../../Styles/styles";
 import { Avatar } from "../../../../Beneficiaries/BeneficiariesEdit";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+import color from "../../../../../Styles/colors";
+import ModalAddTerm from "../../../../Beneficiaries/BeneficiariesEdit/ModalAddTerm";
 
 
 const Registration = () => {
@@ -34,9 +40,28 @@ const RegistrationPage = () => {
   const props = useContext(
     RegistrationDetailsContext
   ) as RegistrationDetailsTypes;
+  const [visibleTerm, setVisibleTerm] = useState<any>();
+
 
   const { id } = useParams();
   const { data: classroom } = useFetchRequestClassroomOne(parseInt(id!));
+
+  const renderHeaderTerm = () => {
+    return (
+      <div
+        className="flex justify-content-between"
+        style={{ background: color.colorCard }}
+      >
+        <Button
+          label={"Novo termo"}
+          icon="pi pi-plus"
+          type="button"
+          onClick={() => setVisibleTerm(true)}
+        />
+      </div>
+    );
+  };
+
 
   if (props.isLoading) return <Loading />;
 
@@ -206,6 +231,18 @@ const RegistrationPage = () => {
                   </div>
                 </div>{" "}
                 <Padding padding="8px" />
+                <h3>Termo</h3>
+                <Padding padding="8px" />
+
+                <DataTable
+                  value={props.registration?.registration?.register_term}
+                  tableStyle={{ minWidth: "50rem" }}
+                  header={renderHeaderTerm}
+                >
+                  <Column body={(row) => { return (<>{formatarData(row?.dateTerm!)}</>) }} header="Data de assinatura"></Column>
+                  <Column body={(row) => { return (<>{isWithinOneYear(new Date(Date.now()), row?.dateTerm!) ? "Termo ativo" : "Termo vencido"}</>) }} header="Status"></Column>
+
+                </DataTable>
                 {/* <h3>Endereço</h3>
                 <Padding />
                 <div className="grid">
@@ -253,6 +290,11 @@ const RegistrationPage = () => {
           }}
         </Formik>
       ) : null}
+      <ModalAddTerm
+        onHide={() => setVisibleTerm(false)}
+        visible={visibleTerm}
+        id={props.registration?.registration?.id!}
+      />
     </ContentPage>
   );
 };

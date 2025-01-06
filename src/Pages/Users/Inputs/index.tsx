@@ -101,7 +101,7 @@ const InputsUser = ({
           ) : null}
         </div>
         <div className="col-12 md:col-6">
-          <label>Projetos</label>
+          <label>Tecnologia</label>
           <Padding />
           <MultiSelect
             options={projects}
@@ -110,7 +110,7 @@ const InputsUser = ({
             value={values.project}
             onChange={handleChange}
             filter
-            placeholder="Projetos"
+            placeholder="Tecnologia"
             maxSelectedLabels={3}
             className="w-full"
           />

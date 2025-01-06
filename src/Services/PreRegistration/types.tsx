@@ -21,3 +21,9 @@ export interface CreatePreRegistration {
     classroom: number;
   }
   
+  export interface CreateRegistrationTermType {
+    registration: number;
+    dataValid: string | Date;
+    dataTerm: string | Date;
+  }
+  

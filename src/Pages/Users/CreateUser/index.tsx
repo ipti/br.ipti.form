@@ -113,7 +113,7 @@ const CreateUserPage = () => {
                 </div>
               </div>{" "}
               <Padding padding="16px" />
-              <Button label="Criar" />
+              <Button label="Criar" icon={"pi pi-plus"} />
             </Form>
           );
         }}

@@ -15,11 +15,13 @@ import BeneficiariesCreateProvider, {
 import { BeneficiariesCreateType } from "../../../Context/Beneficiaries/BeneficiaresCreate/type";
 import {
   color_race,
+  getErrorsAsArray,
   kinship,
   typesex,
 } from "../../../Controller/controllerGlobal";
 import { validaCPF } from "../../../Controller/controllerValidCPF";
 import { Column, Padding, Row } from "../../../Styles/styles";
+import InputAddress from "../../../Components/InputsAddress";
 
 const BeneficiariesCreate = () => {
   return (
@@ -43,7 +45,7 @@ const RegistrationPage = () => {
         return validaCPF(value);
       }
       return true;
-    }),
+    }).required("CPF é obrigatório"),
     responsable_cpf: Yup.string().test("cpf-valid", "CPF inválido", (value) => {
       if (value && value.trim() !== "") {
         return validaCPF(value);
@@ -55,9 +57,10 @@ const RegistrationPage = () => {
       .nullable()
       .required("Data de nascimento é obrigatória"),
     zone: Yup.string().nullable().required("Zona é obrigatório"),
-    project: Yup.string().nullable().required("Projeto é obrigatório"),
-    classroom: Yup.string().nullable().required("Classroom é obrigatório"),
-
+    project: Yup.string().nullable().required("Plano de Trabalho é obrigatório"),
+    classroom: Yup.string().nullable().required("Turma é obrigatório"),
+    state: Yup.string().nullable().required("Estado é obrigatório"),
+    city: Yup.string().nullable().required("Cidade é obrigatório"),
     sex: Yup.string().nullable().required("Sexo é obrigatória"),
   });
 
@@ -79,25 +82,38 @@ const RegistrationPage = () => {
           }}
         >
           {({ values, handleChange, errors, touched, setFieldValue }) => {
-            console.log(errors);
+            const errorArray = getErrorsAsArray(errors);
+
             return (
               <Form>
                 <Column>
                   <Row id="end">
-                    <Button label="Criar" type="submit" />
+                    <Button label="Criar" type="submit" icon={"pi pi-plus"} />
                   </Row>
                 </Column>
+                <Padding padding="8px" />
+                {errorArray.length > 0 && <div>
+                  <h3>Erros encontrados no formulários</h3>
+                  <Padding />
+                  {errorArray.map((error, index) => (
+                    <div key={index} style={{ color: 'red' }}>
+                      {error}
+                    </div>
+                  ))}
+                </div>}
+
+
                 <Padding padding="8px" />
                 <h3>Verificar Cadastro</h3>
                 <Padding padding="8px" />
                 <div className="grid">
                   <div className="col-12 md:col-6">
-                    <label>CPF</label>
+                    <label>CPF *</label>
                     <Padding />
                     <MaskInput
                       value={values.cpf}
                       mask="999.999.999-99"
-                      placeholder="CPF"
+                      placeholder="CPF *"
                       onChange={handleChange}
                       name="cpf"
                     />
@@ -113,7 +129,7 @@ const RegistrationPage = () => {
                 <Padding />
                 <div className="grid">
                   <div className="col-12 md:col-6">
-                    <label>Name *</label>
+                    <label>Nome *</label>
                     <Padding />
                     <TextInput
                       value={values.name}
@@ -213,7 +229,7 @@ const RegistrationPage = () => {
                       placeholder="Telefone para contato"
                     />
                     {errors.responsable_telephone &&
-                    touched.responsable_telephone ? (
+                      touched.responsable_telephone ? (
                       <div style={{ color: "red", marginTop: "8px" }}>
                         {errors.responsable_telephone}
                       </div>
@@ -325,7 +341,7 @@ const RegistrationPage = () => {
                     <Padding />
                     <DropdownComponent
                       value={props.project}
-                      placerholder="Selecione o projeto"
+                      placerholder="Selecione o plano de trabalho"
                       name="project"
                       onChange={(e) => {
                         props.setProject(e.target.value);
@@ -360,7 +376,26 @@ const RegistrationPage = () => {
                       ) : null}
                     </div>
                   ) : null}
+                 {values.project && <div className="col-12 md:col-6">
+                  <label>Data de matricula</label>
+                  <Padding />
+                  <CalendarComponent
+                    value={values.date_registration}
+                    name="date_registration"
+                    dateFormat="dd/mm/yy"
+                    onChange={handleChange}
+                  />
+                  {errors.date_registration && touched.date_registration ? (
+                    <div style={{ color: "red", marginTop: "8px" }}>
+                      {String(errors.date_registration)}
+                    </div>
+                  ) : null}
+                </div>}
                 </div>{" "}
+                <Padding />
+                <h3>Endereço</h3>
+                <Padding padding="8px" />
+                <InputAddress errors={errors} handleChange={handleChange} setFieldValue={setFieldValue} touched={touched} values={values} />
                 {/* <h3>Endereço</h3>
                 <Padding />
                 <div className="grid">
