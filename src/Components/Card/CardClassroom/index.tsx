@@ -80,7 +80,7 @@ const CardClassroom = ({
         <Row style={{ gap: 16 }}>
           <Row style={{ gap: 8, alignItems: "center" }}>
             <img src={pessoas} alt="" style={{ width: 24 }} />
-            <p style={{fontSize: "10px"}}>Participantes: {registrationCount}</p>
+            <p style={{fontSize: "10px"}}>Matriculados: {registrationCount}</p>
           </Row>
           <Column id="center">
             <Row>
