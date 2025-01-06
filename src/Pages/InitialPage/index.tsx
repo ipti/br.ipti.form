@@ -63,7 +63,7 @@ const InitialPage = () => {
   ) as PropsAplicationContext;
 
   const [dates, setDates] = useState<Nullable<(Date | null)[]>>(null);
-  const [formattedDates, setFormattedDates] = useState<{
+  const [, setFormattedDates] = useState<{
     start: string;
     end: string;
   }>({
