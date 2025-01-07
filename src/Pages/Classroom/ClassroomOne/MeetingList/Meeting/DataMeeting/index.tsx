@@ -90,9 +90,10 @@ const DataMeeting = () => {
             <Padding padding="16px" />
             <div className="grid">
               <div className="col-12 md:col-6">
-                <label></label>
+                <label>Tema</label>
                 <TextInput
                   name="theme"
+                  placeholder="Tema do encontro"
                   value={values.theme}
                   disabled={!edit}
                   onChange={handleChange}

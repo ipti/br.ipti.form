@@ -103,8 +103,8 @@ const ClassroomOnePage = () => {
           <Row id="end">
             <Row>
               <Padding />
-              {propsAplication.user?.role ===
-                (ROLE.ADMIN || ROLE.COORDINATORS) && (
+              {(propsAplication.user?.role ===
+                ROLE.ADMIN || propsAplication.user?.role === ROLE.COORDINATORS) && (
                   <Button
                     text
                     label="Editar"
@@ -113,8 +113,8 @@ const ClassroomOnePage = () => {
                   />
                 )}
             </Row>
-            {propsAplication.user?.role ===
-              (ROLE.ADMIN || ROLE.COORDINATORS) && (
+            {(propsAplication.user?.role ===
+                ROLE.ADMIN || propsAplication.user?.role === ROLE.COORDINATORS) && (
                 <Button
                   text
                   label="Tranferir turma"

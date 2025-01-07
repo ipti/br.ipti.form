@@ -92,11 +92,11 @@ const CardClassroom = ({
               <Row style={{ fontSize: "10px" }}>
                 Status: {" "}<Padding padding="2px" />
                 {status === Status.PENDING ? (
-                  <p style={{ fontWeight: "600" }}> Pendente</p>
+                  <p style={{ fontWeight: "600" }}> Em andamento</p>
                 ) : status === Status.APPROVED ? (
                   <p style={{ fontWeight: "600" }}> Finalizado</p>
-                ) : status === Status.REPROVED ? (
-                  <p style={{ fontWeight: "600" }}> Reprovado</p>
+                ) : status === Status.CANCELED ? (
+                  <p style={{ fontWeight: "600" }}> Cancelada</p>
                 ) : null}
               </Row>
             </Row>

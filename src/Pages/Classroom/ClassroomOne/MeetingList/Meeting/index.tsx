@@ -68,8 +68,8 @@ const MeetingPage = () => {
                 />
               </div>
             </Column>
-            {props.meeting.justification &&
-              propsAplication.user?.role === ROLE.REAPPLICATORS && (
+            {(props.meeting.justification &&
+              propsAplication.user?.role === ROLE.REAPPLICATORS) && (
                 <div className="col-12 md:col-6">
                   <label>Justificativa</label>
                   <Padding />
