@@ -1,7 +1,10 @@
+import { useContext, useEffect, useState } from "react";
+
 import { Button } from "primereact/button";
 import { Chart as ChartPrime } from "primereact/chart";
+//import { MultiSelect } from 'primereact/multiselect';
 import { Nullable } from "primereact/ts-helpers";
-import { useContext, useEffect, useState } from "react";
+
 
 import CardQuant from "../../Components/Chart/CardQuant";
 import ContentPage from "../../Components/ContentPage";
@@ -19,6 +22,8 @@ import { useFetchRequestUsersChart } from "../../Services/Users/query";
 import { Column, Padding, Row } from "../../Styles/styles";
 import { PropsAplicationContext } from "../../Types/types";
 import { requestChartMatriculated } from "../../Services/Chart/request";
+import { requestChartStatusClasses } from "../../Services/Chart/request";
+
 import color from "../../Styles/colors";
 
 export interface Chart {
@@ -26,6 +31,13 @@ export interface Chart {
   month: number;
   n_registers: number;
   n_approved: number;
+}
+
+export interface ChartStatus {
+  social_technology_name: string;
+  t_pending: bigint;
+  t_approved: bigint;
+  t_canceled: bigint;
 }
 
 const month = [
@@ -72,21 +84,23 @@ const InitialPage = () => {
   });
   const [ts, setTs] = useState<number | undefined>();
   const [chartData, setChartData] = useState<any>(null);
+  const [chartDataStatus, setChartDataStatus] = useState<any>(null);
 
   // Ao carregar o componente, seleciona por padrão os últimos 6 meses
   useEffect(() => {
     setDates([subtractMonths(new Date(Date.now()), 6), new Date(Date.now())]);
   }, []);
 
+  const formatDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+
   useEffect(() => {
     if (!dates || dates.length < 2 || !dates[0] || !dates[1]) return;
-
-    const formatDate = (date: Date) => {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-      return `${year}-${month}-${day}`;
-    };
 
     const start = formatDate(dates[0]);
     const end = formatDate(dates[1]);
@@ -95,7 +109,7 @@ const InitialPage = () => {
 
     const fetchData = async () => {
       try {
-        const response = await requestChartMatriculated(start, end);
+        const response = await requestChartMatriculated(start, end, ts || 0);
 
         const data: Chart[] = response.data;
         const updatedChartData = {
@@ -122,7 +136,50 @@ const InitialPage = () => {
     };
 
     fetchData();
-  }, [dates]);
+  }, [dates,ts]);
+
+  useEffect(() => { 
+    if (!dates || dates.length < 2 || !dates[0] || !dates[1]) return;
+
+    
+    const start = formatDate(dates[0]);
+    const end = formatDate(dates[1]);
+
+    setFormattedDates({ start, end });
+
+    const fetchData = async () => {
+      try {
+        const response = await requestChartStatusClasses(start, end, []);
+        const data: ChartStatus[] = response.data;
+        const updatedChartData = {
+          labels: data.map((item) => item.social_technology_name),
+          datasets: [
+            {
+              label: "Pendente",
+              data: data.map((item) => item.t_pending),
+              backgroundColor: color.colorCardOrange,
+            },
+            {
+              label: "Aprovado",
+              data: data.map((item) => item.t_approved),
+              backgroundColor: color.blue,
+            },
+            {
+              label: "Cancelado",
+              data: data.map((item) => item.t_canceled),
+              backgroundColor: color.red,
+            },
+          ],
+        };
+        setChartDataStatus(updatedChartData);
+      } catch (error) {
+        console.error("Erro ao buscar dados do gráfico:", error);
+      }
+    };
+
+    fetchData();
+  }, [dates, ts]);
+
 
   const {
     data: chart,
@@ -226,31 +283,63 @@ const InitialPage = () => {
       </div>
 
       <Padding padding="20px" />
-      <div
-        className="card col-12 md:col-12 lg:col-6"
-        style={{ padding: "20px" }}
-      >
-        <Row id="start">
-          <Column>
-            <h2>Gráfico de Matrículas</h2>
-            <Padding padding="8px" />
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <p style={{ marginBottom: "0", whiteSpace: "nowrap" }}>
-                Selecione o período:
-              </p>
-              <CalendarComponent
-                value={dates}
-                onChange={(e: any) => setDates(e.value)}
-                selectionMode="range"
-                placeholder="Selecione o período"
-                dateFormat="dd/mm/yy"
-                name="dates"
-              />
-            </div>
-          </Column>
-        </Row>
-        <div>{chartData && <ChartPrime type="line" data={chartData} />}</div>
-      </div>
+      <Row>
+        <div
+          className="card col-12 md:col-6 lg:col-6"
+          style={{ padding: "20px" }}
+        >
+          <Row id="start">
+            <Column>
+              <h2>Gráfico de Matrículas</h2>
+              <Padding padding="8px" />
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "10px" }}
+              >
+                <p style={{ marginBottom: "0", whiteSpace: "nowrap" }}>
+                  Selecione o período:
+                </p>
+                <CalendarComponent
+                  value={dates}
+                  onChange={(e: any) => setDates(e.value)}
+                  selectionMode="range"
+                  placeholder="Selecione o período"
+                  dateFormat="dd/mm/yy"
+                  name="dates"
+                />
+              </div>
+            </Column>
+          </Row>
+          <div>{chartData && <ChartPrime type="line" data={chartData} />}</div>
+        </div>
+ 
+        <div
+          className="card col-12 md:col-6 lg:col-6"
+          style={{ padding: "20px" }}
+        >
+          <Row id="start">
+            <Column>
+              <h2>Gráfico de Turmas</h2>
+              <Padding padding="8px" />
+              <div
+                style={{ display: "flex", alignItems: "center", gap: "10px" }}
+              >
+                <p style={{ marginBottom: "0", whiteSpace: "nowrap" }}>
+                  Selecione o período:
+                </p>
+                <CalendarComponent
+                  value={dates}
+                  onChange={(e: any) => setDates(e.value)}
+                  selectionMode="range"
+                  placeholder="Selecione o período"
+                  dateFormat="dd/mm/yy"
+                  name="dates"
+                />
+              </div>
+            </Column>
+          </Row>
+          <div>{chartDataStatus && <ChartPrime type="bar" data={chartDataStatus} />}</div>
+        </div>
+      </Row>
     </ContentPage>
   );
 };
