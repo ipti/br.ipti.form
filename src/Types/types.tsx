@@ -1,4 +1,5 @@
 import { DropdownChangeEvent } from "primereact/dropdown";
+import { MultiSelectChangeEvent, MultiSelectHeaderCheckboxChangeEvent } from "primereact/multiselect";
 import { InputMaskChangeEvent } from "primereact/inputmask";
 import { InputNumberValueChangeEvent } from "primereact/inputnumber";
 import { RadioButtonChangeEvent } from "primereact/radiobutton";
@@ -102,6 +103,17 @@ export interface PropsDropdown {
     disabled?: boolean | undefined
     value?: any,
     onChange?(event: DropdownChangeEvent): void,
+    options?: SelectItemOptionsType | undefined,
+    placerholder?: string,
+    optionsLabel?: string,
+    name?: string,
+    optionsValue?: string
+}
+
+export interface PropsMultiSelect {
+    disabled?: boolean | undefined
+    value?: any,
+    onChange?(event: MultiSelectChangeEvent): void
     options?: SelectItemOptionsType | undefined,
     placerholder?: string,
     optionsLabel?: string,

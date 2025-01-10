@@ -31,7 +31,7 @@ export const requestChartMatriculated = (startDate: any, endDate:any, ts:number)
 }
 };
 
-export const requestChartStatusClasses = (startDate: string, endDate:string, socialTech:[]) => {
+export const requestChartStatusClasses = (startDate: string, endDate:string, socialTech:number[]) => {
 
   let path = `/chart-bff/chart-status-classes`;
   let data = {

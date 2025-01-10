@@ -8,7 +8,8 @@ import { Nullable } from "primereact/ts-helpers";
 
 import CardQuant from "../../Components/Chart/CardQuant";
 import ContentPage from "../../Components/ContentPage";
-import DropdownComponent from "../../Components/Dropdown";
+//import DropdownComponent from "../../Components/Dropdown";
+import MultiSelectComponet from "../../Components/MultiSelect";
 import Loading from "../../Components/Loading";
 import CalendarComponent from "../../Components/Calendar";
 
@@ -25,6 +26,7 @@ import { requestChartMatriculated } from "../../Services/Chart/request";
 import { requestChartStatusClasses } from "../../Services/Chart/request";
 
 import color from "../../Styles/colors";
+//import { hasFormSubmit } from "@testing-library/user-event/dist/utils";
 
 export interface Chart {
   year: number;
@@ -82,7 +84,7 @@ const InitialPage = () => {
     start: "",
     end: "",
   });
-  const [ts, setTs] = useState<number | undefined>();
+  const [ts, setTs] = useState<number[] | undefined>();
   const [chartData, setChartData] = useState<any>(null);
   const [chartDataStatus, setChartDataStatus] = useState<any>(null);
 
@@ -109,7 +111,7 @@ const InitialPage = () => {
 
     const fetchData = async () => {
       try {
-        const response = await requestChartMatriculated(start, end, ts || 0);
+        const response = await requestChartMatriculated(start, end, ts![0]);
 
         const data: Chart[] = response.data;
         const updatedChartData = {
@@ -149,18 +151,18 @@ const InitialPage = () => {
 
     const fetchData = async () => {
       try {
-        const response = await requestChartStatusClasses(start, end, []);
+        const response = await requestChartStatusClasses(start, end, ts ?? []);
         const data: ChartStatus[] = response.data;
         const updatedChartData = {
           labels: data.map((item) => item.social_technology_name),
           datasets: [
             {
-              label: "Pendente",
+              label: "Em andamento",
               data: data.map((item) => item.t_pending),
               backgroundColor: color.colorCardOrange,
             },
             {
-              label: "Aprovado",
+              label: "Finalizado",
               data: data.map((item) => item.t_approved),
               backgroundColor: color.blue,
             },
@@ -178,7 +180,7 @@ const InitialPage = () => {
     };
 
     fetchData();
-  }, [dates, ts]);
+  }, [dates,  ts]);
 
 
   const {
@@ -186,6 +188,10 @@ const InitialPage = () => {
     isLoading,
     isError,
   } = useFetchRequestUsersChart(ts?.toString());
+
+
+  console.log("ts", ts);  
+  console.log("ts string", ts?.toString());
 
   const downloadCSV = async () => {
     try {
@@ -221,11 +227,10 @@ const InitialPage = () => {
       )}
       <Padding padding="8px" />
       {propsAplication.project && (
-        <Row id="end">
-          <DropdownComponent
+        <Row>
+          <MultiSelectComponet
             options={[
               ...propsAplication.project,
-              { id: undefined, name: "Todos" },
             ]}
             optionsLabel="name"
             optionsValue="id"
