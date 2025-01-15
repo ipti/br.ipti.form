@@ -5,7 +5,6 @@ import { Chart as ChartPrime } from "primereact/chart";
 //import { MultiSelect } from 'primereact/multiselect';
 import { Nullable } from "primereact/ts-helpers";
 
-
 import CardQuant from "../../Components/Chart/CardQuant";
 import ContentPage from "../../Components/ContentPage";
 //import DropdownComponent from "../../Components/Dropdown";
@@ -24,6 +23,8 @@ import { Column, Padding, Row } from "../../Styles/styles";
 import { PropsAplicationContext } from "../../Types/types";
 import { requestChartMatriculated } from "../../Services/Chart/request";
 import { requestChartStatusClasses } from "../../Services/Chart/request";
+import { requestChartCard } from "../../Services/Chart/request";
+import { requestChartTSCard } from "../../Services/Chart/request";
 
 import color from "../../Styles/colors";
 //import { hasFormSubmit } from "@testing-library/user-event/dist/utils";
@@ -100,7 +101,6 @@ const InitialPage = () => {
     return `${year}-${month}-${day}`;
   };
 
-
   useEffect(() => {
     if (!dates || dates.length < 2 || !dates[0] || !dates[1]) return;
 
@@ -138,12 +138,11 @@ const InitialPage = () => {
     };
 
     fetchData();
-  }, [dates,ts]);
+  }, [dates, ts]);
 
-  useEffect(() => { 
+  useEffect(() => {
     if (!dates || dates.length < 2 || !dates[0] || !dates[1]) return;
 
-    
     const start = formatDate(dates[0]);
     const end = formatDate(dates[1]);
 
@@ -180,18 +179,13 @@ const InitialPage = () => {
     };
 
     fetchData();
-  }, [dates,  ts]);
-
+  }, [dates, ts]);
 
   const {
     data: chart,
     isLoading,
     isError,
   } = useFetchRequestUsersChart(ts?.toString());
-
-
-  console.log("ts", ts);  
-  console.log("ts string", ts?.toString());
 
   const downloadCSV = async () => {
     try {
@@ -225,20 +219,35 @@ const InitialPage = () => {
           />
         </Row>
       )}
+
       <Padding padding="8px" />
       {propsAplication.project && (
-        <Row>
-          <MultiSelectComponet
-            options={[
-              ...propsAplication.project,
-            ]}
-            optionsLabel="name"
-            optionsValue="id"
-            value={ts}
-            onChange={(e) => setTs(e.target.value)}
-            placerholder="Filtrar por Tecnologia"
-          />
-        </Row>
+        <div>
+          <div style={{ display: "flex", alignItems: "center", gap: "32px" }}>
+            <div style={{ flex: 2 }}>
+              <h2>Filtrar por Tecnologia Social</h2>
+              <MultiSelectComponet
+                options={[...propsAplication.project]}
+                optionsLabel="name"
+                optionsValue="id"
+                value={ts}
+                onChange={(e) => setTs(e.target.value)}
+                placerholder="Filtrar por Tecnologia"
+              />
+            </div>
+            <div style={{ flex: 1 }}>
+              <h2>Período em análise:</h2>
+              <CalendarComponent
+                value={dates}
+                onChange={(e: any) => setDates(e.value)}
+                selectionMode="range"
+                placeholder="Selecione o período"
+                dateFormat="dd/mm/yy"
+                name="dates"
+              />
+            </div>
+          </div>
+        </div>
       )}
 
       <Padding padding="16px" />
@@ -287,7 +296,6 @@ const InitialPage = () => {
         </div>
       </div>
 
-      <Padding padding="20px" />
       <Row>
         <div
           className="card col-12 md:col-6 lg:col-6"
@@ -297,26 +305,11 @@ const InitialPage = () => {
             <Column>
               <h2>Gráfico de Matrículas</h2>
               <Padding padding="8px" />
-              <div
-                style={{ display: "flex", alignItems: "center", gap: "10px" }}
-              >
-                <p style={{ marginBottom: "0", whiteSpace: "nowrap" }}>
-                  Selecione o período:
-                </p>
-                <CalendarComponent
-                  value={dates}
-                  onChange={(e: any) => setDates(e.value)}
-                  selectionMode="range"
-                  placeholder="Selecione o período"
-                  dateFormat="dd/mm/yy"
-                  name="dates"
-                />
-              </div>
             </Column>
           </Row>
           <div>{chartData && <ChartPrime type="line" data={chartData} />}</div>
         </div>
- 
+        {/* Adicionar espaço separador aqui*/}
         <div
           className="card col-12 md:col-6 lg:col-6"
           style={{ padding: "20px" }}
@@ -325,24 +318,25 @@ const InitialPage = () => {
             <Column>
               <h2>Gráfico de Turmas</h2>
               <Padding padding="8px" />
-              <div
-                style={{ display: "flex", alignItems: "center", gap: "10px" }}
-              >
-                <p style={{ marginBottom: "0", whiteSpace: "nowrap" }}>
-                  Selecione o período:
-                </p>
-                <CalendarComponent
-                  value={dates}
-                  onChange={(e: any) => setDates(e.value)}
-                  selectionMode="range"
-                  placeholder="Selecione o período"
-                  dateFormat="dd/mm/yy"
-                  name="dates"
-                />
-              </div>
             </Column>
           </Row>
-          <div>{chartDataStatus && <ChartPrime type="bar" data={chartDataStatus} />}</div>
+          <div>
+            {chartDataStatus && (
+              <ChartPrime
+                type="bar"
+                data={chartDataStatus}
+                options={{
+                  indexAxis: "y",
+                  responsive: true,
+                  plugins: {
+                    legend: {
+                      position: "top",
+                    },
+                  },
+                }}
+              />
+            )}
+          </div>
         </div>
       </Row>
     </ContentPage>

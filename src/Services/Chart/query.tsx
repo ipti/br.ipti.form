@@ -1,7 +1,9 @@
 import { useQuery } from "react-query";
 import {
     requestChartMatriculated,
-    requestChartStatusClasses
+    requestChartStatusClasses,
+    requestChartCard,
+    requestChartTSCard
 } from "./request";
 
 export const useRequestChartMatriculated = (start_time: string, end_time: string, ts:number) => {
@@ -11,6 +13,16 @@ export const useRequestChartMatriculated = (start_time: string, end_time: string
 export const useRequestChartStatusClasses = (start_time: string, end_time: string, socialTech: []) => {
   return useQuery(["requestChartStatusClasses"], () => requestChartStatusClasses(start_time, end_time, socialTech));  
 }
+
+export const useRequestChartCard = (year: number, idTs: []) => {
+  return useQuery(["requestChartCard"], () => requestChartCard(year, idTs));
+}
+
+export const useRequestChartTsCard = (year: number, idTs: []) => {
+  return useQuery(["requestChartTsCard"], () => requestChartTSCard(year, idTs));
+}
+
+
 
 
 
