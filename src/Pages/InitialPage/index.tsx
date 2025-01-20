@@ -23,8 +23,8 @@ import { Column, Padding, Row } from "../../Styles/styles";
 import { PropsAplicationContext } from "../../Types/types";
 import { requestChartMatriculated } from "../../Services/Chart/request";
 import { requestChartStatusClasses } from "../../Services/Chart/request";
-import { requestChartCard } from "../../Services/Chart/request";
-import { requestChartTSCard } from "../../Services/Chart/request";
+//import { requestChartCard } from "../../Services/Chart/request";
+//import { requestChartTSCard } from "../../Services/Chart/request";
 
 import color from "../../Styles/colors";
 //import { hasFormSubmit } from "@testing-library/user-event/dist/utils";
@@ -111,7 +111,7 @@ const InitialPage = () => {
 
     const fetchData = async () => {
       try {
-        const response = await requestChartMatriculated(start, end, ts![0]);
+        const response = await requestChartMatriculated(start, end, ts ?? []);
 
         const data: Chart[] = response.data;
         const updatedChartData = {
@@ -303,7 +303,7 @@ const InitialPage = () => {
         >
           <Row id="start">
             <Column>
-              <h2>Gráfico de Matrículas</h2>
+              <h2>Gráfico de Matrículas Total</h2>
               <Padding padding="8px" />
             </Column>
           </Row>
