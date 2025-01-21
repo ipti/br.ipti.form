@@ -198,6 +198,7 @@ const ModalYear = ({
   onHide(): void;
 }) => {
   const years = [
+    { value: 2025 },
     { value: 2024 },
     { value: 2023 },
     { value: 2022 },
