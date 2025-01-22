@@ -17,7 +17,7 @@ import { ROLE } from "../../Controller/controllerGlobal";
 
 import http from "../../Services/axios";
 import { getYear } from "../../Services/localstorage";
-import { useFetchRequestUsersChart } from "../../Services/Users/query";
+//import { useFetchRequestUsersChart } from "../../Services/Users/query";
 
 import { Column, Padding, Row } from "../../Styles/styles";
 import { PropsAplicationContext } from "../../Types/types";
@@ -27,7 +27,7 @@ import { requestChartCard } from "../../Services/Chart/request";
 import { requestChartTSCard } from "../../Services/Chart/request";
 
 import color from "../../Styles/colors";
-import { parse } from "path";
+//import { parse } from "path";
 //import { hasFormSubmit } from "@testing-library/user-event/dist/utils";
 
 export interface Chart {
@@ -184,32 +184,41 @@ const InitialPage = () => {
     fetchData();
   }, [dates, ts]);
 
-  const [chartTSData, setChartTSData] = useState<{ totalMeetings: number, approvedRegisterClassrooms: number, totalRegisterClassrooms:number, totalClassrooms:number, totalProjects:number, totalUserSocialTechnologies: number }>({
+  const [chartTSData, setChartTSData] = useState<{
+    totalMeetings: number;
+    approvedRegisterClassrooms: number;
+    totalRegisterClassrooms: number;
+    totalClassrooms: number;
+    totalProjects: number;
+    totalUserSocialTechnologies: number;
+  }>({
     totalMeetings: 0,
     approvedRegisterClassrooms: 0,
     totalRegisterClassrooms: 0,
     totalClassrooms: 0,
     totalProjects: 0,
-    totalUserSocialTechnologies: 0
+    totalUserSocialTechnologies: 0,
   });
 
   useEffect(() => {
     const fetchChartData = async () => {
       if (!dates || dates.length < 2 || !dates[0] || !dates[1]) return;
-  
+
       const start = formatDate(dates[0]);
       const end = formatDate(dates[1]);
-  
+
       setIsLoading(true);
       setIsError(false);
-  
+
       try {
         let response;
         if (ts && ts.length > 0) {
           response = await requestChartTSCard(start, end, ts);
         } else {
           const year = new Date().getFullYear();
-          response = await requestChartCard(parseInt(getYear()?? year.toString()));
+          response = await requestChartCard(
+            parseInt(getYear() ?? year.toString())
+          );
         }
         setChartTSData(response.data);
       } catch (error) {
@@ -219,11 +228,9 @@ const InitialPage = () => {
         setIsLoading(false);
       }
     };
-  
+
     fetchChartData();
   }, [dates, ts]);
-
-
 
   const downloadCSV = async () => {
     try {
@@ -244,34 +251,38 @@ const InitialPage = () => {
       title={`Bem vindo, ${propsAplication.user?.name}!`}
       description="Visualização dos dados gerais do meuBen."
     >
-      {propsAplication.user?.role === ROLE.ADMIN && (
-        <Row id="end">
-          <Button
-            label="Baixar CSV"
-            icon="pi pi-download"
-            iconPos="left"
-            onClick={downloadCSV}
-          />
-        </Row>
-      )}
-
-      <Padding padding="8px" />
-      {propsAplication.project && (
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "32px" }}>
-            <div style={{ flex: 2 }}>
-              <h2>Filtrar por Tecnologia Social</h2>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "stretch", // Garante que todos os itens tenham a mesma altura
+          width: "100%",
+          gap: "10px", // Define o espaço entre os elementos
+          flexWrap: "wrap", // Permite que os itens se ajustem em diferentes linhas se necessário
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "stretch",
+            gap: "10px",
+            flex: 1,
+          }}
+        >
+          {propsAplication.project && (
+            <div style={{ flex: 2, display: "flex", flexDirection: "column" }}>
               <MultiSelectComponet
                 options={[...propsAplication.project]}
                 optionsLabel="name"
                 optionsValue="id"
                 value={ts}
                 onChange={(e) => setTs(e.target.value)}
-                placerholder="Filtrar por Tecnologia"
+                placerholder="Filtrar por Tecnologia Social"
               />
             </div>
-            <div style={{ flex: 1 }}>
-              <h2>Período em análise:</h2>
+          )}
+          {propsAplication.project && (
+            <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
               <CalendarComponent
                 value={dates}
                 onChange={(e: any) => setDates(e.value)}
@@ -281,9 +292,29 @@ const InitialPage = () => {
                 name="dates"
               />
             </div>
-          </div>
+          )}
         </div>
-      )}
+
+        {propsAplication.user?.role === ROLE.ADMIN && (
+          <Row
+            id="end"
+            style={{
+              marginLeft: "auto",
+              flexShrink: 0,
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+            }}
+          >
+            <Button
+              label="Baixar CSV"
+              icon="pi pi-download"
+              iconPos="left"
+              onClick={downloadCSV}
+            />
+          </Row>
+        )}
+      </div>
 
       <Padding padding="16px" />
       <div className="grid">
