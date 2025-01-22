@@ -43,9 +43,9 @@ export const requestChartStatusClasses = (startDate: string, endDate:string, soc
     });
 }
 
-export const requestChartCard = (year: number, idTs:number[]) => {
+export const requestChartCard = (year: number) => {
   //get
-  let path = `/chart-bff/chart-card?year=${year}&idTs=${idTs}`;
+  let path = `/chart-bff/chart-card?year=${year}`;
   return http
     .get(path)
     .then((response) => response)
@@ -59,13 +59,14 @@ export const requestChartCard = (year: number, idTs:number[]) => {
 }
 
 
-export const requestChartTSCard = (year: number, idTs:number[]) => {
+export const requestChartTSCard = async (startDate: string, endDate:string, socialTech:number[]) => {
   //post
   
   let path = `/chart-bff/chart-ts-card`;
   let data = {
-    year: year,
-    idTs: idTs
+    startDate: startDate,
+    endDate: endDate,
+    socialTech: socialTech
   }
   return http
     .post(path, data)

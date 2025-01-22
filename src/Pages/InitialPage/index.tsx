@@ -23,10 +23,11 @@ import { Column, Padding, Row } from "../../Styles/styles";
 import { PropsAplicationContext } from "../../Types/types";
 import { requestChartMatriculated } from "../../Services/Chart/request";
 import { requestChartStatusClasses } from "../../Services/Chart/request";
-//import { requestChartCard } from "../../Services/Chart/request";
-//import { requestChartTSCard } from "../../Services/Chart/request";
+import { requestChartCard } from "../../Services/Chart/request";
+import { requestChartTSCard } from "../../Services/Chart/request";
 
 import color from "../../Styles/colors";
+import { parse } from "path";
 //import { hasFormSubmit } from "@testing-library/user-event/dist/utils";
 
 export interface Chart {
@@ -88,6 +89,8 @@ const InitialPage = () => {
   const [ts, setTs] = useState<number[] | undefined>();
   const [chartData, setChartData] = useState<any>(null);
   const [chartDataStatus, setChartDataStatus] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false); // Estado para o status de carregamento
+  const [isError, setIsError] = useState<boolean>(false);
 
   // Ao carregar o componente, seleciona por padrão os últimos 6 meses
   useEffect(() => {
@@ -181,11 +184,46 @@ const InitialPage = () => {
     fetchData();
   }, [dates, ts]);
 
-  const {
-    data: chart,
-    isLoading,
-    isError,
-  } = useFetchRequestUsersChart(ts?.toString());
+  const [chartTSData, setChartTSData] = useState<{ totalMeetings: number, approvedRegisterClassrooms: number, totalRegisterClassrooms:number, totalClassrooms:number, totalProjects:number, totalUserSocialTechnologies: number }>({
+    totalMeetings: 0,
+    approvedRegisterClassrooms: 0,
+    totalRegisterClassrooms: 0,
+    totalClassrooms: 0,
+    totalProjects: 0,
+    totalUserSocialTechnologies: 0
+  });
+
+  useEffect(() => {
+    const fetchChartData = async () => {
+      if (!dates || dates.length < 2 || !dates[0] || !dates[1]) return;
+  
+      const start = formatDate(dates[0]);
+      const end = formatDate(dates[1]);
+  
+      setIsLoading(true);
+      setIsError(false);
+  
+      try {
+        let response;
+        if (ts && ts.length > 0) {
+          response = await requestChartTSCard(start, end, ts);
+        } else {
+          const year = new Date().getFullYear();
+          response = await requestChartCard(parseInt(getYear()?? year.toString()));
+        }
+        setChartTSData(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar dados do gráfico:", error);
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    fetchChartData();
+  }, [dates, ts]);
+
+
 
   const downloadCSV = async () => {
     try {
@@ -200,9 +238,6 @@ const InitialPage = () => {
       console.error("Erro ao baixar o arquivo:", error);
     }
   };
-
-  if (isLoading) return <Loading />;
-  if (isError) return <div>Erro ao carregar os dados</div>;
 
   return (
     <ContentPage
@@ -255,42 +290,42 @@ const InitialPage = () => {
         <div className="col-12 md:col-4 lg:col-2">
           <CardQuant
             title="Total de Ts"
-            quant={chart?.totalUserSocialTechnologies!}
+            quant={chartTSData?.totalUserSocialTechnologies!}
             color="navy_blue"
           />
         </div>
         <div className="col-12 md:col-4 lg:col-2">
           <CardQuant
             title="Total de Projetos"
-            quant={chart?.totalProjects!}
+            quant={chartTSData?.totalProjects!}
             color="blue"
           />
         </div>
         <div className="col-12 md:col-4 lg:col-2">
           <CardQuant
             title="Total de Turmas"
-            quant={chart?.totalClassrooms!}
+            quant={chartTSData?.totalClassrooms!}
             color="orange"
           />
         </div>
         <div className="col-12 md:col-4 lg:col-2">
           <CardQuant
             title="Total de matrículas"
-            quant={chart?.totalRegisterClassrooms!}
+            quant={chartTSData?.totalRegisterClassrooms!}
             color="navy_blue"
           />
         </div>
         <div className="col-12 md:col-4 lg:col-2">
           <CardQuant
             title="Total de matrículas confirmadas"
-            quant={chart?.approvedRegisterClassrooms!}
+            quant={chartTSData?.approvedRegisterClassrooms!}
             color="blue"
           />
         </div>
         <div className="col-12 md:col-4 lg:col-2">
           <CardQuant
             title="Total de encontros"
-            quant={chart?.totalMeetings!}
+            quant={chartTSData?.totalMeetings!}
             color="orange"
           />
         </div>

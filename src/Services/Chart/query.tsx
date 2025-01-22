@@ -14,12 +14,12 @@ export const useRequestChartStatusClasses = (start_time: string, end_time: strin
   return useQuery(["requestChartStatusClasses"], () => requestChartStatusClasses(start_time, end_time, socialTech));  
 }
 
-export const useRequestChartCard = (year: number, idTs: []) => {
-  return useQuery(["requestChartCard"], () => requestChartCard(year, idTs));
+export const useRequestChartCard = (year: number) => {
+  return useQuery(["requestChartCard"], () => requestChartCard(year));
 }
 
-export const useRequestChartTsCard = (year: number, idTs: []) => {
-  return useQuery(["requestChartTsCard"], () => requestChartTSCard(year, idTs));
+export const useRequestChartTsCard = (start_time: string, end_time: string, socialTech: number []) => {
+  return useQuery(["requestChartTsCard"], () => requestChartTSCard(start_time, end_time, socialTech));
 }
 
 
