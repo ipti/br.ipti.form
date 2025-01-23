@@ -97,7 +97,7 @@ export const ReportClassroom = () => {
       const headerRow = [
         "Nº",
         "NOME COMPLETO",
-        ...meetingSubset.map((item: any) => item.name),
+        ...meetingSubset.map((item: any, index: number) => item.name.substring(0,3) + item.name.slice(-2)),
         "FREQUÊNCIA",
         "STATUS",
       ];

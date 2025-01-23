@@ -86,6 +86,7 @@ const InitialPage = () => {
     start: "",
     end: "",
   });
+  const [LoadingTs, setLoadingTs] = useState<boolean>(true);
   const [ts, setTs] = useState<number[] | undefined>();
   const [chartData, setChartData] = useState<any>(null);
   const [chartDataStatus, setChartDataStatus] = useState<any>(null);
@@ -142,6 +143,13 @@ const InitialPage = () => {
 
     fetchData();
   }, [dates, ts]);
+
+  useEffect(() => {
+    if(propsAplication.project && LoadingTs){
+      setTs(propsAplication.project?.map((item) => item.id));
+      setLoadingTs(false);
+    }
+  }, [propsAplication.project]);
 
   useEffect(() => {
     if (!dates || dates.length < 2 || !dates[0] || !dates[1]) return;

@@ -85,10 +85,13 @@ const ReportPage = () => {
       <div id="center" style={{width: "90%", maxWidth: "95vw"}}>
       <DataTable
         value={data?.register_classroom}
+        scrollable 
         header={header}
-        tableStyle={{ width: "50rem" }}
+        paginator
+        rows={10}
+        // tableStyle={{ width: window.innerWidth > 1000 ? "" :"50rem" }}
         >
-        <Column field={"registration.name"} header={"Beneficiário"} />
+        <Column field={"registration.name"} frozen header={"Beneficiário"} />
         {data?.meeting?.map((item: any, index: number) => (
           <Column
             align={"center"}
@@ -98,7 +101,7 @@ const ReportPage = () => {
             header={item.name}
             />
           ))}
-        <Column body={bodyTotal} header={"Total"} />
+        <Column body={bodyTotal} frozen header={"Total"} />
       </DataTable>
           </div>
     </ContentPage>

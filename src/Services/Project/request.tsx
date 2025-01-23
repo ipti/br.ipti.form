@@ -94,7 +94,7 @@ export const requestProjectList = async () => {
 export const requestTsList = async (id: number | undefined) => {
   if (GetIdTs()) {
     return await http
-      .get("/social-technology-bff/one", { params: { stId: id ?? GetIdTs() } })
+      .get("/social-technology-bff/one", { params: { stId: id ?? GetIdTs(), year: getYear() } })
       .then((response) => response.data)
       .catch((err) => {
         if (err.response.status === 401) {
