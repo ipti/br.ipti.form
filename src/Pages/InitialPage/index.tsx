@@ -116,25 +116,39 @@ const InitialPage = () => {
     const fetchData = async () => {
       try {
         const response = await requestChartMatriculated(start, end, ts ?? []);
-
+    
         const data: Chart[] = response.data;
+    
+        // Pegando apenas os meses disponíveis nos dados recebidos
+        const availableMonths = Array.from(new Set(data.map((item) => item.month))).sort((a, b) => a - b);
+    
+        // Criando labels dinâmicos baseados nos meses retornados
+        const labels = availableMonths.map((m) => month[m]); 
+    
         const updatedChartData = {
-          labels: month,
+          labels: labels,
           datasets: [
             {
               label: "Total de Matrículas Confirmadas",
-              data: renderChart(data, 1),
+              data: availableMonths.map((m) => {
+                const found = data.find((element) => element.month === m);
+                return found ? found.n_approved : 0;
+              }),
               borderColor: color.blue,
               fill: false,
             },
             {
               label: "Total de Matrículas",
-              data: renderChart(data, 2),
+              data: availableMonths.map((m) => {
+                const found = data.find((element) => element.month === m);
+                return found ? found.n_registers : 0;
+              }),
               borderColor: color.colorCardOrange,
               fill: false,
             },
           ],
         };
+    
         setChartData(updatedChartData);
       } catch (error) {
         console.error("Erro ao buscar dados do gráfico:", error);
