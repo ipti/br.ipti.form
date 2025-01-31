@@ -1,7 +1,6 @@
 import axios from "axios";
-import { Buffer } from 'buffer';
+import { Buffer } from "buffer";
 import { FormikErrors } from "formik";
-
 
 export const gerarIdAleatorio = (tamanho: number) => {
   const caracteres =
@@ -20,9 +19,9 @@ export const getErrorsAsArray = (errors: FormikErrors<any>): string[] => {
   const flattenErrors = (obj: any): string[] => {
     let messages: string[] = [];
     Object.entries(obj).forEach(([key, value]) => {
-      if (typeof value === 'string') {
+      if (typeof value === "string") {
         messages.push(value);
-      } else if (typeof value === 'object' && value !== null) {
+      } else if (typeof value === "object" && value !== null) {
         messages = [...messages, ...flattenErrors(value)];
       }
     });
@@ -31,7 +30,6 @@ export const getErrorsAsArray = (errors: FormikErrors<any>): string[] => {
 
   return flattenErrors(errors);
 };
-
 
 export function formatarData(data: string): string {
   var date = data.toString().split("T")[0];
@@ -42,13 +40,15 @@ export function formatarData(data: string): string {
 export function isWithinOneYear(date1: any, date2: any, dateValid?: any) {
   const oneYearInMilliseconds = 365 * 24 * 60 * 60 * 1000; // Um ano em milissegundos
 
-  const timeDifference = Math.abs(new Date(date1).getUTCMilliseconds() - new Date(date2).getUTCMilliseconds()); // Diferença absoluta em ms
+  const timeDifference = Math.abs(
+    new Date(date1).getUTCMilliseconds() - new Date(date2).getUTCMilliseconds()
+  ); // Diferença absoluta em ms
   return timeDifference <= oneYearInMilliseconds; // Verifica se está dentro de um ano
 }
 
 export function converterData(data: string) {
   // Divide a string pelo separador "/"
-  const partes = data.split('/');
+  const partes = data.split("/");
 
   // As partes serão: partes[0] = dia, partes[1] = mês, partes[2] = ano
   const dia = partes[0];
@@ -62,8 +62,6 @@ export function converterData(data: string) {
 }
 
 export function somarNumeros(num1: number, num2: number): number {
-
-
   return parseInt(`${num1 + num2}`);
 }
 
@@ -86,11 +84,9 @@ export const getStatusList = () => {
     { id: Status.PENDING, name: "Pendente de análise" },
     { id: Status.PENDING_DOCUMENTATION, name: "Pendente de documentação" },
     { id: Status.PENDING_TERM, name: "Pendente de termo" },
-
   ];
   return status;
 };
-
 
 export const getStatusClassroomList = () => {
   const status = [
@@ -122,16 +118,15 @@ export const Status = {
   REPROVED: "REPROVED",
   PENDING_TERM: "PENDING_TERM",
   PENDING_DOCUMENTATION: "PENDING_DOCUMENTATION",
-  CANCELED: "CANCELED"
+  CANCELED: "CANCELED",
 };
-
 
 export const StatusEnum: any = {
   APPROVED: "Aprovado",
   PENDING: "Pendente",
   REPROVED: "Reprovado",
   PENDING_TERM: "Pend. de termo",
-  PENDING_DOCUMENTATION: "Pend. de documentação"
+  PENDING_DOCUMENTATION: "Pend. de documentação",
 };
 
 export const ROLE = {
@@ -142,17 +137,16 @@ export const ROLE = {
 };
 
 export const kinship = [
-  { id: "PAI", name: 'Pai' },
-  { id: "MAE", name: 'Mãe' },
-  { id: "PRIMO_A", name: 'Primo(a)' },
-  { id: "TIO_A", name: 'Tio(a)' },
-  { id: "FILHO_A", name: 'Filho(a)' },
-  { id: "IRMAO_A", name: 'Irmão(a)' },
-  { id: "OUTRO", name: 'Outro' },
-  { id: "NAO_PARENTE", name: 'Não Parente' },
-  { id: "NAO_DEFINIDO", name: 'Não Definido' }
-
-]
+  { id: "PAI", name: "Pai" },
+  { id: "MAE", name: "Mãe" },
+  { id: "PRIMO_A", name: "Primo(a)" },
+  { id: "TIO_A", name: "Tio(a)" },
+  { id: "FILHO_A", name: "Filho(a)" },
+  { id: "IRMAO_A", name: "Irmão(a)" },
+  { id: "OUTRO", name: "Outro" },
+  { id: "NAO_PARENTE", name: "Não Parente" },
+  { id: "NAO_DEFINIDO", name: "Não Definido" },
+];
 
 export const loadImageFileAsBase64 = (imagePath: string): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -170,14 +164,47 @@ export const loadImageFileAsBase64 = (imagePath: string): Promise<string> => {
   });
 };
 
-
-export const convertImageUrlToBase64 = async (imageUrl: string): Promise<string> => {
+export const convertImageUrlToBase64 = async (
+  imageUrl: string
+): Promise<string> => {
   try {
-    const response = await axios.get(imageUrl, { responseType: 'arraybuffer' });
-    const base64 = Buffer.from(response.data, 'binary').toString('base64');
-    const mimeType = response.headers['content-type'];
+    const response = await axios.get(imageUrl, { responseType: "arraybuffer" });
+    const base64 = Buffer.from(response.data, "binary").toString("base64");
+    const mimeType = response.headers["content-type"];
     return `data:${mimeType};base64,${base64}`;
   } catch (error: any) {
     throw new Error(`Failed to convert image to Base64: ${error.message}`);
+  }
+};
+
+export const Month = {
+  0: "Janeiro",
+  1: "Fevereiro",
+  2: "Março",
+  3: "Abril",
+  4: "Maio",
+  5: "Junho",
+  6: "Julho",
+  7: "Agosto",
+  8: "Setembro",
+  9: "Outubro",
+  10: "Novembro",
+  11: "Dezembro",
+};
+
+export const getMonthNumber = (startMonth: number, endMonth: number) => {
+  const monthsArray = Object.values(Month); // Obtém os nomes dos meses como array
+
+  if (startMonth < 0 || startMonth > 11 || endMonth < 0 || endMonth > 11) {
+    throw new Error("Os valores devem estar entre 0 e 11.");
+  }
+
+  if (startMonth <= endMonth) {
+    return monthsArray.slice(startMonth, endMonth + 1);
+  } else {
+    return [
+      ...monthsArray.slice(startMonth),
+      ...monthsArray.slice(0, endMonth + 1),
+    ];
   }
 };

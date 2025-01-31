@@ -13,7 +13,7 @@ import Loading from "../../Components/Loading";
 import CalendarComponent from "../../Components/Calendar";
 
 import { AplicationContext } from "../../Context/Aplication/context";
-import { ROLE } from "../../Controller/controllerGlobal";
+import { getMonthNumber, ROLE } from "../../Controller/controllerGlobal";
 
 import http from "../../Services/axios";
 import { getYear } from "../../Services/localstorage";
@@ -116,15 +116,21 @@ const InitialPage = () => {
     const fetchData = async () => {
       try {
         const response = await requestChartMatriculated(start, end, ts ?? []);
-    
+
         const data: Chart[] = response.data;
-    
+
         // Pegando apenas os meses disponíveis nos dados recebidos
-        const availableMonths = Array.from(new Set(data.map((item) => item.month))).sort((a, b) => a - b);
-    
+        const availableMonths = Array.from(
+          new Set(data.map((item) => item.month))
+        ).sort((a, b) => a - b);
+
+        const mesInital = dates[0]?.getMonth() ?? 0;
+        const mesFinal = dates[1]?.getMonth() ?? 0;
         // Criando labels dinâmicos baseados nos meses retornados
-        const labels = availableMonths.map((m) => month[m]); 
-    
+        const labels = dates[0]
+          ? getMonthNumber(mesInital, mesFinal)
+          : availableMonths.map((m) => month[m]);
+
         const updatedChartData = {
           labels: labels,
           datasets: [
@@ -148,7 +154,7 @@ const InitialPage = () => {
             },
           ],
         };
-    
+
         setChartData(updatedChartData);
       } catch (error) {
         console.error("Erro ao buscar dados do gráfico:", error);
@@ -159,7 +165,7 @@ const InitialPage = () => {
   }, [dates, ts]);
 
   useEffect(() => {
-    if(propsAplication.project && LoadingTs){
+    if (propsAplication.project && LoadingTs) {
       setTs(propsAplication.project?.map((item) => item.id));
       setLoadingTs(false);
     }
