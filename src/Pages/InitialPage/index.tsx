@@ -27,6 +27,7 @@ import { requestChartCard } from "../../Services/Chart/request";
 import { requestChartTSCard } from "../../Services/Chart/request";
 
 import color from "../../Styles/colors";
+//import { error } from "console";
 //import { parse } from "path";
 //import { hasFormSubmit } from "@testing-library/user-event/dist/utils";
 
@@ -63,14 +64,6 @@ const subtractMonths = (date: Date, months: number): Date => {
   const newDate = new Date(date);
   newDate.setMonth(newDate.getMonth() - months);
   return newDate;
-};
-
-const renderChart = (data: Chart[], type: number) => {
-  return month.map((item, index) => {
-    const found = data.find((element) => element.month === index);
-    if (!found) return 0;
-    return type === 1 ? found.n_approved : found.n_registers;
-  });
 };
 
 const InitialPage = () => {
@@ -401,7 +394,17 @@ const InitialPage = () => {
               <Padding padding="8px" />
             </Column>
           </Row>
-          <div>{chartData && <ChartPrime type="line" data={chartData} />}</div>
+          {isLoading ? (
+            <Loading />
+          ) : isError ? (
+            <div>Erro ao carregar os dados</div>
+          ) : (
+            <div>
+              <div>
+                {chartData && <ChartPrime type="line" data={chartData} />}
+              </div>
+            </div>
+          )}
         </div>
         {/* Adicionar espaço separador aqui*/}
         <div

@@ -2,7 +2,7 @@ import { Form, Formik } from "formik";
 import { Button } from "primereact/button";
 import { Chart as ChartPrime } from "primereact/chart";
 
-import React, {useContext, useState, useEffect } from 'react';
+import { useContext, useState, useEffect } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
 import pessoas from "../../../Assets/images/pessoasgray.svg";
@@ -19,12 +19,18 @@ import ClassroomProvider, {
   ClassroomContext,
 } from "../../../Context/Classroom/context";
 import { ClassroomTypes } from "../../../Context/Classroom/type";
-import { getStatusClassroomList, ROLE } from "../../../Controller/controllerGlobal";
+import {
+  getStatusClassroomList,
+  ROLE,
+} from "../../../Controller/controllerGlobal";
 import { useFetchRequestClassroomOne } from "../../../Services/Classroom/query";
 import { Column, Padding, Row } from "../../../Styles/styles";
 import { PropsAplicationContext } from "../../../Types/types";
 import CardItensClassrooom from "./CardItensClassroom";
 import ModalChange from "./ModalChangeClaassroom";
+import color from "../../../Styles/colors";
+
+import { requestChartFrequency } from "../../../Services/Chart/request";
 
 const ClassroomOne = () => {
   return (
@@ -43,66 +49,51 @@ const ClassroomOnePage = () => {
   const [visible, setVisible] = useState(false);
 
   const [chartData, setChartData] = useState({});
-  const [chartOptions, setChartOptions] = useState({});
 
   useEffect(() => {
-    const documentStyle = getComputedStyle(document.documentElement);
-    const textColor = documentStyle.getPropertyValue('--text-color');
-    const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
-    const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
-    const data = {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-        datasets: [
-            {
-                label: 'First Dataset',
-                data: [65, 59, 80, 81, 56, 55, 40],
-                fill: false,
-                borderColor: documentStyle.getPropertyValue('--blue-500'),
-                tension: 0.4
-            },
-            {
-                label: 'Second Dataset',
-                data: [28, 48, 40, 19, 86, 27, 90],
-                fill: false,
-                borderColor: documentStyle.getPropertyValue('--pink-500'),
-                tension: 0.4
-            }
-        ]
-    };
-    const options = {
-        maintainAspectRatio: false,
-        aspectRatio: 0.6,
-        plugins: {
-            legend: {
-                labels: {
-                    color: textColor
-                }
-            }
-        },
-        scales: {
-            x: {
-                ticks: {
-                    color: textColorSecondary
-                },
-                grid: {
-                    color: surfaceBorder
-                }
-            },
-            y: {
-                ticks: {
-                    color: textColorSecondary
-                },
-                grid: {
-                    color: surfaceBorder
-                }
-            }
+    const fetchData = async () => {
+      try {
+        const response = await requestChartFrequency(classroom?.id);
+
+        if (!response?.data || response.data.length === 0) {
+          console.warn("Nenhum dado válido retornado da API.");
+          return;
         }
+
+        const data: {
+          name: string;
+          frequency: number;
+          beneficiarios: number;
+        }[] = response.data;
+
+        const updatedChartData = {
+          labels: data.map((item) => item.name),
+          datasets: [
+            {
+              label: "Numero de Beneficiários",
+              data: data.map((item) => item.beneficiarios),
+              borderColor: color.gray,
+              fill: false,
+            },
+            {
+              label: "Faltas por encontro",
+              data: data.map((item) => item.frequency),
+              borderColor: color.red,
+              backgroundColor: color.red + "44",
+              tension: 0.4,
+              fill: true,
+            },
+          ],
+        };
+
+        setChartData(updatedChartData);
+      } catch (error) {
+        console.error("Erro ao buscar dados do gráfico:", error);
+      }
     };
 
-    setChartData(data);
-    setChartOptions(options);
-}, []);
-
+    fetchData();
+  }, [classroom?.id]);
 
   const propsAplication = useContext(
     AplicationContext
@@ -116,14 +107,21 @@ const ClassroomOnePage = () => {
         <>
           {classroom ? (
             <Formik
-              initialValues={{ name: classroom?.name, status: getStatusClassroomList().find(props => props.id === classroom?.status) }}
+              initialValues={{
+                name: classroom?.name,
+                status: getStatusClassroomList().find(
+                  (props) => props.id === classroom?.status
+                ),
+              }}
               onSubmit={(values) => {
-                props.UpdateClassroom({ name: values.name, status: values.status?.id! }, parseInt(id!));
+                props.UpdateClassroom(
+                  { name: values.name, status: values.status?.id! },
+                  parseInt(id!)
+                );
                 setEdit(false);
               }}
             >
               {({ values, handleChange }) => {
-
                 return (
                   <Form>
                     <Column>
@@ -141,12 +139,17 @@ const ClassroomOnePage = () => {
                         <div className="col-12 md:col-6">
                           <label>Status da turma</label>
                           <Padding />
-                          <DropdownComponent options={getStatusClassroomList()} name="status" value={values.status} placerholder="Status da turma" onChange={handleChange} />
+                          <DropdownComponent
+                            options={getStatusClassroomList()}
+                            name="status"
+                            value={values.status}
+                            placerholder="Status da turma"
+                            onChange={handleChange}
+                          />
                         </div>
                       </div>
                       <Padding />
                       <Row>
-
                         <Button label="Salvar" icon={"pi pi-save"} />
                         <Padding />
                         <Button
@@ -168,25 +171,25 @@ const ClassroomOnePage = () => {
           <Row id="end">
             <Row>
               <Padding />
-              {(propsAplication.user?.role ===
-                ROLE.ADMIN || propsAplication.user?.role === ROLE.COORDINATORS) && (
-                  <Button
-                    text
-                    label="Editar"
-                    icon="pi pi-pencil"
-                    onClick={() => setEdit(true)}
-                  />
-                )}
-            </Row>
-            {(propsAplication.user?.role ===
-                ROLE.ADMIN || propsAplication.user?.role === ROLE.COORDINATORS) && (
+              {(propsAplication.user?.role === ROLE.ADMIN ||
+                propsAplication.user?.role === ROLE.COORDINATORS) && (
                 <Button
                   text
-                  label="Tranferir turma"
-                  icon="pi pi-sync"
-                  onClick={() => setVisible(true)}
+                  label="Editar"
+                  icon="pi pi-pencil"
+                  onClick={() => setEdit(true)}
                 />
               )}
+            </Row>
+            {(propsAplication.user?.role === ROLE.ADMIN ||
+              propsAplication.user?.role === ROLE.COORDINATORS) && (
+              <Button
+                text
+                label="Tranferir turma"
+                icon="pi pi-sync"
+                onClick={() => setVisible(true)}
+              />
+            )}
           </Row>
         </Column>
       )}
@@ -228,13 +231,18 @@ const ClassroomOnePage = () => {
             title="Relatório"
             description="Acesse o relatório da turma"
             icon={report}
-          // count={classroom?.register_classroom?.length}
           />
         </div>
       </div>
 
-      <div className="card">
-        <ChartPrime type="line" data={chartData} options={chartOptions} />
+      <div
+        className="card col-12 md:col-12 lg:col-12"
+        style={{ padding: "20px" }}
+      >
+        <h2>Gráfico Faltas em Encontros</h2>
+        <Padding padding="8px" />
+
+        <ChartPrime type="line" data={chartData} />
       </div>
     </ContentPage>
   );

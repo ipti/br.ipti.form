@@ -79,3 +79,19 @@ export const requestChartTSCard = async (startDate: string, endDate:string, soci
       throw err;
     });
 }
+
+
+export const requestChartFrequency = async (classroomId:number) => {
+  //get
+  let path = `/chart-bff/chart-meeting-frequency?classroomId=${classroomId}`;
+  return http
+    .get(path)
+    .then((response) => response)
+    .catch((err) => {
+      if (err.response.status === 401) {
+        logout();
+        window.location.reload();
+      }
+      throw err;
+    });
+}

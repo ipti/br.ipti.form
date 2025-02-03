@@ -3,7 +3,8 @@ import {
     requestChartMatriculated,
     requestChartStatusClasses,
     requestChartCard,
-    requestChartTSCard
+    requestChartTSCard,
+    requestChartFrequency
 } from "./request";
 
 export const useRequestChartMatriculated = (start_time: string, end_time: string, socialTech:[]) => {
@@ -20,6 +21,10 @@ export const useRequestChartCard = (year: number) => {
 
 export const useRequestChartTsCard = (start_time: string, end_time: string, socialTech: number []) => {
   return useQuery(["requestChartTsCard"], () => requestChartTSCard(start_time, end_time, socialTech));
+}
+
+export const useRequestChartFrequency = (classroom: number) => {
+  return useQuery(["requestChartFrequency"], () => requestChartFrequency(classroom));
 }
 
 
