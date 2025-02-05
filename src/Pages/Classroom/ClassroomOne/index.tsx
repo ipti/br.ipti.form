@@ -242,7 +242,7 @@ const ClassroomOnePage = () => {
         <h2>Gráfico Faltas em Encontros</h2>
         <Padding padding="8px" />
 
-        <ChartPrime type="line" data={chartData} />
+        <ChartPrime type="line" data={chartData}  style={{ height: '400px' }}/>
       </div>
     </ContentPage>
   );

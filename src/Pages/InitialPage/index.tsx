@@ -7,11 +7,11 @@ import { Nullable } from "primereact/ts-helpers";
 
 import CardQuant from "../../Components/Chart/CardQuant";
 import ContentPage from "../../Components/ContentPage";
+import ChartLines from "../../Components/Chart/ChartLines";
 //import DropdownComponent from "../../Components/Dropdown";
 import MultiSelectComponet from "../../Components/MultiSelect";
 import Loading from "../../Components/Loading";
 import CalendarComponent from "../../Components/Calendar";
-
 import { AplicationContext } from "../../Context/Aplication/context";
 import { getMonthNumber, ROLE } from "../../Controller/controllerGlobal";
 
@@ -27,9 +27,14 @@ import { requestChartCard } from "../../Services/Chart/request";
 import { requestChartTSCard } from "../../Services/Chart/request";
 
 import color from "../../Styles/colors";
+import { ChartLinesModel } from "../../Components/Chart/ChartLines/chartLinesModel";
+import { InitialPageModel } from "./initialPageModel";
+
 //import { error } from "console";
 //import { parse } from "path";
 //import { hasFormSubmit } from "@testing-library/user-event/dist/utils";
+
+import { getInitialPageModel } from "../../Controller/controllerInicialPage";
 
 export interface Chart {
   year: number;
@@ -86,8 +91,12 @@ const InitialPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false); // Estado para o status de carregamento
   const [isError, setIsError] = useState<boolean>(false);
 
+  const [initialPageData, setInitialPageData] = useState<InitialPageModel>();
+
   // Ao carregar o componente, seleciona por padrão os últimos 6 meses
   useEffect(() => {
+    const pagedata = getInitialPageModel();
+    setInitialPageData(pagedata);
     setDates([subtractMonths(new Date(Date.now()), 6), new Date(Date.now())]);
   }, []);
 
@@ -124,31 +133,30 @@ const InitialPage = () => {
           ? getMonthNumber(mesInital, mesFinal)
           : availableMonths.map((m) => month[m]);
 
-        const updatedChartData = {
-          labels: labels,
-          datasets: [
-            {
-              label: "Total de Matrículas Confirmadas",
-              data: availableMonths.map((m) => {
-                const found = data.find((element) => element.month === m);
-                return found ? found.n_approved : 0;
-              }),
-              borderColor: color.blue,
-              fill: false,
-            },
-            {
-              label: "Total de Matrículas",
-              data: availableMonths.map((m) => {
-                const found = data.find((element) => element.month === m);
-                return found ? found.n_registers : 0;
-              }),
-              borderColor: color.colorCardOrange,
-              fill: false,
-            },
-          ],
-        };
+        const datasets = [
+          {
+            label: "Total de Matrículas Confirmadas",
+            data: availableMonths.map((m) => {
+              const found = data.find((element) => element.month === m);
+              return found ? found.n_approved : 0;
+            }),
+            borderColor: color.blue,
+            fill: false,
+          },
+          {
+            label: "Total de Matrículas",
+            data: availableMonths.map((m) => {
+              const found = data.find((element) => element.month === m);
+              return found ? found.n_registers : 0;
+            }),
+            borderColor: color.colorCardOrange,
+            fill: false,
+          },
+        ];
 
-        setChartData(updatedChartData);
+        // const updatedChartData = new ChartLinesModel(labels, datasets);
+
+        // setChartData(updatedChartData);
       } catch (error) {
         console.error("Erro ao buscar dados do gráfico:", error);
       }
@@ -342,7 +350,7 @@ const InitialPage = () => {
         <div className="col-12 md:col-4 lg:col-2">
           <CardQuant
             title="Total de Ts"
-            quant={chartTSData?.totalUserSocialTechnologies!}
+            quant={initialPageData?.cardsData?.totalUserSocialTechnologies!}
             color="navy_blue"
           />
         </div>
@@ -400,13 +408,15 @@ const InitialPage = () => {
             <div>Erro ao carregar os dados</div>
           ) : (
             <div>
-              <div>
+              <ChartLines chartLinesModel={chartData} type_chart="line" />
+              {/* <div>
                 {chartData && <ChartPrime type="line" data={chartData} />}
-              </div>
+              </div> */}
             </div>
           )}
         </div>
         {/* Adicionar espaço separador aqui*/}
+        <Padding padding="16px" />
         <div
           className="card col-12 md:col-6 lg:col-6"
           style={{ padding: "20px" }}
@@ -436,6 +446,8 @@ const InitialPage = () => {
           </div>
         </div>
       </Row>
+
+      <Padding padding="16px" />
     </ContentPage>
   );
 };

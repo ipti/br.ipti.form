@@ -22,7 +22,8 @@ const CardQuant = ({ title, quant, color }: { title: string; quant: number | str
         alt="Ring Card"
         style={{
           position: "absolute",
-          bottom: "0px",           
+          bottom: "0px",          
+          right: "0px", 
           width: "50px",
           height: "50px",
           borderRadius: "0px 0px 32px 0px",
