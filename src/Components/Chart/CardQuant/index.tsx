@@ -18,17 +18,16 @@ const CardQuant = ({ title, quant, color }: { title: string; quant: number | str
         <h1 style={{color: "white", fontSize: 35, zIndex: 3}}>{quant}</h1>
       </Column>
       <img
-        src={ringCardImage} // casoo background seja blue, usar ring_card_orange, caso seja navy_blue, usar ring_card_blur
+        src={ringCardImage} 
         alt="Ring Card"
         style={{
-          position: "absolute", // Posiciona a imagem em relação ao card
-          bottom: "0px", // Move a imagem para cima do card
-          right: "0px", // Ajusta horizontalmente
+          position: "absolute",
+          bottom: "0px",           
           width: "50px",
           height: "50px",
           borderRadius: "0px 0px 32px 0px",
-          zIndex: 2, // Mantém a imagem acima do card
-          opacity: "1", // Deixe visível
+          zIndex: 2,
+          opacity: "1", 
         }}
       />
     </div>
