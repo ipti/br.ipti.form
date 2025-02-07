@@ -148,6 +148,21 @@ export const kinship = [
   { id: "NAO_DEFINIDO", name: "Não Definido" },
 ];
 
+export const month = [
+  "Janeiro",
+  "Fevereiro",
+  "Março",
+  "Abril",
+  "Maio",
+  "Junho",
+  "Julho",
+  "Agosto",
+  "Setembro",
+  "Outubro",
+  "Novembro",
+  "Dezembro",
+];
+
 export const loadImageFileAsBase64 = (imagePath: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     fetch(imagePath)

@@ -1,66 +1,29 @@
 import { useContext, useEffect, useState } from "react";
 
 import { Button } from "primereact/button";
-import { Chart as ChartPrime } from "primereact/chart";
 //import { MultiSelect } from 'primereact/multiselect';
 import { Nullable } from "primereact/ts-helpers";
 
 import CardQuant from "../../Components/Chart/CardQuant";
 import ContentPage from "../../Components/ContentPage";
-import ChartLines from "../../Components/Chart/ChartLines";
-//import DropdownComponent from "../../Components/Dropdown";
+
 import MultiSelectComponet from "../../Components/MultiSelect";
-import Loading from "../../Components/Loading";
+//import Loading from "../../Components/Loading";
 import CalendarComponent from "../../Components/Calendar";
 import { AplicationContext } from "../../Context/Aplication/context";
-import { getMonthNumber, ROLE } from "../../Controller/controllerGlobal";
 
 import http from "../../Services/axios";
 import { getYear } from "../../Services/localstorage";
 
 import { Column, Padding, Row } from "../../Styles/styles";
 import { PropsAplicationContext } from "../../Types/types";
-import { requestChartMatriculated } from "../../Services/Chart/request";
-import { requestChartStatusClasses } from "../../Services/Chart/request";
 
-import color from "../../Styles/colors";
 import { InitialPageModel } from "./initialPageModel";
 
-//import { error } from "console";
-//import { parse } from "path";
-//import { hasFormSubmit } from "@testing-library/user-event/dist/utils";
-
 import { getInitialPageModel } from "../../Controller/controllerInicialPage";
-
-
-export interface Chart {
-  year: number;
-  month: number;
-  n_registers: number;
-  n_approved: number;
-}
-
-export interface ChartStatus {
-  social_technology_name: string;
-  t_pending: bigint;
-  t_approved: bigint;
-  t_canceled: bigint;
-}
-
-const month = [
-  "Janeiro",
-  "Fevereiro",
-  "Março",
-  "Abril",
-  "Maio",
-  "Junho",
-  "Julho",
-  "Agosto",
-  "Setembro",
-  "Outubro",
-  "Novembro",
-  "Dezembro",
-];
+import { ChartMatriculated } from "./Components/ChartMatrticulated/chartMatriculated";
+import { ChartStatus } from "./Components/ChartStatus/chartStatus";
+import { ROLE } from "../../Controller/controllerGlobal";
 
 const subtractMonths = (date: Date, months: number): Date => {
   const newDate = new Date(date);
@@ -74,144 +37,32 @@ const InitialPage = () => {
   ) as PropsAplicationContext;
 
   const [dates, setDates] = useState<Nullable<(Date | null)[]>>(null);
-  const [, setFormattedDates] = useState<{
-    start: string;
-    end: string;
-  }>({
-    start: "",
-    end: "",
-  });
-  
   const [ts, setTs] = useState<number[] | undefined>();
-  const [chartData, setChartData] = useState<any>(null);
-  const [chartDataStatus, setChartDataStatus] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false); // Estado para o status de carregamento
-  const [isError, setIsError] = useState<boolean>(false);
-
   const [initialPageData, setInitialPageData] = useState<InitialPageModel>();
 
   useEffect(() => {
-    console.log("teste");
-    
-    if(propsAplication.project === undefined) return;
+    if (propsAplication.project === undefined) return;
     setTs(propsAplication.project?.map((item) => item.id));
     console.log("teste2");
     setDates([subtractMonths(new Date(Date.now()), 6), new Date(Date.now())]);
-    
+
     const fetchData = async () => {
-      const pagedata = await getInitialPageModel(propsAplication.project?.map((item) => item.id) ?? (ts as number[]), dates ?? [subtractMonths(new Date(Date.now()), 6), new Date(Date.now())]);
-      setInitialPageData(pagedata);
+      try {
+        const pagedata = await getInitialPageModel(
+          propsAplication.project?.map((item) => item.id) ?? (ts as number[]),
+          dates ?? [
+            subtractMonths(new Date(Date.now()), 6),
+            new Date(Date.now()),
+          ]
+        );
+
+        setInitialPageData(pagedata);
+      } catch (error) {
+        console.error("Erro ao buscar dados iniciais:", error);
+      }
     };
     fetchData();
-
   }, [propsAplication.project]);
-
-  const formatDate = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  };
-
-  useEffect(() => {
-    if (!dates || dates.length < 2 || !dates[0] || !dates[1]) return;
-
-    const start = formatDate(dates[0]);
-    const end = formatDate(dates[1]);
-
-    setFormattedDates({ start, end });
-
-    const fetchData = async () => {
-      try {
-        const response = await requestChartMatriculated(start, end, ts ?? []);
-
-        const data: Chart[] = response.data;
-
-        // Pegando apenas os meses disponíveis nos dados recebidos
-        const availableMonths = Array.from(
-          new Set(data.map((item) => item.month))
-        ).sort((a, b) => a - b);
-
-        const mesInital = dates[0]?.getMonth() ?? 0;
-        const mesFinal = dates[1]?.getMonth() ?? 0;
-        // Criando labels dinâmicos baseados nos meses retornados
-        const labels = dates[0]
-          ? getMonthNumber(mesInital, mesFinal)
-          : availableMonths.map((m) => month[m]);
-
-        const datasets = [
-          {
-            label: "Total de Matrículas Confirmadas",
-            data: availableMonths.map((m) => {
-              const found = data.find((element) => element.month === m);
-              return found ? found.n_approved : 0;
-            }),
-            borderColor: color.blue,
-            fill: false,
-          },
-          {
-            label: "Total de Matrículas",
-            data: availableMonths.map((m) => {
-              const found = data.find((element) => element.month === m);
-              return found ? found.n_registers : 0;
-            }),
-            borderColor: color.colorCardOrange,
-            fill: false,
-          },
-        ];
-
-        // const updatedChartData = new ChartLinesModel(labels, datasets);
-
-        // setChartData(updatedChartData);
-      } catch (error) {
-        console.error("Erro ao buscar dados do gráfico:", error);
-      }
-    };
-
-    fetchData();
-  }, [dates, ts]);
-
-  
-  useEffect(() => {
-    if (!dates || dates.length < 2 || !dates[0] || !dates[1]) return;
-
-    const start = formatDate(dates[0]);
-    const end = formatDate(dates[1]);
-
-    setFormattedDates({ start, end });
-
-    const fetchData = async () => {
-      try {
-        const response = await requestChartStatusClasses(start, end, ts ?? []);
-        const data: ChartStatus[] = response.data;
-        const updatedChartData = {
-          labels: data.map((item) => item.social_technology_name),
-          datasets: [
-            {
-              label: "Em andamento",
-              data: data.map((item) => item.t_pending),
-              backgroundColor: color.colorCardOrange,
-            },
-            {
-              label: "Finalizado",
-              data: data.map((item) => item.t_approved),
-              backgroundColor: color.blue,
-            },
-            {
-              label: "Cancelado",
-              data: data.map((item) => item.t_canceled),
-              backgroundColor: color.red,
-            },
-          ],
-        };
-        setChartDataStatus(updatedChartData);
-      } catch (error) {
-        console.error("Erro ao buscar dados do gráfico:", error);
-      }
-    };
-
-    fetchData();
-  }, [dates, ts]);
 
   const downloadCSV = async () => {
     try {
@@ -354,22 +205,13 @@ const InitialPage = () => {
               <Padding padding="8px" />
             </Column>
           </Row>
-          {isLoading ? (
-            <Loading />
-          ) : isError ? (
-            <div>Erro ao carregar os dados</div>
-          ) : (
-            <div>
-              <ChartLines chartLinesModel={chartData} type_chart="line" />
-              {/* <div>
-                {chartData && <ChartPrime type="line" data={chartData} />}
-              </div> */}
-            </div>
-          )}
-          
+
+          <div>
+            <ChartMatriculated dates={dates} ts={ts} />
+          </div>
         </div>
         {/* Adicionar espaço separador aqui*/}
-        <Padding padding="16px" />
+        <Padding padding="10px" />
         <div
           className="card col-12 md:col-6 lg:col-6"
           style={{ padding: "20px" }}
@@ -381,21 +223,7 @@ const InitialPage = () => {
             </Column>
           </Row>
           <div>
-            {chartDataStatus && (
-              <ChartPrime
-                type="bar"
-                data={chartDataStatus}
-                options={{
-                  indexAxis: "y",
-                  responsive: true,
-                  plugins: {
-                    legend: {
-                      position: "top",
-                    },
-                  },
-                }}
-              />
-            )}
+            <ChartStatus dates={dates} ts={ts} />
           </div>
         </div>
       </Row>
