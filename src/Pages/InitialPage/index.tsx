@@ -17,17 +17,13 @@ import { getMonthNumber, ROLE } from "../../Controller/controllerGlobal";
 
 import http from "../../Services/axios";
 import { getYear } from "../../Services/localstorage";
-//import { useFetchRequestUsersChart } from "../../Services/Users/query";
 
 import { Column, Padding, Row } from "../../Styles/styles";
 import { PropsAplicationContext } from "../../Types/types";
 import { requestChartMatriculated } from "../../Services/Chart/request";
 import { requestChartStatusClasses } from "../../Services/Chart/request";
-import { requestChartCard } from "../../Services/Chart/request";
-import { requestChartTSCard } from "../../Services/Chart/request";
 
 import color from "../../Styles/colors";
-import { ChartLinesModel } from "../../Components/Chart/ChartLines/chartLinesModel";
 import { InitialPageModel } from "./initialPageModel";
 
 //import { error } from "console";
@@ -35,6 +31,7 @@ import { InitialPageModel } from "./initialPageModel";
 //import { hasFormSubmit } from "@testing-library/user-event/dist/utils";
 
 import { getInitialPageModel } from "../../Controller/controllerInicialPage";
+
 
 export interface Chart {
   year: number;
@@ -84,7 +81,7 @@ const InitialPage = () => {
     start: "",
     end: "",
   });
-  const [LoadingTs, setLoadingTs] = useState<boolean>(true);
+  
   const [ts, setTs] = useState<number[] | undefined>();
   const [chartData, setChartData] = useState<any>(null);
   const [chartDataStatus, setChartDataStatus] = useState<any>(null);
@@ -93,12 +90,21 @@ const InitialPage = () => {
 
   const [initialPageData, setInitialPageData] = useState<InitialPageModel>();
 
-  // Ao carregar o componente, seleciona por padrão os últimos 6 meses
   useEffect(() => {
-    const pagedata = getInitialPageModel();
-    setInitialPageData(pagedata);
+    console.log("teste");
+    
+    if(propsAplication.project === undefined) return;
+    setTs(propsAplication.project?.map((item) => item.id));
+    console.log("teste2");
     setDates([subtractMonths(new Date(Date.now()), 6), new Date(Date.now())]);
-  }, []);
+    
+    const fetchData = async () => {
+      const pagedata = await getInitialPageModel(propsAplication.project?.map((item) => item.id) ?? (ts as number[]), dates ?? [subtractMonths(new Date(Date.now()), 6), new Date(Date.now())]);
+      setInitialPageData(pagedata);
+    };
+    fetchData();
+
+  }, [propsAplication.project]);
 
   const formatDate = (date: Date) => {
     const year = date.getFullYear();
@@ -165,13 +171,7 @@ const InitialPage = () => {
     fetchData();
   }, [dates, ts]);
 
-  useEffect(() => {
-    if (propsAplication.project && LoadingTs) {
-      setTs(propsAplication.project?.map((item) => item.id));
-      setLoadingTs(false);
-    }
-  }, [propsAplication.project]);
-
+  
   useEffect(() => {
     if (!dates || dates.length < 2 || !dates[0] || !dates[1]) return;
 
@@ -211,54 +211,6 @@ const InitialPage = () => {
     };
 
     fetchData();
-  }, [dates, ts]);
-
-  const [chartTSData, setChartTSData] = useState<{
-    totalMeetings: number;
-    approvedRegisterClassrooms: number;
-    totalRegisterClassrooms: number;
-    totalClassrooms: number;
-    totalProjects: number;
-    totalUserSocialTechnologies: number;
-  }>({
-    totalMeetings: 0,
-    approvedRegisterClassrooms: 0,
-    totalRegisterClassrooms: 0,
-    totalClassrooms: 0,
-    totalProjects: 0,
-    totalUserSocialTechnologies: 0,
-  });
-
-  useEffect(() => {
-    const fetchChartData = async () => {
-      if (!dates || dates.length < 2 || !dates[0] || !dates[1]) return;
-
-      const start = formatDate(dates[0]);
-      const end = formatDate(dates[1]);
-
-      setIsLoading(true);
-      setIsError(false);
-
-      try {
-        let response;
-        if (ts && ts.length > 0) {
-          response = await requestChartTSCard(start, end, ts);
-        } else {
-          const year = new Date().getFullYear();
-          response = await requestChartCard(
-            parseInt(getYear() ?? year.toString())
-          );
-        }
-        setChartTSData(response.data);
-      } catch (error) {
-        console.error("Erro ao buscar dados do gráfico:", error);
-        setIsError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchChartData();
   }, [dates, ts]);
 
   const downloadCSV = async () => {
@@ -357,35 +309,35 @@ const InitialPage = () => {
         <div className="col-12 md:col-4 lg:col-2">
           <CardQuant
             title="Total de Projetos"
-            quant={chartTSData?.totalProjects!}
+            quant={initialPageData?.cardsData?.totalProjects!}
             color="blue"
           />
         </div>
         <div className="col-12 md:col-4 lg:col-2">
           <CardQuant
             title="Total de Turmas"
-            quant={chartTSData?.totalClassrooms!}
+            quant={initialPageData?.cardsData?.totalClassrooms!}
             color="orange"
           />
         </div>
         <div className="col-12 md:col-4 lg:col-2">
           <CardQuant
             title="Total de matrículas"
-            quant={chartTSData?.totalRegisterClassrooms!}
+            quant={initialPageData?.cardsData?.totalRegisterClassrooms!}
             color="navy_blue"
           />
         </div>
         <div className="col-12 md:col-4 lg:col-2">
           <CardQuant
             title="Total de matrículas confirmadas"
-            quant={chartTSData?.approvedRegisterClassrooms!}
+            quant={initialPageData?.cardsData?.approvedRegisterClassrooms!}
             color="blue"
           />
         </div>
         <div className="col-12 md:col-4 lg:col-2">
           <CardQuant
             title="Total de encontros"
-            quant={chartTSData?.totalMeetings!}
+            quant={initialPageData?.cardsData?.totalMeetings!}
             color="orange"
           />
         </div>
@@ -414,6 +366,7 @@ const InitialPage = () => {
               </div> */}
             </div>
           )}
+          
         </div>
         {/* Adicionar espaço separador aqui*/}
         <Padding padding="16px" />
