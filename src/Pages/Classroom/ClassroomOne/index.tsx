@@ -239,10 +239,23 @@ const ClassroomOnePage = () => {
         className="card col-12 md:col-12 lg:col-12"
         style={{ padding: "20px" }}
       >
-        <h2>Gráfico Faltas em Encontros</h2>
-        <Padding padding="8px" />
-
-        <ChartPrime type="line" data={chartData}  style={{ height: '400px' }}/>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            flexDirection: "column",
+          }}
+        >
+          <h2>Gráfico Faltas em Encontros</h2>
+          <Padding padding="8px" />
+          <ChartPrime
+            type="line"
+            data={chartData}
+            style={{ height: "400px", flexGrow: 1 }}
+            width="55%"
+          />
+        </div>
       </div>
     </ContentPage>
   );

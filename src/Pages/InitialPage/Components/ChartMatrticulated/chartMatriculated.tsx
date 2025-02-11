@@ -10,7 +10,7 @@ export function ChartMatriculated({
   ts: number[] | undefined;
 }) {
   const states = ChartMatriculatedState({ dates: dates, ts: ts });
-
+  
   return (
     <div>
       {states.chartData && <Chart type="line" data={states.chartData} />}

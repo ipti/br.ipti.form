@@ -18,15 +18,18 @@ import { getYear } from "../../Services/localstorage";
 import { Padding, Row } from "../../Styles/styles";
 import { PropsAplicationContext } from "../../Types/types";
 
-import { InitialPageModel } from "./initialPageModel";
 
-import { getInitialPageModel } from "../../Controller/controllerInicialPage";
-import { ChartMatriculated } from "./Components/ChartMatrticulated/chartMatriculated";
-import { ChartStatus } from "./Components/ChartStatus/chartStatus";
+
+// import { getInitialPageModel } from "../../Controller/controllerInicialPage";
+//import { ChartMatriculated } from "./Components/ChartMatrticulated/chartMatriculated";
+//import { ChartStatus } from "./Components/ChartStatus/chartStatus";
 import { ROLE } from "../../Controller/controllerGlobal";
 import ChartsProvider, { ChartsContext } from "../../Context/Charts/context";
 import type { ChartsProps } from "../../Context/Charts/context";
 import { ChartCard } from "./Components/ChartCard";
+import { useFetchRequestUsersChart } from "../../Services/Users/query";
+import { requestChartCard, requestChartTSCard } from "../../Services/Chart/request";
+
 
 const subtractMonths = (date: Date, months: number): Date => {
   const newDate = new Date(date);
@@ -52,7 +55,7 @@ const InitialPage = () => {
 
     const fetchData = async () => {
       try {
-        const pagedata = await getInitialPageModel(
+        const pagedata = await (
           propsAplication.project?.map((item) => item.id) ?? (ts as number[]),
           dates ?? [
             subtractMonths(new Date(Date.now()), 6),
@@ -81,6 +84,55 @@ const InitialPage = () => {
       console.error("Erro ao baixar o arquivo:", error);
     }
   };
+  const [chartTSData, setChartTSData] = useState<{
+    totalMeetings: number;
+    approvedRegisterClassrooms: number;
+    totalRegisterClassrooms: number;
+    totalClassrooms: number;
+    totalProjects: number;
+    totalUserSocialTechnologies: number;
+  }>({
+    totalMeetings: 0,
+    approvedRegisterClassrooms: 0,
+    totalRegisterClassrooms: 0,
+    totalClassrooms: 0,
+    totalProjects: 0,
+    totalUserSocialTechnologies: 0,
+  });
+
+  const formatDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  useEffect(() => {
+    const fetchChartData = async () => {
+      if (!dates || dates.length < 2 || !dates[0] || !dates[1]) return;
+
+      const start = formatDate(dates[0]);
+      const end = formatDate(dates[1]);
+
+
+      try {
+        let response;
+        if (ts && ts.length > 0) {
+          response = await requestChartTSCard(start, end, ts);
+        } else {
+          const year = new Date().getFullYear();
+          response = await requestChartCard(
+            parseInt(getYear() ?? year.toString())
+          );
+        }
+        setChartTSData(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar dados do gráfico:", error);
+      } 
+    };
+
+    fetchChartData();
+  }, [dates, ts]);
 
   return (
     <ChartsProvider>
@@ -157,51 +209,53 @@ const InitialPage = () => {
           )}
         </div>
 
-        <Padding padding="16px" />
-        <div className="grid">
-          <div className="col-12 md:col-4 lg:col-2">
-            <CardQuant
-              title="Total de Ts"
-              quant={initialPageData?.cardsData?.totalUserSocialTechnologies!}
-              color="navy_blue"
-            />
-          </div>
-          <div className="col-12 md:col-4 lg:col-2">
-            <CardQuant
-              title="Total de Projetos"
-              quant={initialPageData?.cardsData?.totalProjects!}
-              color="blue"
-            />
-          </div>
-          <div className="col-12 md:col-4 lg:col-2">
-            <CardQuant
-              title="Total de Turmas"
-              quant={initialPageData?.cardsData?.totalClassrooms!}
-              color="orange"
-            />
-          </div>
-          <div className="col-12 md:col-4 lg:col-2">
-            <CardQuant
-              title="Total de matrículas"
-              quant={initialPageData?.cardsData?.totalRegisterClassrooms!}
-              color="navy_blue"
-            />
-          </div>
-          <div className="col-12 md:col-4 lg:col-2">
-            <CardQuant
-              title="Total de matrículas confirmadas"
-              quant={initialPageData?.cardsData?.approvedRegisterClassrooms!}
-              color="blue"
-            />
-          </div>
-          <div className="col-12 md:col-4 lg:col-2">
-            <CardQuant
-              title="Total de encontros"
-              quant={initialPageData?.cardsData?.totalMeetings!}
-              color="orange"
-            />
-          </div>
+        
+      <Padding padding="16px" />
+      <div className="grid">
+        <div className="col-12 md:col-4 lg:col-2">
+          <CardQuant
+            title="Total de Ts"
+            quant={chartTSData?.totalUserSocialTechnologies!}
+            color="navy_blue"
+          />
         </div>
+        <div className="col-12 md:col-4 lg:col-2">
+          <CardQuant
+            title="Total de Projetos"
+            quant={chartTSData?.totalProjects!}
+            color="blue"
+          />
+        </div>
+        <div className="col-12 md:col-4 lg:col-2">
+          <CardQuant
+            title="Total de Turmas"
+            quant={chartTSData?.totalClassrooms!}
+            color="orange"
+          />
+        </div>
+        <div className="col-12 md:col-4 lg:col-2">
+          <CardQuant
+            title="Total de matrículas"
+            quant={chartTSData?.totalRegisterClassrooms!}
+            color="navy_blue"
+          />
+        </div>
+        <div className="col-12 md:col-4 lg:col-2">
+          <CardQuant
+            title="Total de matrículas confirmadas"
+            quant={chartTSData?.approvedRegisterClassrooms!}
+            color="blue"
+          />
+        </div>
+        <div className="col-12 md:col-4 lg:col-2">
+          <CardQuant
+            title="Total de encontros"
+            quant={chartTSData?.totalMeetings!}
+            color="orange"
+          />
+        </div>
+      </div>
+
 
         <div
           className="grid"

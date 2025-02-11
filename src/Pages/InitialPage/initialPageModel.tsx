@@ -1,12 +1,8 @@
 export class InitialPageModel {
   cardsData: {
-    totalMeetings: number;
-    approvedRegisterClassrooms: number;
-    totalRegisterClassrooms: number;
-    totalClassrooms: number;
-    totalProjects: number;
-    totalUserSocialTechnologies: number;
-  };
+    name: string;
+    quant: number;
+  }[];
 
   matriculatedData: {
     labels: string[];
@@ -20,13 +16,9 @@ export class InitialPageModel {
 
   constructor(
     cardsData: {
-      totalMeetings: number;
-      approvedRegisterClassrooms: number;
-      totalRegisterClassrooms: number;
-      totalClassrooms: number;
-      totalProjects: number;
-      totalUserSocialTechnologies: number;
-    },
+      name: string;
+      quant: number;
+    }[],
     matriculatedData: {
       labels: string[];
       datasets: {
@@ -36,7 +28,6 @@ export class InitialPageModel {
         fill: boolean;
       }[];
     }
-    
   ) {
     this.cardsData = cardsData;
     this.matriculatedData = matriculatedData;

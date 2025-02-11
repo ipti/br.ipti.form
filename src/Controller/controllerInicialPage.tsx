@@ -1,4 +1,4 @@
-import { InitialPageModel } from "../Pages/InitialPage/initialPageModel";
+
 import {
   requestChartCard,
   requestChartMatriculated,
@@ -9,7 +9,6 @@ import { getMonthNumber } from "../Controller/controllerGlobal";
 import color from "../Styles/colors";
 import { ChartLinesModel } from "../Components/Chart/ChartLines/chartLinesModel";
 
-
 export interface Chart {
   year: number;
   month: number;
@@ -18,8 +17,18 @@ export interface Chart {
 }
 
 const month = [
-  "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-  "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+  "Janeiro",
+  "Fevereiro",
+  "Março",
+  "Abril",
+  "Maio",
+  "Junho",
+  "Julho",
+  "Agosto",
+  "Setembro",
+  "Outubro",
+  "Novembro",
+  "Dezembro",
 ];
 
 const formatDate = (date: Date) => {
@@ -29,7 +38,7 @@ const formatDate = (date: Date) => {
   return `${year}-${month}-${day}`;
 };
 
- const getInitialPageCardsData = async (ts: number[], dates: any[]) => {
+const getInitialPageCardsData = async (ts: number[], dates: any[]) => {
   const start = formatDate(dates[0]);
   const end = formatDate(dates[1]);
 
@@ -57,8 +66,7 @@ const formatDate = (date: Date) => {
   }
 };
 
-//todo: getInicialPageMatriculatedData
-
+todo: getInicialPageMatriculatedData
 
 const getInitialPageMatriculatedData = async (ts: number[], dates: Date[]) => {
   if (!dates || dates.length < 2 || !dates[0] || !dates[1]) return null;
@@ -70,7 +78,9 @@ const getInitialPageMatriculatedData = async (ts: number[], dates: Date[]) => {
     const response = await requestChartMatriculated(start, end, ts ?? []);
     const data: Chart[] = response.data;
 
-    const availableMonths = Array.from(new Set(data.map((item) => item.month))).sort((a, b) => a - b);
+    const availableMonths = Array.from(
+      new Set(data.map((item) => item.month))
+    ).sort((a, b) => a - b);
 
     const mesInital = dates[0]?.getMonth() ?? 0;
     const mesFinal = dates[1]?.getMonth() ?? 0;
@@ -106,11 +116,16 @@ const getInitialPageMatriculatedData = async (ts: number[], dates: Date[]) => {
     return new ChartLinesModel([], []);
   }
 };
-//todo: getInicialPageStatusClassesData
+todo: getInicialPageStatusClassesData
 
 export const getInitialPageModel = async (ts: number[], dates: any[]) => {
-  const cardsData = await getInitialPageCardsData(ts, dates);
-  const matriculatedData = (await getInitialPageMatriculatedData(ts, dates)) ?? new ChartLinesModel([], []);
+  const [cardsdata, matriculateddata] = await Promise.all([
+    getInitialPageCardsData(ts, dates),
+    getInitialPageMatriculatedData(ts, dates),
+  ]);
 
-  return new InitialPageModel(cardsData, matriculatedData);
+  if (matriculateddata) {
+    return new InitialPageModel(cardsdata, matriculateddata);
+  }
+  return new InitialPageModel(cardsdata, new ChartLinesModel([], []));
 };
