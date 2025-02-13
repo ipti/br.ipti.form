@@ -20,7 +20,6 @@ import { PropsAplicationContext } from "../../Types/types";
 
 
 
-// import { getInitialPageModel } from "../../Controller/controllerInicialPage";
 //import { ChartMatriculated } from "./Components/ChartMatrticulated/chartMatriculated";
 //import { ChartStatus } from "./Components/ChartStatus/chartStatus";
 import { ROLE } from "../../Controller/controllerGlobal";
@@ -44,31 +43,17 @@ const InitialPage = () => {
 
   const [dates, setDates] = useState<Nullable<(Date | null)[]>>(null);
   const [ts, setTs] = useState<number[] | undefined>();
-  const [initialPageData, setInitialPageData] = useState<InitialPageModel>();
 
   const chartData = useContext(ChartsContext) as ChartsProps;
 
   useEffect(() => {
-    if (propsAplication.project === undefined) return;
-    setTs(propsAplication.project?.map((item) => item.id));
     setDates([subtractMonths(new Date(Date.now()), 6), new Date(Date.now())]);
+  }, []);
 
-    const fetchData = async () => {
-      try {
-        const pagedata = await (
-          propsAplication.project?.map((item) => item.id) ?? (ts as number[]),
-          dates ?? [
-            subtractMonths(new Date(Date.now()), 6),
-            new Date(Date.now()),
-          ]
-        );
-
-        setInitialPageData(pagedata);
-      } catch (error) {
-        console.error("Erro ao buscar dados iniciais:", error);
-      }
-    };
-    fetchData();
+  useEffect(() => {
+    if (propsAplication.project) {
+      setTs(propsAplication.project?.map((item) => item.id));
+    }
   }, [propsAplication.project]);
 
   const downloadCSV = async () => {
@@ -114,6 +99,8 @@ const InitialPage = () => {
       const start = formatDate(dates[0]);
       const end = formatDate(dates[1]);
 
+      console.log("start", ts);	
+      console.log("PROP", propsAplication.project);
 
       try {
         let response;
@@ -132,7 +119,7 @@ const InitialPage = () => {
     };
 
     fetchChartData();
-  }, [dates, ts]);
+  }, [dates, propsAplication.project, ts]);
 
   return (
     <ChartsProvider>
