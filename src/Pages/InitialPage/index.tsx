@@ -8,7 +8,7 @@ import CardQuant from "../../Components/Chart/CardQuant";
 import ContentPage from "../../Components/ContentPage";
 
 import MultiSelectComponet from "../../Components/MultiSelect";
-//import Loading from "../../Components/Loading";
+
 import CalendarComponent from "../../Components/Calendar";
 import { AplicationContext } from "../../Context/Aplication/context";
 
@@ -19,14 +19,11 @@ import { Padding, Row } from "../../Styles/styles";
 import { PropsAplicationContext } from "../../Types/types";
 
 
-
-//import { ChartMatriculated } from "./Components/ChartMatrticulated/chartMatriculated";
-//import { ChartStatus } from "./Components/ChartStatus/chartStatus";
 import { ROLE } from "../../Controller/controllerGlobal";
-import ChartsProvider, { ChartsContext } from "../../Context/Charts/context";
-import type { ChartsProps } from "../../Context/Charts/context";
+import ChartsProvider from "../../Context/Charts/context";
+
 import { ChartCard } from "./Components/ChartCard";
-import { useFetchRequestUsersChart } from "../../Services/Users/query";
+
 import { requestChartCard, requestChartTSCard } from "../../Services/Chart/request";
 
 
@@ -44,7 +41,6 @@ const InitialPage = () => {
   const [dates, setDates] = useState<Nullable<(Date | null)[]>>(null);
   const [ts, setTs] = useState<number[] | undefined>();
 
-  const chartData = useContext(ChartsContext) as ChartsProps;
 
   useEffect(() => {
     setDates([subtractMonths(new Date(Date.now()), 6), new Date(Date.now())]);
@@ -98,9 +94,6 @@ const InitialPage = () => {
 
       const start = formatDate(dates[0]);
       const end = formatDate(dates[1]);
-
-      console.log("start", ts);	
-      console.log("PROP", propsAplication.project);
 
       try {
         let response;
