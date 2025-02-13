@@ -1,60 +1,36 @@
-import { Button } from "primereact/button";
-import { Chart as ChartPrime } from "primereact/chart";
-import { Nullable } from "primereact/ts-helpers";
 import { useContext, useEffect, useState } from "react";
+
+import { Button } from "primereact/button";
+//import { MultiSelect } from 'primereact/multiselect';
+import { Nullable } from "primereact/ts-helpers";
 
 import CardQuant from "../../Components/Chart/CardQuant";
 import ContentPage from "../../Components/ContentPage";
-import DropdownComponent from "../../Components/Dropdown";
-import Loading from "../../Components/Loading";
-import CalendarComponent from "../../Components/Calendar";
 
+import MultiSelectComponet from "../../Components/MultiSelect";
+
+import CalendarComponent from "../../Components/Calendar";
 import { AplicationContext } from "../../Context/Aplication/context";
-import { ROLE } from "../../Controller/controllerGlobal";
 
 import http from "../../Services/axios";
 import { getYear } from "../../Services/localstorage";
-import { useFetchRequestUsersChart } from "../../Services/Users/query";
 
-import { Column, Padding, Row } from "../../Styles/styles";
+import { Padding, Row } from "../../Styles/styles";
 import { PropsAplicationContext } from "../../Types/types";
-import { requestChartMatriculated } from "../../Services/Chart/request";
-import color from "../../Styles/colors";
 
-export interface Chart {
-  year: number;
-  month: number;
-  n_registers: number;
-  n_approved: number;
-}
 
-const month = [
-  "Janeiro",
-  "Fevereiro",
-  "Março",
-  "Abril",
-  "Maio",
-  "Junho",
-  "Julho",
-  "Agosto",
-  "Setembro",
-  "Outubro",
-  "Novembro",
-  "Dezembro",
-];
+import { ROLE } from "../../Controller/controllerGlobal";
+import ChartsProvider from "../../Context/Charts/context";
+
+import { ChartCard } from "./Components/ChartCard";
+
+import { requestChartCard, requestChartTSCard } from "../../Services/Chart/request";
+
 
 const subtractMonths = (date: Date, months: number): Date => {
   const newDate = new Date(date);
   newDate.setMonth(newDate.getMonth() - months);
   return newDate;
-};
-
-const renderChart = (data: Chart[], type: number) => {
-  return month.map((item, index) => {
-    const found = data.find((element) => element.month === index);
-    if (!found) return 0;
-    return type === 1 ? found.n_approved : found.n_registers;
-  });
 };
 
 const InitialPage = () => {
@@ -63,72 +39,18 @@ const InitialPage = () => {
   ) as PropsAplicationContext;
 
   const [dates, setDates] = useState<Nullable<(Date | null)[]>>(null);
-  const [, setFormattedDates] = useState<{
-    start: string;
-    end: string;
-  }>({
-    start: "",
-    end: "",
-  });
-  const [ts, setTs] = useState<number | undefined>();
-  const [chartData, setChartData] = useState<any>(null);
+  const [ts, setTs] = useState<number[] | undefined>();
 
-  // Ao carregar o componente, seleciona por padrão os últimos 6 meses
+
   useEffect(() => {
     setDates([subtractMonths(new Date(Date.now()), 6), new Date(Date.now())]);
   }, []);
 
   useEffect(() => {
-    if (!dates || dates.length < 2 || !dates[0] || !dates[1]) return;
-
-    const formatDate = (date: Date) => {
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0");
-      const day = String(date.getDate()).padStart(2, "0");
-      return `${year}-${month}-${day}`;
-    };
-
-    const start = formatDate(dates[0]);
-    const end = formatDate(dates[1]);
-
-    setFormattedDates({ start, end });
-
-    const fetchData = async () => {
-      try {
-        const response = await requestChartMatriculated(start, end);
-
-        const data: Chart[] = response.data;
-        const updatedChartData = {
-          labels: month,
-          datasets: [
-            {
-              label: "Total de Matrículas Confirmadas",
-              data: renderChart(data, 1),
-              borderColor: color.blue,
-              fill: false,
-            },
-            {
-              label: "Total de Matrículas",
-              data: renderChart(data, 2),
-              borderColor: color.colorCardOrange,
-              fill: false,
-            },
-          ],
-        };
-        setChartData(updatedChartData);
-      } catch (error) {
-        console.error("Erro ao buscar dados do gráfico:", error);
-      }
-    };
-
-    fetchData();
-  }, [dates]);
-
-  const {
-    data: chart,
-    isLoading,
-    isError,
-  } = useFetchRequestUsersChart(ts?.toString());
+    if (propsAplication.project) {
+      setTs(propsAplication.project?.map((item) => item.id));
+    }
+  }, [propsAplication.project]);
 
   const downloadCSV = async () => {
     try {
@@ -143,115 +65,199 @@ const InitialPage = () => {
       console.error("Erro ao baixar o arquivo:", error);
     }
   };
+  const [chartTSData, setChartTSData] = useState<{
+    totalMeetings: number;
+    approvedRegisterClassrooms: number;
+    totalRegisterClassrooms: number;
+    totalClassrooms: number;
+    totalProjects: number;
+    totalUserSocialTechnologies: number;
+  }>({
+    totalMeetings: 0,
+    approvedRegisterClassrooms: 0,
+    totalRegisterClassrooms: 0,
+    totalClassrooms: 0,
+    totalProjects: 0,
+    totalUserSocialTechnologies: 0,
+  });
 
-  if (isLoading) return <Loading />;
-  if (isError) return <div>Erro ao carregar os dados</div>;
+  const formatDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  useEffect(() => {
+    const fetchChartData = async () => {
+      if (!dates || dates.length < 2 || !dates[0] || !dates[1]) return;
+
+      const start = formatDate(dates[0]);
+      const end = formatDate(dates[1]);
+
+      try {
+        let response;
+        if (ts && ts.length > 0) {
+          response = await requestChartTSCard(start, end, ts);
+        } else {
+          const year = new Date().getFullYear();
+          response = await requestChartCard(
+            parseInt(getYear() ?? year.toString())
+          );
+        }
+        setChartTSData(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar dados do gráfico:", error);
+      } 
+    };
+
+    fetchChartData();
+  }, [dates, propsAplication.project, ts]);
 
   return (
-    <ContentPage
-      title={`Bem vindo, ${propsAplication.user?.name}!`}
-      description="Visualização dos dados gerais do meuBen."
-    >
-      {propsAplication.user?.role === ROLE.ADMIN && (
-        <Row id="end">
-          <Button
-            label="Baixar CSV"
-            icon="pi pi-download"
-            iconPos="left"
-            onClick={downloadCSV}
-          />
-        </Row>
-      )}
-      <Padding padding="8px" />
-      {propsAplication.project && (
-        <Row id="end">
-          <DropdownComponent
-            options={[
-              ...propsAplication.project,
-              { id: undefined, name: "Todos" },
-            ]}
-            optionsLabel="name"
-            optionsValue="id"
-            value={ts}
-            onChange={(e) => setTs(e.target.value)}
-            placerholder="Filtrar por Tecnologia"
-          />
-        </Row>
-      )}
+    <ChartsProvider>
+      <ContentPage
+        title={`Bem vindo, ${propsAplication.user?.name}!`}
+        description="Visualização dos dados gerais do meuBen."
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "stretch",
+            width: "100%",
+            gap: "10px",
+            flexWrap: "wrap",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "stretch",
+              gap: "10px",
+              flex: 1,
+            }}
+          >
+            {propsAplication.project && (
+              <div
+                style={{ flex: 2, display: "flex", flexDirection: "column" }}
+              >
+                <MultiSelectComponet
+                  options={[...propsAplication.project]}
+                  optionsLabel="name"
+                  optionsValue="id"
+                  value={ts}
+                  onChange={(e) => setTs(e.target.value)}
+                  placerholder="Filtrar por Tecnologia Social"
+                />
+              </div>
+            )}
+            {propsAplication.project && (
+              <div
+                style={{ flex: 1, display: "flex", flexDirection: "column" }}
+              >
+                <CalendarComponent
+                  value={dates}
+                  onChange={(e: any) => setDates(e.value)}
+                  selectionMode="range"
+                  placeholder="Selecione o período"
+                  dateFormat="dd/mm/yy"
+                  name="dates"
+                />
+              </div>
+            )}
+          </div>
 
+          {propsAplication.user?.role === ROLE.ADMIN && (
+            <Row
+              id="end"
+              style={{
+                marginLeft: "auto",
+                flexShrink: 0,
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+              }}
+            >
+              <Button
+                label="Baixar CSV"
+                icon="pi pi-download"
+                iconPos="left"
+                onClick={downloadCSV}
+              />
+            </Row>
+          )}
+        </div>
+
+        
       <Padding padding="16px" />
       <div className="grid">
         <div className="col-12 md:col-4 lg:col-2">
           <CardQuant
             title="Total de Ts"
-            quant={chart?.totalUserSocialTechnologies!}
+            quant={chartTSData?.totalUserSocialTechnologies!}
             color="navy_blue"
           />
         </div>
         <div className="col-12 md:col-4 lg:col-2">
           <CardQuant
             title="Total de Projetos"
-            quant={chart?.totalProjects!}
+            quant={chartTSData?.totalProjects!}
             color="blue"
           />
         </div>
         <div className="col-12 md:col-4 lg:col-2">
           <CardQuant
             title="Total de Turmas"
-            quant={chart?.totalClassrooms!}
+            quant={chartTSData?.totalClassrooms!}
             color="orange"
           />
         </div>
         <div className="col-12 md:col-4 lg:col-2">
           <CardQuant
             title="Total de matrículas"
-            quant={chart?.totalRegisterClassrooms!}
+            quant={chartTSData?.totalRegisterClassrooms!}
             color="navy_blue"
           />
         </div>
         <div className="col-12 md:col-4 lg:col-2">
           <CardQuant
             title="Total de matrículas confirmadas"
-            quant={chart?.approvedRegisterClassrooms!}
+            quant={chartTSData?.approvedRegisterClassrooms!}
             color="blue"
           />
         </div>
         <div className="col-12 md:col-4 lg:col-2">
           <CardQuant
             title="Total de encontros"
-            quant={chart?.totalMeetings!}
+            quant={chartTSData?.totalMeetings!}
             color="orange"
           />
         </div>
       </div>
 
-      <Padding padding="20px" />
-      <div
-        className="card col-12 md:col-12 lg:col-6"
-        style={{ padding: "20px" }}
-      >
-        <Row id="start">
-          <Column>
-            <h2>Gráfico de Matrículas</h2>
-            <Padding padding="8px" />
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <p style={{ marginBottom: "0", whiteSpace: "nowrap" }}>
-                Selecione o período:
-              </p>
-              <CalendarComponent
-                value={dates}
-                onChange={(e: any) => setDates(e.value)}
-                selectionMode="range"
-                placeholder="Selecione o período"
-                dateFormat="dd/mm/yy"
-                name="dates"
-              />
-            </div>
-          </Column>
-        </Row>
-        <div>{chartData && <ChartPrime type="line" data={chartData} />}</div>
-      </div>
-    </ContentPage>
+
+        <div
+          className="grid"
+          style={{ display: "flex", justifyContent: "space-between" }}
+        >
+          <ChartCard
+            title="Gráfico de Matrículas Total"
+            type="line"
+            dates={dates}
+            ts={ts}
+          />
+          <ChartCard
+            title="Status de Matrículas"
+            type="bar"
+            dates={dates}
+            ts={ts}
+          />
+        </div>
+
+        <Padding padding="16px" />
+      </ContentPage>
+    </ChartsProvider>
   );
 };
 

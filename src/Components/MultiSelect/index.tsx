@@ -1,7 +1,7 @@
-import { Dropdown } from "primereact/dropdown";
-import { PropsDropdown } from "../../Types/types";
+import { MultiSelect } from "primereact/multiselect";
+import { PropsMultiSelect } from "../../Types/types";
 
-const DropdownComponent = ({
+const MultiSelectComponet = ({
   value,
   onChange,
   options,
@@ -10,20 +10,20 @@ const DropdownComponent = ({
   name,
   optionsValue,
   disabled,
-}: PropsDropdown) => {
+}: PropsMultiSelect) => {
   return (
-    <Dropdown
+    <MultiSelect
       name={name}
       value={value}
       onChange={onChange}
       options={options}
-      disabled={disabled}
       optionValue={optionsValue}
       optionLabel={optionsLabel ?? "name"}
-      placeholder={placerholder}
+      filter placeholder={placerholder}
+      maxSelectedLabels={3}
       className="w-full"
     />
   );
 };
 
-export default DropdownComponent;
+export default MultiSelectComponet;
