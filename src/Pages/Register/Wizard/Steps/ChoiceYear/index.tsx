@@ -20,6 +20,7 @@ const ChoiceYear = () => {
   const props = useContext(RegisterContext) as RegisterTypes;
 
   const years = [
+    { value: 2025 },
     { value: 2024 },
     { value: 2023 },
     { value: 2022 },
