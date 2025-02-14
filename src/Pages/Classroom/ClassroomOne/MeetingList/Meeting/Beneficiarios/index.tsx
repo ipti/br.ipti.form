@@ -20,6 +20,7 @@ import {
 import {
   Status,
   convertImageUrlToBase64,
+  formatCPF,
   loadImageFileAsBase64,
 } from "../../../../../../Controller/controllerGlobal";
 import styles from "../../../../../../Styles";
@@ -151,9 +152,9 @@ const Beneficiarios = () => {
 
     const createTableBody = (registrationsSubset: any, startIndex: any) => {
       return [
-        ["Nº ", "NOME COMPLETO", "ASSINATURA"],
+        ["Nº ", "NOME COMPLETO", "CPF", "ASSINATURA"],
         ...registrationsSubset.map((item: any, index: number) => {
-          return [startIndex + index + 1, item.registration.name, ""];
+          return [startIndex + index + 1, item.registration.name, item.registration.cpf ? formatCPF(item.registration.cpf) : "", ""];
         }),
       ];
     };
@@ -194,7 +195,7 @@ const Beneficiarios = () => {
               style: "tableExample",
               marginTop: 16,
               table: {
-                widths: ["3%", "50%", "47%"],
+                widths: ["2%", "39%", "15%", "44%"],
                 body: createTableBody(
                   registrations.slice(index, index + pageSize),
                   index
@@ -219,6 +220,7 @@ const Beneficiarios = () => {
         },
         tableExample: {
           margin: [0, 5, 0, 15],
+          fontSize: 10
         },
       },
       header: (currentPage: number, pageCount: number) => {
@@ -367,6 +369,12 @@ const Beneficiarios = () => {
               align="center"
               header="Nome"
             ></Column>
+            <Column
+              body={(row) => <>{formatCPF(row.registration.cpf ?? "")}</>}
+              align={"center"}
+              header="CPF"
+            >
+            </Column>
             <Column
               body={bodyRegisterFouls}
               align="center"

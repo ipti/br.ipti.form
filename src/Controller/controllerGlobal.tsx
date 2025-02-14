@@ -223,3 +223,11 @@ export const getMonthNumber = (startMonth: number, endMonth: number) => {
     ];
   }
 };
+
+export function formatCPF(cpf: string) {
+  cpf = cpf.replace(/\D/g, ""); // Remove tudo que não for número
+  cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2"); // Coloca um ponto entre o terceiro e o quarto dígitos
+  cpf = cpf.replace(/(\d{3})(\d)/, "$1.$2"); // Coloca um ponto entre o sexto e o sétimo dígitos
+  cpf = cpf.replace(/(\d{3})(\d{1,2})$/, "$1-$2"); // Coloca um hífen antes dos últimos dois dígitos
+  return cpf;
+}
