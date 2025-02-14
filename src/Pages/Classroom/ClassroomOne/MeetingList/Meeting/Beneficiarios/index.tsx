@@ -195,7 +195,7 @@ const Beneficiarios = () => {
               style: "tableExample",
               marginTop: 16,
               table: {
-                widths: ["2%", "39%", "15%", "44%"],
+                widths: ["3%", "40%", "15%", "42%"],
                 body: createTableBody(
                   registrations.slice(index, index + pageSize),
                   index
