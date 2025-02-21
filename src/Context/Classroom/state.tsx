@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { ControllerClassroom } from "../../Services/Classroom/controller"
 import { useFetchRequestClassroom } from "../../Services/Classroom/query"
-import { idProject } from "../../Services/localstorage"
+import { GetIdProject, idProject } from "../../Services/localstorage"
 import { useFetchRequestTsLists } from "../../Services/Project/query"
 import { Tsone } from "../Project/ProjectList/type"
 import { ChangeClassroom, CreateClassroom } from "./type"
@@ -22,15 +22,19 @@ export const ClassroomState = () => {
     useEffect(() => {
         if (tsOneRequest) {
             setTsOne(tsOneRequest)
-            setProject(tsOneRequest?.project[0]?.id)
-            idProject(tsOneRequest?.project[0]?.id)
+            if (GetIdProject() && tsOneRequest?.project.find((item: any) => item.id === parseInt(GetIdProject() ?? "0"))) {
+                setProject(parseInt(GetIdProject() ?? "0"))
+            } else {
+                setProject(tsOneRequest?.project[0]?.id)
+                idProject(tsOneRequest?.project[0]?.id)
+            }
         }
     }, [tsOneRequest])
 
     const { requestCreateClassroomMutation, requestChangeClassroomMutation, requestDeleteClassroomMutation, requestUpdateClassroomMutation } = ControllerClassroom()
 
-    const UpdateClassroom = (body: {name: string, status: string}, id: number) => {
-        requestUpdateClassroomMutation.mutate({data: body, id: id})
+    const UpdateClassroom = (body: { name: string, status: string }, id: number) => {
+        requestUpdateClassroomMutation.mutate({ data: body, id: id })
     }
 
 
@@ -53,5 +57,5 @@ export const ClassroomState = () => {
         requestDeleteClassroomMutation.mutate(id)
     }
 
-    return { initialValue, CreateClassroom,classrooms, UpdateClassroom, DeleteClassroom, isLoading, tsOne, project, setProject, ChangeClassroom }
+    return { initialValue, CreateClassroom, classrooms, UpdateClassroom, DeleteClassroom, isLoading, tsOne, project, setProject, ChangeClassroom }
 }
