@@ -7,7 +7,9 @@ import { useContext, useState } from "react";
 import styled from "styled-components";
 import * as Yup from "yup";
 import avatar from "../../../Assets/images/avatar.svg";
+import CalendarComponent from "../../../Components/Calendar";
 import DropdownComponent from "../../../Components/Dropdown";
+import Icon from "../../../Components/Icon";
 import MaskInput from "../../../Components/InputMask";
 import InputAddress from "../../../Components/InputsAddress";
 import Loading from "../../../Components/Loading";
@@ -21,18 +23,16 @@ import {
   formatarData,
   getErrorsAsArray,
   getStatus,
-  isWithinOneYear,
+  isDateTerm,
   kinship,
-  typesex,
+  typesex
 } from "../../../Controller/controllerGlobal";
+import { validaCPF } from "../../../Controller/controllerValidCPF";
 import styles from "../../../Styles";
 import color from "../../../Styles/colors";
 import { Container, Padding, Row } from "../../../Styles/styles";
-import ModalCreateRegisterClassroom from "./ModalCreateRegisterClassroom";
-import { validaCPF } from "../../../Controller/controllerValidCPF";
 import ModalAddTerm from "./ModalAddTerm";
-import Icon from "../../../Components/Icon";
-import CalendarComponent from "../../../Components/Calendar";
+import ModalCreateRegisterClassroom from "./ModalCreateRegisterClassroom";
 
 
 const BeneficiariesEdit = () => {
@@ -161,7 +161,6 @@ const BeneficiariesEditPage = () => {
           }}
         >
           {({ values, handleChange, errors, touched, setFieldValue }) => {
-            console.log(values)
             const errorArray = getErrorsAsArray(errors);
             return (
               <Form>
@@ -424,7 +423,7 @@ const BeneficiariesEditPage = () => {
                   <Column body={(row) => { return (<>{formatarData(row?.dateTerm!)}</>) }} header="Data de assinatura"></Column>
                   <Column body={(row) => { return (<>{formatarData(row?.dateValid ?? "")}</>) }} header="Data de validade"></Column>
 
-                  <Column body={(row) => { return (<>{isWithinOneYear(new Date(Date.now()), row?.dateTerm!, row?.dateValid!) ? "Termo ativo" : "Termo vencido"}</>) }} header="Status"></Column>
+                  <Column body={(row) => { return (<>{isDateTerm(row?.dateValid!) ? "Termo ativo" : "Termo vencido"}</>) }} header="Status"></Column>
                   <Column align={"center"} body={(row) => { return (<Row id="center" onClick={() => {window.open(row.blob_file.blob_url)}} style={{cursor: "pointer"}}><Icon icon="pi pi-download" /></Row>) }} header="Ações"></Column>
 
                 </DataTable>

@@ -112,7 +112,6 @@ const Beneficiarios = () => {
     return array;
   };
 
-  console.log(FilterId(selectedProducts))
 
   const bodyRegisterFouls = (dataRow: RegisterClassroom) => {
     return (

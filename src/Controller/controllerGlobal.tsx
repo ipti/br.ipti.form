@@ -46,6 +46,15 @@ export function isWithinOneYear(date1: any, date2: any, dateValid?: any) {
   return timeDifference <= oneYearInMilliseconds; // Verifica se está dentro de um ano
 }
 
+export function isDateTerm(dateValid?: any) {
+
+
+  const dateNow = Date.now();
+  const dateValidTerm = new Date(dateValid).getTime()
+
+  return dateValidTerm >= dateNow; // Verifica se está dentro de um ano
+}
+
 export function converterData(data: string) {
   // Divide a string pelo separador "/"
   const partes = data.split("/");

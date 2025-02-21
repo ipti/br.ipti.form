@@ -55,7 +55,6 @@ const ListClassroomPage = () => {
             optionsValue="id"
             value={props.project}
             onChange={(e) => {
-              console.log(e.value);
               props.setProject(e.value);
               idProject(e.value);
             }}

@@ -28,7 +28,6 @@ const InputsUser = ({
   const { data: projects } = useFetchRequestSocialTechnologyLists();
 
   const props = useContext(AplicationContext) as PropsAplicationContext;
-  console.log(errors);
   return (
     <Form>
       <div className="grid">

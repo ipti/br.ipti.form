@@ -40,7 +40,6 @@ const RegistrationListPage = () => {
   };
 
 
-  console.log(props.registrations)
   return (
     <ContentPage title={classroom?.name} description="Visualização das matriculas realizadas na turma.">
       <Row id="space-between">
