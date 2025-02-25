@@ -1,145 +1,163 @@
-import { ChangeClassroom, CreateClassroom } from "../../Context/Classroom/type";
-import http from "../axios";
-import { getYear, logout } from "../localstorage";
+import { ChangeClassroom, CreateClassroom } from '../../Context/Classroom/type'
+import http from '../axios'
+import { getYear, logout } from '../localstorage'
 
 export const requestCreateClassroom = (data: CreateClassroom) => {
   return http
-    .post("/classroom", data)
-    .then((response) => response.data)
-    .catch((err) => {
+    .post('/classroom', data)
+    .then(response => response.data)
+    .catch(err => {
       if (err.response.status === 401) {
-        logout();
-        window.location.reload();
+        logout()
+        window.location.reload()
       }
-      alert(err.response.message);
-      throw err;
-    });
-};
+      alert(err.response.message)
+      throw err
+    })
+}
 
 export const requestClassroom = (idProject: number) => {
-  let path = "/classroom-bff";
+  let path = '/classroom-bff'
   if (idProject) {
     return http
       .get(path, {
         params: {
           idProject: idProject,
-          year: getYear(),
-        },
-      })
-      .then((response) => response.data)
-      .catch((err) => {
-        if (err.response.status === 401) {
-          logout();
-          window.location.reload();
+          year: getYear()
         }
-        throw err;
-      });
+      })
+      .then(response => response.data)
+      .catch(err => {
+        if (err.response.status === 401) {
+          logout()
+          window.location.reload()
+        }
+        throw err
+      })
   }
-};
+}
 
 export const requestClassroomOne = (id: number) => {
-  let path = "/classroom-bff/one";
+  let path = '/classroom-bff/one'
   return http
     .get(path, { params: { idClassroom: id } })
-    .then((response) => response.data)
-    .catch((err) => {
+    .then(response => response.data)
+    .catch(err => {
       if (err.response.status === 401) {
-        logout();
-        window.location.reload();
+        logout()
+        window.location.reload()
       }
-      throw err;
-    });
-};
+      throw err
+    })
+}
 
 export const requestClassroomReport = (id: number) => {
-  let path = "/classroom-bff/report";
+  let path = '/classroom-bff/report'
   return http
     .get(path, { params: { idClassroom: id } })
-    .then((response) => response.data)
-    .catch((err) => {
+    .then(response => response.data)
+    .catch(err => {
       if (err.response.status === 401) {
-        logout();
-        window.location.reload();
+        logout()
+        window.location.reload()
       }
-      throw err;
-    });
-};
+      throw err
+    })
+}
 
-export const requestUpdateClassroom = (id: number, data: { name: string, status: string }) => {
-  let path = "/classroom/";
+export const requestUpdateClassroom = (
+  id: number,
+  data: { name: string; status: string }
+) => {
+  let path = '/classroom/'
   return http
     .put(path + id, data)
-    .then((response) => response.data)
-    .catch((err) => {
+    .then(response => response.data)
+    .catch(err => {
       if (err.response.status === 401) {
-        logout();
-        window.location.reload();
+        logout()
+        window.location.reload()
       }
-      throw err;
-    });
-};
+      throw err
+    })
+}
 
 export const requestChangeClassroom = (data: ChangeClassroom) => {
   let path =
-    "/classroom-bff/change-project?idClassroom=" +
+    '/classroom-bff/change-project?idClassroom=' +
     data.idClassroom +
-    "&idProject=" +
-    data.idProject;
+    '&idProject=' +
+    data.idProject
   return http
     .put(path)
-    .then((response) => response.data)
-    .catch((err) => {
+    .then(response => response.data)
+    .catch(err => {
       if (err.response.status === 401) {
-        logout();
-        window.location.reload();
+        logout()
+        window.location.reload()
       }
-      throw err;
-    });
-};
+      throw err
+    })
+}
 
 export const requestClassroomRegistration = (id: number) => {
-  let path = "/registration-classroom-bff";
+  let path = '/registration-classroom-bff'
   return http
     .get(path, {
       params: {
-        idClassroom: id,
-      },
-    })
-    .then((response) => response.data)
-    .catch((err) => {
-      if (err.response.status === 401) {
-        logout();
-        window.location.reload();
+        idClassroom: id
       }
-      throw err;
-    });
-};
+    })
+    .then(response => response.data)
+    .catch(err => {
+      if (err.response.status === 401) {
+        logout()
+        window.location.reload()
+      }
+      throw err
+    })
+}
 
 export const requestClassroomRegistrationOne = (id: number) => {
-  let path = "/registration/" + id;
+  let path = '/registration/' + id
   return http
     .get(path)
-    .then((response) => response.data)
-    .catch((err) => {
+    .then(response => response.data)
+    .catch(err => {
       if (err.response.status === 401) {
-        logout();
-        window.location.reload();
+        logout()
+        window.location.reload()
       }
-      throw err;
-    });
-};
+      throw err
+    })
+}
 
 export const requestDeleteClassroom = (id: number) => {
-  let path = "/classroom/" + id;
+  let path = '/classroom/' + id
   return http
     .delete(path)
-    .then((response) => response.data)
-    .catch((err) => {
+    .then(response => response.data)
+    .catch(err => {
       if (err.response.status === 401) {
-        logout();
-        window.location.reload();
+        logout()
+        window.location.reload()
       }
-      alert(err.response.message);
-      throw err;
-    });
-};
+      alert(err.response.message)
+      throw err
+    })
+}
+
+export const requestCountStates = (id: number) => {
+  let path = '/classroom-bff/count-states'
+  console.log({ id })
+  return http
+    .get(path, { params: { idClassroom: id } })
+    .then(response => response.data)
+    .catch(err => {
+      if (err.response.status === 401) {
+        logout()
+        window.location.reload()
+      }
+      throw err
+    })
+}

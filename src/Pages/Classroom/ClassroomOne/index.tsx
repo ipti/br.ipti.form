@@ -1,105 +1,113 @@
-import { Form, Formik } from "formik";
-import { Button } from "primereact/button";
-import { Chart as ChartPrime } from "primereact/chart";
+import { Form, Formik } from 'formik'
+import { Button } from 'primereact/button'
+import { Chart as ChartPrime } from 'primereact/chart'
 
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect } from 'react'
 
-import { useNavigate, useParams } from "react-router-dom";
-import pessoas from "../../../Assets/images/pessoasgray.svg";
+import { useNavigate, useParams } from 'react-router-dom'
+import pessoas from '../../../Assets/images/pessoasgray.svg'
 
-import report from "../../../Assets/images/report-svgrepo-com.svg";
-import meeting from "../../../Assets/images/school_teacher.svg";
-import TextInput from "../../../Components/TextInput";
+import report from '../../../Assets/images/report-svgrepo-com.svg'
+import meeting from '../../../Assets/images/school_teacher.svg'
+import TextInput from '../../../Components/TextInput'
 
-import ContentPage from "../../../Components/ContentPage";
-import DropdownComponent from "../../../Components/Dropdown";
-import Loading from "../../../Components/Loading";
-import { AplicationContext } from "../../../Context/Aplication/context";
+import ContentPage from '../../../Components/ContentPage'
+import DropdownComponent from '../../../Components/Dropdown'
+import Loading from '../../../Components/Loading'
+import { AplicationContext } from '../../../Context/Aplication/context'
 import ClassroomProvider, {
-  ClassroomContext,
-} from "../../../Context/Classroom/context";
-import { ClassroomTypes } from "../../../Context/Classroom/type";
+  ClassroomContext
+} from '../../../Context/Classroom/context'
+import { ClassroomTypes } from '../../../Context/Classroom/type'
 import {
   getStatusClassroomList,
-  ROLE,
-} from "../../../Controller/controllerGlobal";
-import { useFetchRequestClassroomOne } from "../../../Services/Classroom/query";
-import { Column, Padding, Row } from "../../../Styles/styles";
-import { PropsAplicationContext } from "../../../Types/types";
-import CardItensClassrooom from "./CardItensClassroom";
-import ModalChange from "./ModalChangeClaassroom";
-import color from "../../../Styles/colors";
+  ROLE
+} from '../../../Controller/controllerGlobal'
+import { useFetchRequestClassroomOne } from '../../../Services/Classroom/query'
+import { Column, Padding, Row } from '../../../Styles/styles'
+import { PropsAplicationContext } from '../../../Types/types'
+import CardItensClassrooom from './CardItensClassroom'
+import ModalChange from './ModalChangeClaassroom'
+import color from '../../../Styles/colors'
 
-import { requestChartFrequency } from "../../../Services/Chart/request";
+import { requestChartFrequency } from '../../../Services/Chart/request'
+import CardQuant from '../../../Components/Chart/CardQuant'
+import { requestCountStates } from '../../../Services/Classroom/request'
 
 const ClassroomOne = () => {
   return (
     <ClassroomProvider>
       <ClassroomOnePage />
     </ClassroomProvider>
-  );
-};
+  )
+}
 
 const ClassroomOnePage = () => {
-  const history = useNavigate();
-  const { id } = useParams();
-  const props = useContext(ClassroomContext) as ClassroomTypes;
-  const { data: classroom } = useFetchRequestClassroomOne(parseInt(id!));
-  const [edit, setEdit] = useState(false);
-  const [visible, setVisible] = useState(false);
+  const history = useNavigate()
+  const { id } = useParams()
+  const props = useContext(ClassroomContext) as ClassroomTypes
+  const { data: classroom } = useFetchRequestClassroomOne(parseInt(id!))
+  const [edit, setEdit] = useState(false)
+  const [visible, setVisible] = useState(false)
+  const [cards, setCards] = useState<{ number: number; status: string }[]>([])
 
-  const [chartData, setChartData] = useState({});
+  const [chartData, setChartData] = useState({})
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await requestChartFrequency(classroom?.id);
+        const response = await requestChartFrequency(classroom?.id)
 
         if (!response?.data || response.data.length === 0) {
-          console.warn("Nenhum dado válido retornado da API.");
-          return;
+          console.warn('Nenhum dado válido retornado da API.')
+          return
         }
 
         const data: {
-          name: string;
-          frequency: number;
-          beneficiarios: number;
-        }[] = response.data;
+          name: string
+          frequency: number
+          beneficiarios: number
+        }[] = response.data
 
         const updatedChartData = {
-          labels: data.map((item) => item.name),
+          labels: data.map(item => item.name),
           datasets: [
             {
-              label: "Numero de Beneficiários",
-              data: data.map((item) => item.beneficiarios),
+              label: 'Numero de Beneficiários',
+              data: data.map(item => item.beneficiarios),
               borderColor: color.gray,
-              fill: false,
+              fill: false
             },
             {
-              label: "Faltas por encontro",
-              data: data.map((item) => item.frequency),
+              label: 'Faltas por encontro',
+              data: data.map(item => item.frequency),
               borderColor: color.red,
-              backgroundColor: color.red + "44",
+              backgroundColor: color.red + '44',
               tension: 0.4,
-              fill: true,
-            },
-          ],
-        };
+              fill: true
+            }
+          ]
+        }
 
-        setChartData(updatedChartData);
+        setChartData(updatedChartData)
       } catch (error) {
-        console.error("Erro ao buscar dados do gráfico:", error);
+        console.error('Erro ao buscar dados do gráfico:', error)
       }
-    };
+    }
+    const cardsData = async () => {
+      const counts = await requestCountStates(classroom?.id)
+      setCards(counts)
+    }
 
-    fetchData();
-  }, [classroom?.id]);
+    fetchData()
+    cardsData()
+  }, [classroom?.id])
 
   const propsAplication = useContext(
     AplicationContext
-  ) as PropsAplicationContext;
+  ) as PropsAplicationContext
 
-  if (props.isLoading) return <Loading />;
+  if (props.isLoading) return <Loading />
 
   return (
     <ContentPage title={classroom?.name} description="Detalhes da sua turma.">
@@ -110,15 +118,15 @@ const ClassroomOnePage = () => {
               initialValues={{
                 name: classroom?.name,
                 status: getStatusClassroomList().find(
-                  (props) => props.id === classroom?.status
-                ),
+                  props => props.id === classroom?.status
+                )
               }}
-              onSubmit={(values) => {
+              onSubmit={values => {
                 props.UpdateClassroom(
                   { name: values.name, status: values.status?.id! },
                   parseInt(id!)
-                );
-                setEdit(false);
+                )
+                setEdit(false)
               }}
             >
               {({ values, handleChange }) => {
@@ -150,7 +158,7 @@ const ClassroomOnePage = () => {
                       </div>
                       <Padding />
                       <Row>
-                        <Button label="Salvar" icon={"pi pi-save"} />
+                        <Button label="Salvar" icon={'pi pi-save'} />
                         <Padding />
                         <Button
                           label="Cancelar"
@@ -161,7 +169,7 @@ const ClassroomOnePage = () => {
                       </Row>
                     </Column>
                   </Form>
-                );
+                )
               }}
             </Formik>
           ) : null}
@@ -234,17 +242,33 @@ const ClassroomOnePage = () => {
           />
         </div>
       </div>
-
+      <div className="grid">
+        {cards.map(item => (
+          <div className="col-12 md:col-4 lg:col-2">
+            <CardQuant
+              title={item.status}
+              quant={item.number}
+              color={
+                item.status === 'Aprovados'
+                  ? 'orange'
+                  : item.status === 'Pendentes'
+                  ? 'blue'
+                  : 'navy_blue'
+              }
+            />
+          </div>
+        ))}
+      </div>
       <div
         className="card col-12 md:col-12 lg:col-12"
-        style={{ padding: "20px" }}
+        style={{ padding: '20px' }}
       >
         <div
           style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "column",
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection: 'column'
           }}
         >
           <h2>Gráfico Faltas em Encontros</h2>
@@ -252,13 +276,13 @@ const ClassroomOnePage = () => {
           <ChartPrime
             type="line"
             data={chartData}
-            style={{ height: "400px", flexGrow: 1 }}
+            style={{ height: '400px', flexGrow: 1 }}
             width="55%"
           />
         </div>
       </div>
     </ContentPage>
-  );
-};
+  )
+}
 
-export default ClassroomOne;
+export default ClassroomOne
