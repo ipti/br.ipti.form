@@ -90,9 +90,10 @@ const DataMeeting = () => {
             <Padding padding="16px" />
             <div className="grid">
               <div className="col-12 md:col-6">
-                <label>Tema do encontro</label>
+                <label>Tema</label>
                 <TextInput
                   name="theme"
+                  placeholder="Tema do encontro"
                   value={values.theme}
                   disabled={!edit}
                   onChange={handleChange}
@@ -114,7 +115,8 @@ const DataMeeting = () => {
                         name="status"
                         placerholder="Status"
                         optionsLabel="name"
-                        options={status}
+                        options={!props.ArchivesMeeting ? status.filter((i)=> i.id !== Status.APPROVED):status}
+                        
                       />
                     </div>
                     {values.status?.id === Status.REPROVED && <div className="col-12 md:col-6">

@@ -24,6 +24,7 @@ export interface Registration {
   id: number
   name: string
   birthday: string
+  avatar_url: string
   cpf: string
   sex: number
   color_race: number

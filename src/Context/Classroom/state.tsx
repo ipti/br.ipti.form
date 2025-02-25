@@ -4,7 +4,7 @@ import { useFetchRequestClassroom } from "../../Services/Classroom/query"
 import { idProject } from "../../Services/localstorage"
 import { useFetchRequestTsLists } from "../../Services/Project/query"
 import { Tsone } from "../Project/ProjectList/type"
-import { CreateClassroom } from "./type"
+import { ChangeClassroom, CreateClassroom } from "./type"
 
 export const ClassroomState = () => {
     const initialValue = {
@@ -27,9 +27,9 @@ export const ClassroomState = () => {
         }
     }, [tsOneRequest])
 
-    const { requestCreateClassroomMutation, requestDeleteClassroomMutation, requestUpdateClassroomMutation } = ControllerClassroom()
+    const { requestCreateClassroomMutation, requestChangeClassroomMutation, requestDeleteClassroomMutation, requestUpdateClassroomMutation } = ControllerClassroom()
 
-    const UpdateClassroom = (body: {name: string}, id: number) => {
+    const UpdateClassroom = (body: {name: string, status: string}, id: number) => {
         requestUpdateClassroomMutation.mutate({data: body, id: id})
     }
 
@@ -45,9 +45,13 @@ export const ClassroomState = () => {
         requestCreateClassroomMutation.mutate(body)
     }
 
+    const ChangeClassroom = (body: ChangeClassroom) => {
+        requestChangeClassroomMutation.mutate(body)
+    }
+
     const DeleteClassroom = (id: number) => {
         requestDeleteClassroomMutation.mutate(id)
     }
 
-    return { initialValue, CreateClassroom,classrooms, UpdateClassroom, DeleteClassroom, isLoading, tsOne, project, setProject }
+    return { initialValue, CreateClassroom,classrooms, UpdateClassroom, DeleteClassroom, isLoading, tsOne, project, setProject, ChangeClassroom }
 }

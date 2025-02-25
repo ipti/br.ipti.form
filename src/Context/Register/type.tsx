@@ -35,7 +35,10 @@ export interface Registration {
     responsable_name?: string;
     responsable_cpf?: string;
     responsable_telephone?: string;
+    kinship?: string | null;
     zone: number | null;
+    city: number | null,
+    state: number | null
 }
 
 

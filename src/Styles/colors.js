@@ -19,13 +19,15 @@ const color = {
   colorsBaseInkNormal: "#252A31",
   colorsBaseInkLight: "#5F738C",
   colorsBaseProductNormalActive: "#336AE9",
+  colorNavyBlue: "#24234F",
+  colorCardOrange: "#FCAD09",
   colorsBaseProductLightActive: "#ccd0ee",
   colorsBaseCloudNormal: "#EFF2F5",
   colorsBaseProductDarkHover: "#1C1F7F",
   colorsBaseInkNormalActive: "#0B0C0F",
   colorsBaseInkLighterActive: "#94a8be",
   colorsBaseInkLightHover: "#52647a",
-  colorsBaseProductLighter: "#fafafe"
+  colorsBaseProductLighter: "#fafafe",
 };
 
 export default color;

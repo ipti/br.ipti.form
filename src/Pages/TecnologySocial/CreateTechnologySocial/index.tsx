@@ -1,12 +1,15 @@
 import { Form, Formik } from "formik";
 import { Button } from "primereact/button";
 import { useContext } from "react";
+import * as Yup from "yup";
+import ContentPage from "../../../Components/ContentPage";
 import TextInput from "../../../Components/TextInput";
 import CreateTsProvider, {
   CreateTsContext,
 } from "../../../Context/TecnologySocial/CreateTecnologySocial/context";
 import { CreateTsTypes } from "../../../Context/TecnologySocial/CreateTecnologySocial/type";
-import { Container, Padding, Row } from "../../../Styles/styles";
+import { Padding, Row } from "../../../Styles/styles";
+
 
 const CreateTechnologySocial = () => {
   return (
@@ -23,12 +26,17 @@ const CreateTechnologySocialPage = () => {
     name: "",
   };
 
+  const CreateTsSchema = Yup.object().shape({
+    name: Yup.string().required("Campo Obrigatório"),
+   
+  });
+
   return (
-    <Container>
-      <h1>Criar Tecnologia</h1>
+    <ContentPage title="Criar Tecnologia" description="Crie sua tecnologia social.">
       <Padding padding="16px" />
       <Formik
         initialValues={initialValues}
+        validationSchema={CreateTsSchema}
         onSubmit={(values) => {
           props.CreateTechnology({ name: values.name });
         }}
@@ -37,7 +45,7 @@ const CreateTechnologySocialPage = () => {
           return (
             <Form>
               <Row id="end">
-                <Button label="Criar" />
+                <Button label="Criar" icon={"pi pi-plus"} />
               </Row>
               <div className="col-12 md:col-6">
                 <label>Nome*</label>
@@ -60,7 +68,7 @@ const CreateTechnologySocialPage = () => {
           );
         }}
       </Formik>
-    </Container>
+    </ContentPage>
   );
 };
 

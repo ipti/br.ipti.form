@@ -5,15 +5,17 @@ import { UpdateRegister } from "../../Context/Classroom/Registration/type";
 import styles from "../../Styles";
 import queryClient from "../reactquery";
 import {
+  requestCreateRegistrationTerm,
   requestDeleteRegistration,
   requestDeleteRegistrationClassroom,
   requestPreRegistration,
   requestRegistrationClassroom,
+  requestUpdateAvatarRegistration,
   requestUpdateRegistration,
 } from "./request";
 import {
   CreatePreRegistration,
-  CreateRegistrationClassroomType,
+  CreateRegistrationClassroomType
 } from "./types";
 
 export const ControllerPreRegistration = () => {
@@ -21,7 +23,13 @@ export const ControllerPreRegistration = () => {
   const requestPreRegistrationMutation = useMutation(
     (data: CreatePreRegistration) => requestPreRegistration(data),
     {
-      onError: (error) => { },
+      onError: (error: any) => {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
       onSuccess: (data) => {
         Swal.fire({
           icon: "success",
@@ -39,16 +47,21 @@ export const ControllerPreRegistration = () => {
   const requestRegistrationMutation = useMutation(
     (data: CreatePreRegistration) => requestPreRegistration(data),
     {
-      onError: (error) => { },
+      onError: (error: any) => {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
       onSuccess: (data) => {
-        console.log(data);
         Swal.fire({
           icon: "success",
           title: "Registro feito com sucesso!",
           confirmButtonColor: styles.colors.colorsBaseProductNormal,
         }).then((result) => {
           if (result.isConfirmed) {
-            if(data?.user?.id){
+            if (data?.user?.id) {
               history("/beneficiarios/" + data?.user?.id);
             } else {
               history("/beneficiarios");
@@ -63,9 +76,55 @@ export const ControllerPreRegistration = () => {
 };
 
 export const ControllerUpdateRegistration = () => {
+
   const requestPreRegistrationMutation = useMutation(
     ({ data, id }: { data: UpdateRegister; id: number }) =>
       requestUpdateRegistration(data, id),
+    {
+      onError: (error: any) => {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
+      onSuccess: (data) => {
+        Swal.fire({
+          icon: "success",
+          title: "Alteração realizada com sucesso!",
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        });
+      },
+    }
+  );
+
+  const requestRegisterTermMutation = useMutation(
+    ({ data}: { data: FormData}) =>
+      requestCreateRegistrationTerm(data),
+    {
+      onError: (error: any) => {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
+      onSuccess: (data) => {
+
+        queryClient.refetchQueries("useRequestsClassroomRegistrationOne")
+        queryClient.refetchQueries("useRequestsRegistrationOne")
+        Swal.fire({
+          icon: "success",
+          title: "Termo adicionado com sucesso!",
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        });
+      },
+    }
+  );
+
+  const requestCHangeAvatarRegistrationMutation = useMutation(
+    ({  id, file }: { id: number, file: File }) =>
+      requestUpdateAvatarRegistration(id, file),
     {
       onError: (error) => { },
       onSuccess: (data) => {
@@ -141,6 +200,8 @@ export const ControllerUpdateRegistration = () => {
     requestPreRegistrationMutation,
     requestDeleteRegistrationClassroomMutation,
     requestRegistrationClassroomMutation,
-    requestDeleteRegistrationMutation
+    requestDeleteRegistrationMutation,
+    requestCHangeAvatarRegistrationMutation,
+    requestRegisterTermMutation
   };
 };

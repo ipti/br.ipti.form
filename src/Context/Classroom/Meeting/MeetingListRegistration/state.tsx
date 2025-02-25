@@ -11,10 +11,14 @@ export const MeetingListRegistrationState = () => {
   const { data: meetingRequest, isLoading } = useFetchRequestMeetingOne(idMeeting!);
   const [meeting, setmeeting] = useState<Meeting | undefined>();
 
-  const { requestUpdateMeetingMutation, requestCreateFoulsMutation, requestArchvesMeetingMutation } = MeetingController()
+  const { requestUpdateMeetingMutation, requestDeleteArchivesMeetingMutation,requestCreateFoulsMutation, requestArchvesMeetingMutation } = MeetingController()
 
   const UpdateMeeting = (data: EditMeeting, id: number) => {
     requestUpdateMeetingMutation.mutate({data: data, id: id})
+  }
+
+  const DeleteArchiveMeeting = (id: number) => {
+    requestDeleteArchivesMeetingMutation.mutate(id)
   }
 
   const ArchivesMeeting = (data: any, id: number) => {
@@ -33,5 +37,5 @@ export const MeetingListRegistrationState = () => {
     }
   }, [meetingRequest]);
 
-  return { meeting, UpdateMeeting, CreateFouls, ArchivesMeeting, isLoading };
+  return { meeting, UpdateMeeting, CreateFouls, ArchivesMeeting, isLoading, DeleteArchiveMeeting };
 };

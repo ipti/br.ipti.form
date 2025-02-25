@@ -5,7 +5,7 @@
     padding: 0;
     outline: 0;
     box-sizing: border-box;
-    font-family: 'Quicksand', 'Poppins', sans-serif;
+    font-family: "Poppins Regular";
   }
 
   html,
@@ -19,10 +19,22 @@
     color: #333;
     -webkit-font-smoothing: antialiased !important;
     scroll-behavior: smooth;
-
-
   }
 
+  
+  h1 {
+    font-family: "Poppins Regular";
+    text-transform: uppercase;
+    font-size: 24px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  h3 {
+    font-size: 14px;
+  }
 
   @font-face {
     font-family: "Poppins Regular";
@@ -121,17 +133,18 @@
   }
 
   .card {
+    background: var(--surface-card);
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
     box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
-    padding: 2rem;
+  }
+
+  .card {
     border-radius: 10px;
     margin-bottom: 1rem;
   }
 
-
-
-  .p-card .p-card-content {
-    padding: 0;
-  }
 
   .p-button.p-button-secondary,
   .p-buttonset.p-button-secondary>.p-button,

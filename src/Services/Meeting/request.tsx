@@ -60,6 +60,22 @@ export const requestArchivesMeeting = (data: FormData, id: number) => {
       });
 }
 
+export const requestDeleteArchivesMeeting = (id: number) => {
+
+  return http
+      .delete("/archive-meeting-bff/"+id)
+      .then((response) => response.data)
+      .catch((err) => {
+          if (err.response.status === 401) {
+              logout();
+              window.location.reload();
+          }
+          alert(err.response.message);
+          throw err;
+      });
+}
+
+
 
 
 

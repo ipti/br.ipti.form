@@ -10,20 +10,42 @@ const BeneficiariesListProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { registrations, limite, page, setLimite, setPage, filter, setFilter, DeleteRegistration } =
-    BeneficiariesListState();
+  const {
+    registrations,
+    limite,
+    handleFilter,
+    page,
+    setLimite,
+    setPage,
+    filter,
+    setFilter,
+    DeleteRegistration,
+    cpfFilter,
+    nameFilter,
+    allFilter,
+    setallFilter,
+    setTsId,
+    tsId
+  } = BeneficiariesListState();
 
   return (
     <BeneficiariesListContext.Provider
       value={{
         registrations,
+        handleFilter,
         limite,
         page,
         setLimite,
         setPage,
         filter,
         setFilter,
-        DeleteRegistration
+        DeleteRegistration,
+        cpfFilter,
+        nameFilter,
+        allFilter,
+        setallFilter,
+        setTsId,
+        tsId
       }}
     >
       {children}

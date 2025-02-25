@@ -10,6 +10,7 @@ const InputNumberComponent = ({
     disabled,
     onBlur,
     name,
+    suffix
 }: PropsInputNumber) => {
     return (
         <div>
@@ -19,6 +20,7 @@ const InputNumberComponent = ({
                 disabled={disabled}
                 value={value}
                 name={name}
+                suffix={suffix}
                 onValueChange={onChange}
                 placeholder={placeholder}
             />

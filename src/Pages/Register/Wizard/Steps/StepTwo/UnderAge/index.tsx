@@ -6,9 +6,10 @@ import MaskInput from "../../../../../../Components/InputMask";
 import TextInput from "../../../../../../Components/TextInput";
 import { RegisterContext } from "../../../../../../Context/Register/context";
 import { RegisterTypes } from "../../../../../../Context/Register/type";
-import { Column, Padding, Row } from "../../../../../../Styles/styles";
-import InputsEquals from "../InputsEquals";
 import { validaCPF } from "../../../../../../Controller/controllerValidCPF";
+import { Column, Padding, Row } from "../../../../../../Styles/styles";
+import DropdownComponent from "../../../../../../Components/Dropdown";
+import { kinship } from "../../../../../../Controller/controllerGlobal";
 
 const UnderAge = () => {
   const props = useContext(RegisterContext) as RegisterTypes;
@@ -16,10 +17,7 @@ const UnderAge = () => {
   const initialValue = {
     responsable_cpf: props.dataValues.responsable_cpf ?? "",
     responsable_name: props.dataValues.responsable_name ?? "",
-    responsable_telephone: props.dataValues.responsable_telephone ?? "",
-    birthday: props.dataValues.birthday ?? "",
-    zone: props.dataValues.zone ?? null,
-    sex: props.dataValues.sex ?? null,
+    kinship: props.dataValues.kinship ?? "",
   };
 
   const schema = Yup.object().shape({
@@ -29,14 +27,8 @@ const UnderAge = () => {
     responsable_name: Yup.string().required(
       "Nome do responsável é obrigatório"
     ),
-    responsable_telephone: Yup.string().required(
-      "Telefone do responsável é obrigatório"
-    ),
-    birthday: Yup.string()
-      .nullable()
-      .required("Data de nascimento é obrigatória"),
-    zone: Yup.string().nullable().required("Zona é obrigatória"),
-    sex: Yup.string().nullable().required("Sexo é obrigatória"),
+    kinship: Yup.string().required("Parentesco é obrigatório"),
+   
   });
 
   return (
@@ -47,11 +39,9 @@ const UnderAge = () => {
           validationSchema={schema}
           onSubmit={(values) => {
             props.NextStep(values);
-            console.log(values)
           }}
         >
           {({ values, handleChange, errors, touched }) => {
-            console.log(errors);
             return (
               <Form>
                 <Row id="center">
@@ -89,12 +79,25 @@ const UnderAge = () => {
                         {errors.responsable_cpf}
                       </div>
                     ) : null}
-                    <InputsEquals
-                      errors={errors}
-                      handleChange={handleChange}
-                      touched={touched}
-                      values={values}
-                    />
+                    <Padding padding={props.padding} />
+                    <div>
+                      <label>Parantesco *</label>
+                      <Padding />
+                      <DropdownComponent
+                        placerholder="Parantesco *"
+                        onChange={handleChange}
+                        name="kinship"
+                        options={kinship}
+                        optionsValue="id"
+                        optionsLabel="name"
+                        value={values.kinship}
+                      />
+                    </div>
+                    {errors.kinship && touched.kinship ? (
+                      <div style={{ color: "red", marginTop: "8px" }}>
+                        {errors.kinship}
+                      </div>
+                    ) : null}
                     <Padding padding={props.padding} />
                   </div>
                 </Row>

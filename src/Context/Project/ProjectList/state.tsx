@@ -5,7 +5,7 @@ import { Tsone } from "./type";
 export const ProjectListState = () => {
 
     const [tsOne, setTsOne] = useState<Tsone | undefined>();
-    const { data: tsOneRequest } = useFetchRequestTsLists(undefined)
+    const { data: tsOneRequest, isLoading } = useFetchRequestTsLists(undefined)
 
     useEffect(() => {
         if (tsOneRequest) {
@@ -14,6 +14,6 @@ export const ProjectListState = () => {
     }, [tsOneRequest])
 
     return {
-        tsOne
+        tsOne, isLoading
     }
 }

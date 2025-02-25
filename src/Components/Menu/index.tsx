@@ -30,7 +30,11 @@ import tecnologia_hover from "../../Assets/images/iconsMenu/digital_wellbeing_ac
 import projeto from "../../Assets/images/iconsMenu/note_add.svg";
 import projeto_hover from "../../Assets/images/iconsMenu/note_add_active.svg";
 
-// import ajuda from "../../Assets/images/question_mark.svg";
+import beneficiaries from "../../Assets/images/iconsMenu/diversity_4.svg";
+import beneficiaries_hover from "../../Assets/images/iconsMenu/diversity_hover.svg";
+
+import ajuda from "../../Assets/images/question_mark.svg";
+import ajuda_hover from "../../Assets/images/iconsMenu/question_mark_active.svg";
 
 import user from "../../Assets/images/iconsMenu/person.svg";
 import user_hover from "../../Assets/images/iconsMenu/person_active.svg";
@@ -39,10 +43,17 @@ const Menu = ({ viewdMenu }: { viewdMenu: boolean }) => {
   const [active, setActive] = useState(parseInt(getMenuItem()!));
   const [visibleModal, setVisibleModal] = useState(false);
   const props = useContext(AplicationContext) as PropsAplicationContext;
+
+  const itemMenu = getMenuItem()
+
+  useEffect(() => {
+    setActive(parseInt(getMenuItem()!))
+  }, [itemMenu])
+  
+
   return (
     <Container active={viewdMenu}>
       <Padding padding="4px" />
-
       <Padding padding="16px">
         <Row id="center">
           <Column id="center">
@@ -101,7 +112,7 @@ const Menu = ({ viewdMenu }: { viewdMenu: boolean }) => {
           />
           <Padding />
           <Item
-            text={"Projetos"}
+            text={"Planos de trabalho"}
             funcActiv={() => {
               setActive(3);
               menuItem("3");
@@ -123,30 +134,44 @@ const Menu = ({ viewdMenu }: { viewdMenu: boolean }) => {
           />
           <Padding />
           <Item
-            text={"Beneficiarios"}
+            text={"Beneficiários"}
             funcActiv={() => {
               setActive(5);
               menuItem("5");
             }}
             active={active === 5 ? true : false}
             path={"/beneficiarios"}
-            icon={active === 5 ? turmasHover : turmas}
+            icon={active === 5 ? beneficiaries_hover : beneficiaries}
           />
-          <Padding />
+          {/* <Item
+            text={"Reaplicadores"}
+            funcActiv={() => {
+              setActive(8);
+              menuItem("8");
+            }}
+            active={active === 8 ? true : false}
+            path={"/reaplicadores"}
+            icon={active === 8 ? turmasHover : turmas}
+          /> */}
+
           {props.user?.role === ROLE.ADMIN ||
           props.user?.role === ROLE.COORDINATORS ? (
-            <Item
-              text={"Usuarios"}
-              funcActiv={() => {
-                setActive(6);
-                menuItem("6");
-              }}
-              active={active === 6 ? true : false}
-              path={"/users"}
-              icon={active === 6 ? user_hover : user}
-            />
+            <>
+              <Padding />
+              <Item
+                text={"Usuarios"}
+                funcActiv={() => {
+                  setActive(6);
+                  menuItem("6");
+                }}
+                active={active === 6 ? true : false}
+                path={"/users"}
+                icon={active === 6 ? user_hover : user}
+              />
+            </>
           ) : null}
-          {/* <Padding />
+
+          <Padding />
 
           <Item
             text={"Ajuda"}
@@ -156,14 +181,11 @@ const Menu = ({ viewdMenu }: { viewdMenu: boolean }) => {
             }}
             active={active === 7 ? true : false}
             path={"/ajuda"}
-            icon={ajuda}
-          /> */}
+            icon={active === 7 ? ajuda_hover : ajuda}
+          />
         </Padding>
       ) : null}
-      <ModalYear
-        visible={visibleModal}
-        onHide={() => setVisibleModal(false)}
-      />
+      <ModalYear visible={visibleModal} onHide={() => setVisibleModal(false)} />
     </Container>
   );
 };
@@ -176,6 +198,7 @@ const ModalYear = ({
   onHide(): void;
 }) => {
   const years = [
+    { value: 2025 },
     { value: 2024 },
     { value: 2023 },
     { value: 2022 },

@@ -19,8 +19,10 @@ const ModalCreateRegisterClassroom = ({
 
   const { id } = useParams();
 
+
+
   return (
-    <Dialog onHide={onHide} visible={visible} style={{ width: "30vw" }}>
+    <Dialog onHide={onHide} visible={visible} header="Adicionar a nova turma" style={{ width: window.innerWidth > 800 ? "30vw" : "50vw" }}>
       <Formik
         initialValues={{ classroom: "", registration: id, project: "" }}
         onSubmit={(values) => {
@@ -36,11 +38,11 @@ const ModalCreateRegisterClassroom = ({
             <Form>
               <div className="grid">
                 <div className="col-12">
-                  <label>Matricula</label>
+                  <label>Plano de trabalho</label>
                   <Padding />
                   <DropdownComponent
                     value={props.project}
-                    placerholder="Selecione o projeto"
+                    placerholder="Selecione o Plano de trabalho"
                     name="deficiency"
                     onChange={(e) => props.setProject(e.target.value)}
                     options={props.projectRequet}

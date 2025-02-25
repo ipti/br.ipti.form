@@ -30,6 +30,8 @@ export const logout = () => {
   localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(id_key);
   localStorage.removeItem(id_project);
+  localStorage.removeItem(id_ts);
+
 
   // localStorage.clear();
 };

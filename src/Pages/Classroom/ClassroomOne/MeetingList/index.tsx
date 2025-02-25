@@ -1,20 +1,24 @@
 import { Button } from "primereact/button";
-import CardMeeting from "../../../../Components/Card/CardMeeting";
-import { Container, Padding } from "../../../../Styles/styles";
+import { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import CardMeeting from "../../../../Components/Card/CardMeeting";
+import ContentPage from "../../../../Components/ContentPage";
+import Empty from "../../../../Components/Empty";
+import Loading from "../../../../Components/Loading";
 import MeetingListProvider, {
   MeetingListContext,
 } from "../../../../Context/Classroom/Meeting/MeetingList/context";
-import { useContext } from "react";
 import { MeetingListTypes } from "../../../../Context/Classroom/Meeting/MeetingList/type";
+import ProjectListProvider from "../../../../Context/Project/ProjectList/context";
 import { useFetchRequestClassroomOne } from "../../../../Services/Classroom/query";
-import Empty from "../../../../Components/Empty";
-import Loading from "../../../../Components/Loading";
+import { Padding } from "../../../../Styles/styles";
 
 const MeetingList = () => {
   return (
     <MeetingListProvider>
-      <MeetingListPage />
+      <ProjectListProvider>
+        <MeetingListPage />
+      </ProjectListProvider>
     </MeetingListProvider>
   );
 };
@@ -32,8 +36,7 @@ const MeetingListPage = () => {
 
   if (props.isLoading && isLoading) return <Loading />;
   return (
-    <Container>
-      <h2>Encontros {classroom?.name}</h2>
+    <ContentPage title={"Encontros da turma: " + classroom?.name} description="Visualização dos encontros da turma.">
       <Padding padding="16px" />
       <Button
         label="Criar encontro"
@@ -58,7 +61,7 @@ const MeetingListPage = () => {
       ) : (
         <Empty title="Encontros" />
       )}
-    </Container>
+    </ContentPage>
   );
 };
 

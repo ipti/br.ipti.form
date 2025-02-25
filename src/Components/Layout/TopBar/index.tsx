@@ -58,10 +58,10 @@ const TopBar = ({
       </Column>
       <Column style={{ width: "auto" }} id="center">
         <Row>
-          <Column className="w-12rem md:w-16rem">
+          <Column className="w-12rem md:w-20rem">
             {props.project ? (
               <DropdownComponent
-                placerholder="Projetos"
+                placerholder="Plano de trabalho"
                 options={props.project}
                 value={verifyValueProject(parseInt(GetIdTs()!))}
                 onChange={(e) => {

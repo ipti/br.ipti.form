@@ -27,6 +27,7 @@ const LoginPage = () => {
   const props = useContext(LoginContext) as LoginContextText;
 
   const years = [
+    { value: 2025 },
     { value: 2024 },
     { value: 2023 },
     { value: 2022 },
@@ -42,8 +43,8 @@ const LoginPage = () => {
   });
 
   useEffect(() => {
-    setYear("2024");
-    setYearState(2024);
+    setYear("2025");
+    setYearState(2025);
   }, []);
 
   return (

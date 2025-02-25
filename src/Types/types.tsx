@@ -1,9 +1,10 @@
 import { DropdownChangeEvent } from "primereact/dropdown";
+import { MultiSelectChangeEvent, MultiSelectHeaderCheckboxChangeEvent } from "primereact/multiselect";
 import { InputMaskChangeEvent } from "primereact/inputmask";
 import { InputNumberValueChangeEvent } from "primereact/inputnumber";
 import { RadioButtonChangeEvent } from "primereact/radiobutton";
 import { SelectItemOptionsType } from "primereact/selectitem";
-import { ChangeEventHandler, Dispatch, FocusEventHandler, SetStateAction } from "react";
+import { ChangeEventHandler, Dispatch, FocusEventHandler, HTMLInputTypeAttribute, SetStateAction } from "react";
 import { User } from "../Context/Users/type";
 
 export interface PropsInputText {
@@ -13,6 +14,7 @@ export interface PropsInputText {
     disabled?: boolean | undefined,
     onBlur?: FocusEventHandler<HTMLInputElement> | undefined,
     name?: string
+    type?: HTMLInputTypeAttribute | undefined
 }
 
 export interface PropsInputMask {
@@ -32,6 +34,7 @@ export interface PropsInputNumber {
     disabled?: boolean | undefined,
     onBlur?: FocusEventHandler<HTMLInputElement> | undefined,
     name?: string
+    suffix?: string
 }
 
 export interface PropsInputCalendar {
@@ -43,6 +46,7 @@ export interface PropsInputCalendar {
     name?: string,
     view?: "date" | "month" | "year",
     dateFormat?: string
+    selectionMode?: "range" | "multiple" | "single" | undefined
 }
 
 export interface PropsInputArea {
@@ -99,6 +103,17 @@ export interface PropsDropdown {
     disabled?: boolean | undefined
     value?: any,
     onChange?(event: DropdownChangeEvent): void,
+    options?: SelectItemOptionsType | undefined,
+    placerholder?: string,
+    optionsLabel?: string,
+    name?: string,
+    optionsValue?: string
+}
+
+export interface PropsMultiSelect {
+    disabled?: boolean | undefined
+    value?: any,
+    onChange?(event: MultiSelectChangeEvent): void
     options?: SelectItemOptionsType | undefined,
     placerholder?: string,
     optionsLabel?: string,

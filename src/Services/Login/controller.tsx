@@ -25,9 +25,10 @@ export const LoginController = ({ setError }: { setError: any, }) => {
         login(data.data.access_token);
         idUser(data.data.userRegistered.id);
         // ProjectLogin(data.data.user.schools)
-        if (data.data.userRegistered.user_projects[0]?.project_fk) {
-          idProject(data.data.userRegistered.user_projects[0]?.project_fk);
+        if (data.data.userRegistered.user_social_technology[0]?.social_technology_fk) {
+          idProject(data.data.userRegistered.user_social_technology[0]?.social_technology_fk);
         }
+
         history("/");
         menuItem("1");
         window.location.reload();

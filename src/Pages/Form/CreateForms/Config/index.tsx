@@ -29,7 +29,7 @@ const Config = () => {
                 <Padding padding="8px" />
                 <label>Destino do formulário</label>
                 <Padding />
-                <Dropdown options={project} placeholder="Escolher Projeto" optionLabel="name" />
+                <Dropdown options={project} placeholder="Escolher Plano de trabalho" optionLabel="name" />
                 <Padding padding="8px" />
             </Column>
         </div>

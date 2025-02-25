@@ -1,32 +1,36 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
-  useFetchRequestProjectList,
-  useFetchRequestRegistrationOne,
-} from "../../../Services/PreRegistration/query";
-import { Registration } from "./type";
-import {
+  converterData,
   formatarData,
   getStatus,
   VerifyColor,
   VerifySex,
 } from "../../../Controller/controllerGlobal";
+import { useFetchRequestClassroom } from "../../../Services/Classroom/query";
 import { ControllerUpdateRegistration } from "../../../Services/PreRegistration/controller";
+import {
+  useFetchRequestProjectList,
+  useFetchRequestRegistrationOne,
+} from "../../../Services/PreRegistration/query";
 import { CreateRegistrationClassroomType } from "../../../Services/PreRegistration/types";
 import { UpdateRegister } from "../../Classroom/Registration/type";
-import { useFetchRequestClassroom } from "../../../Services/Classroom/query";
+import { Registration } from "./type";
 
 export const BeneficiariesEditState = () => {
   const [project, setProject] = useState<any | undefined>();
   const { data: projectRequet } = useFetchRequestProjectList();
-  const { data: classroomsFetch } = useFetchRequestClassroom(project!)
+  const { data: classroomsFetch } = useFetchRequestClassroom(project!);
   const [classrooms, setClassrooms] = useState<any>();
+  const [file, setFile] = useState<File[] | undefined>();
 
   const { id } = useParams();
   const {
     requestRegistrationClassroomMutation,
     requestDeleteRegistrationClassroomMutation,
     requestPreRegistrationMutation,
+    requestCHangeAvatarRegistrationMutation,
+    requestRegisterTermMutation
   } = ControllerUpdateRegistration();
   const { data: registrationsRequests, isLoading } =
     useFetchRequestRegistrationOne(id!);
@@ -36,9 +40,9 @@ export const BeneficiariesEditState = () => {
 
   useEffect(() => {
     if (classroomsFetch) {
-        setClassrooms(classroomsFetch)
+      setClassrooms(classroomsFetch);
     }
-}, [classroomsFetch, project])
+  }, [classroomsFetch, project]);
 
   useEffect(() => {
     if (registrationsRequests) {
@@ -47,7 +51,6 @@ export const BeneficiariesEditState = () => {
   }, [registrationsRequests]);
 
   const date = new Date(registrations?.birthday!);
-
   const initialValue = {
     name: registrations?.name,
     sex: VerifySex(registrations?.sex!),
@@ -63,26 +66,50 @@ export const BeneficiariesEditState = () => {
     responsable_cpf: registrations?.responsable_cpf,
     responsable_telephone: registrations?.responsable_telephone,
     status: getStatus(registrations?.status!),
+    deficiency_description: registrations?.deficiency_description,
+    kinship: registrations?.kinship,
+    address: registrations?.address ?? "",
+    cep: registrations?.cep ?? "",
+    neighborhood: registrations?.neighborhood ?? "",
+    number: registrations?.number ?? "",
+    complement: registrations?.complement ?? "",
+    state: registrations?.state_fk ?? "",
+    city: registrations?.city_fk ?? "",
+    date_registration: new Date(registrations?.date_registration) ?? ""
   };
 
   const CreateRegisterClassroom = (data: CreateRegistrationClassroomType) => {
     requestRegistrationClassroomMutation.mutate(data);
   };
 
+  const CreateRegisterTerm = (data: FormData) => {
+    requestRegisterTermMutation.mutate({data: data});
+  };
+
+
   const DeleteRegistration = (id: number) => {
     requestDeleteRegistrationClassroomMutation.mutate(id);
   };
 
   const handleUpdateRegistration = (data: UpdateRegister, id: number) => {
+    if (file) {
+      requestCHangeAvatarRegistrationMutation.mutate({
+        id: id,
+        file: file[0],
+      });
+    }
     requestPreRegistrationMutation.mutate({
       data: {
         ...data,
-        birthday: data?.birthday,
+        birthday: converterData(data?.birthday?.toString()!),
         responsable_telephone: data?.responsable_telephone?.replace(
           /[^a-zA-Z0-9]/g,
           ""
         ),
+        kinship: data.kinship === "" ? "NAO_DEFINIDO" : data.kinship,
         responsable_cpf: data?.responsable_cpf?.replace(/[^a-zA-Z0-9]/g, ""),
+        cpf: data?.cpf?.replace(/[^a-zA-Z0-9]/g, ""),
+
       },
       id: id,
     });
@@ -97,6 +124,9 @@ export const BeneficiariesEditState = () => {
     projectRequet,
     project,
     setProject,
-    classrooms
+    classrooms,
+    file,
+    setFile,
+    CreateRegisterTerm
   };
 };

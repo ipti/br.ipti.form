@@ -1,17 +1,27 @@
 import { Button } from "primereact/button";
+import { Chip } from "primereact/chip";
 import { Column } from "primereact/column";
 import { ConfirmDialog } from "primereact/confirmdialog";
 import { DataTable } from "primereact/datatable";
+import { InputText } from "primereact/inputtext";
 import { Paginator } from "primereact/paginator";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ContentPage from "../../../Components/ContentPage";
 import BeneficiariesListProvider, {
   BeneficiariesListContext,
 } from "../../../Context/Beneficiaries/BeneficiariesList/context";
 import { BeneficiariesListType } from "../../../Context/Beneficiaries/BeneficiariesList/type";
-import { somarNumeros } from "../../../Controller/controllerGlobal";
+import {
+  formatarData,
+  somarNumeros,
+} from "../../../Controller/controllerGlobal";
 import color from "../../../Styles/colors";
-import { Container, Padding, Row } from "../../../Styles/styles";
+import { Padding, Row } from "../../../Styles/styles";
+import ModalFilter from "./ModalFilter";
+import DropdownComponent from "../../../Components/Dropdown";
+import { PropsAplicationContext } from "../../../Types/types";
+import { AplicationContext } from "../../../Context/Aplication/context";
 
 const BeneficiariesList = () => {
   return (
@@ -23,19 +33,39 @@ const BeneficiariesList = () => {
 
 const BeneficiariesListPage = () => {
   const props = useContext(BeneficiariesListContext) as BeneficiariesListType;
-  const history = useNavigate()
+  const propsAplication = useContext(
+    AplicationContext
+  ) as PropsAplicationContext;
+  const history = useNavigate();
 
   const [visible, setVisible] = useState<any>();
 
+  const [visibleFilter, setVisibleFilter] = useState<any>();
+
   const renderHeader = () => {
     return (
-      <div className="flex justify-content-between" style={{ background: color.colorCard }}>
-        <Button label="Adicionar beneficiario" icon="pi pi-plus" onClick={() => history("criar")} />
+      <div
+        className="flex justify-content-between"
+        style={{ background: color.colorCard }}
+      >
+        <Button
+          label={window.innerWidth > 800 ? "Adicionar beneficiario" : undefined}
+          icon="pi pi-plus"
+          onClick={() => history("criar")}
+        />
+        <span className="p-input-icon-left">
+          <i className="pi pi-search" />
+          <InputText
+            value={props.allFilter}
+            placeholder="Pesquisar..."
+            onChange={(e) => props.setallFilter(e.target.value)}
+          />
+        </span>
         {/* <Button
-          label="Configurar filtro"
+          label={window.innerWidth > 800 ? "Configurar filtro" : undefined}
           icon="pi pi-filter"
           onClick={() => {
-            setVisible(true);
+            setVisibleFilter(true);
           }}
         /> */}
       </div>
@@ -45,17 +75,71 @@ const BeneficiariesListPage = () => {
   const ActionBeneficiariesBody = (rowData: any) => {
     return (
       <Row id="center" style={{ gap: "8px" }}>
-        <Button rounded icon={"pi pi-pencil"} onClick={() => { history(`${rowData.id}`) }} />
-        <Button severity="danger" rounded icon={"pi pi-trash"} onClick={() => { setVisible(rowData) }} />
+        <Button
+          rounded
+          icon={"pi pi-pencil"}
+          onClick={() => {
+            history(`${rowData.id}`);
+          }}
+        />
+        <Button
+          severity="danger"
+          rounded
+          icon={"pi pi-trash"}
+          onClick={() => {
+            setVisible(rowData);
+          }}
+        />
       </Row>
     );
   };
 
   return (
     <>
-      <Container>
-        <h1>Beneficiarios</h1>
-        <Padding padding="16px" />
+      <ContentPage
+        title="Beneficiários"
+        description="Visualização dos beneficiários da tecnologia."
+      >
+        <Padding padding="4px" />
+        {propsAplication.project ? (
+          <div className="grid">
+            <div className="col-12 md:col-6">
+              <label>Filtrar por tecnologia</label>
+              <Padding />
+              <DropdownComponent
+                placerholder="Escolha uma tecnologia"
+                options={[
+                  { name: "Todos", id: undefined },
+                  ...propsAplication.project,
+                ]}
+                value={props.tsId}
+                optionsValue="id"
+                onChange={(e) => {
+                  props.setTsId(e.target.value);
+                }}
+              />
+            </div>
+          </div>
+        ) : null}{" "}
+        <Row style={{ gap: 8 }}>
+          {props.nameFilter?.length! > 0 && (
+            <Chip label={"Nome: " + props.nameFilter} />
+          )}
+          {props.cpfFilter?.length! > 0 && (
+            <Chip label={"CPF: " + props.cpfFilter} />
+          )}
+          {(props.cpfFilter?.length! > 0 || props.nameFilter?.length! > 0) && (
+            <Button
+              label="Limpar filtro"
+              text
+              type="button"
+              onClick={() => {
+                props.handleFilter({ name: "", cpf: "" });
+              }}
+            />
+          )}
+        </Row>
+        <Padding padding="8px" />
         <DataTable
           value={props.registrations?.content}
           tableStyle={{ minWidth: "50rem" }}
@@ -68,6 +152,12 @@ const BeneficiariesListPage = () => {
             header="Nome do responsável"
           ></Column>
           <Column field="cpf" header="CPF"></Column>
+          <Column
+            body={(rowData) => {
+              return <>{formatarData(rowData.createdAt)}</>;
+            }}
+            header="Data de matricula"
+          ></Column>
           <Column header="Ações" body={ActionBeneficiariesBody}></Column>
         </DataTable>
         <Paginator
@@ -78,7 +168,7 @@ const BeneficiariesListPage = () => {
           }}
           rows={props.limite}
         />
-      </Container>
+      </ContentPage>
       <ConfirmDialog
         visible={visible}
         onHide={() => setVisible(false)}
@@ -88,7 +178,10 @@ const BeneficiariesListPage = () => {
         accept={() => props.DeleteRegistration(visible.id)}
         reject={() => setVisible(false)}
       />
-      {/* <ModalFilter visible={visible} onHide={() => setVisible(false)} /> */}
+      <ModalFilter
+        visible={visibleFilter}
+        onHide={() => setVisibleFilter(false)}
+      />
     </>
   );
 };

@@ -1,18 +1,32 @@
 import { Form, Formik } from "formik";
 import { Button } from "primereact/button";
-import { useContext } from "react";
+import { useContext, useState } from "react";
+import { useParams } from "react-router-dom";
+import avatar from "../../../../../Assets/images/avatar.svg";
+import ContentPage from "../../../../../Components/ContentPage";
 import DropdownComponent from "../../../../../Components/Dropdown";
+import MaskInput from "../../../../../Components/InputMask";
+import Loading from "../../../../../Components/Loading";
 import TextInput from "../../../../../Components/TextInput";
 import RegistartionDetailsProvider, {
   RegistrationDetailsContext,
 } from "../../../../../Context/Classroom/Registration/context";
 import { RegistrationDetailsTypes } from "../../../../../Context/Classroom/Registration/type";
-import { color_race, Status, typesex } from "../../../../../Controller/controllerGlobal";
-import { Container, Padding } from "../../../../../Styles/styles";
-import { useParams } from "react-router-dom";
+import {
+  color_race,
+  formatarData,
+  getStatusList,
+  isWithinOneYear,
+  typesex
+} from "../../../../../Controller/controllerGlobal";
 import { useFetchRequestClassroomOne } from "../../../../../Services/Classroom/query";
-import MaskInput from "../../../../../Components/InputMask";
-import Loading from "../../../../../Components/Loading";
+import { Padding } from "../../../../../Styles/styles";
+import { Avatar } from "../../../../Beneficiaries/BeneficiariesEdit";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+import color from "../../../../../Styles/colors";
+import ModalAddTerm from "../../../../Beneficiaries/BeneficiariesEdit/ModalAddTerm";
+
 
 const Registration = () => {
   return (
@@ -26,16 +40,36 @@ const RegistrationPage = () => {
   const props = useContext(
     RegistrationDetailsContext
   ) as RegistrationDetailsTypes;
+  const [visibleTerm, setVisibleTerm] = useState<any>();
+
 
   const { id } = useParams();
   const { data: classroom } = useFetchRequestClassroomOne(parseInt(id!));
 
+  const renderHeaderTerm = () => {
+    return (
+      <div
+        className="flex justify-content-between"
+        style={{ background: color.colorCard }}
+      >
+        <Button
+          label={"Novo termo"}
+          icon="pi pi-plus"
+          type="button"
+          onClick={() => setVisibleTerm(true)}
+        />
+      </div>
+    );
+  };
+
+
   if (props.isLoading) return <Loading />;
 
   return (
-    <Container>
-      <h2>{classroom?.name}</h2>
+    <ContentPage title={classroom?.name} description="Detalhes da matricula do beneficiário">
       <Padding padding="16px" />
+
+
       {props.registration ? (
         <Formik
           initialValues={props.initialValue}
@@ -61,15 +95,17 @@ const RegistrationPage = () => {
                       name="status"
                       placerholder="Status"
                       optionsLabel="name"
-                      options={[
-                        { id: Status.APPROVED, name: "Aprovado" },
-                        { id: Status.REPROVED, name: "Reprovado" },
-                        { id: Status.PENDING, name: "Pedente" },
-                      ]}
+                      options={
+                        getStatusList()
+                      }
                     />
                   </div>
                 </div>{" "}
                 <Padding padding="8px" />
+                <Avatar>
+                  <img alt="" src={props.registration?.avatar_url ? props.registration?.avatar_url : avatar} />
+                </Avatar>
+                <Padding padding="16px" />
                 <h3>Dados basicos</h3>
                 <Padding />
                 <div className="grid">
@@ -99,9 +135,9 @@ const RegistrationPage = () => {
                   <div className="col-12 md:col-6">
                     <label>Data de Nascimento</label>
                     <Padding />
-                    <TextInput
+                    <MaskInput
                       value={values.birthday?.toString()}
-                      disabled
+                      mask="99/99/9999"
                       placeholder="Data de Nascimento"
                       name="birthday"
                       onChange={handleChange}
@@ -131,6 +167,19 @@ const RegistrationPage = () => {
                     />
                   </div>
                   <div className="col-12 md:col-6">
+                    <label>Telefone para contato </label>
+                    <Padding />
+                    <MaskInput
+                      value={values.responsable_telephone}
+                      mask="(99) 9 9999-9999"
+                      name="responsable_telephone"
+                      onChange={handleChange}
+                      placeholder="name"
+                    />
+                  </div>
+                </div>{" "}
+                <div className="grid">
+                  <div className="col-12 md:col-6">
                     <label>Deficiente</label>
                     <Padding />
                     <DropdownComponent
@@ -144,6 +193,16 @@ const RegistrationPage = () => {
                       ]}
                     />
                   </div>
+                  {values.deficiency && <div className="col-12 md:col-6">
+                    <label>Qual deficiência?</label>
+                    <Padding />
+                    <TextInput
+                      value={values.deficiency_description}
+                      name="deficiency_description"
+                      onChange={handleChange}
+                      placeholder="Qual deficiência ?"
+                    />
+                  </div>}
                 </div>{" "}
                 <Padding padding="8px" />
                 <h3>Dados Responsavel</h3>
@@ -171,20 +230,19 @@ const RegistrationPage = () => {
                     />
                   </div>
                 </div>{" "}
-                <div className="grid">
-                  <div className="col-12 md:col-6">
-                    <label>Telefone </label>
-                    <Padding />
-                    <MaskInput
-                      value={values.responsable_telephone}
-                      mask="(99) 9 9999-9999"
-                      name="responsable_telephone"
-                      onChange={handleChange}
-                      placeholder="name"
-                    />
-                  </div>
-                </div>{" "}
                 <Padding padding="8px" />
+                <h3>Termo</h3>
+                <Padding padding="8px" />
+
+                <DataTable
+                  value={props.registration?.registration?.register_term}
+                  tableStyle={{ minWidth: "50rem" }}
+                  header={renderHeaderTerm}
+                >
+                  <Column body={(row) => { return (<>{formatarData(row?.dateTerm!)}</>) }} header="Data de assinatura"></Column>
+                  <Column body={(row) => { return (<>{isWithinOneYear(new Date(Date.now()), row?.dateTerm!) ? "Termo ativo" : "Termo vencido"}</>) }} header="Status"></Column>
+
+                </DataTable>
                 {/* <h3>Endereço</h3>
                 <Padding />
                 <div className="grid">
@@ -232,7 +290,12 @@ const RegistrationPage = () => {
           }}
         </Formik>
       ) : null}
-    </Container>
+      <ModalAddTerm
+        onHide={() => setVisibleTerm(false)}
+        visible={visibleTerm}
+        id={props.registration?.registration?.id!}
+      />
+    </ContentPage>
   );
 };
 export default Registration;

@@ -5,5 +5,11 @@ export interface CreateProjectTypes {
 
 export interface CreateProject {
     name: string,
+    approval_percentage: number,
     socialTechnologyId: number
+}
+
+export interface UpdateProject {
+    name: string,
+    approval_percentage: number,
 }

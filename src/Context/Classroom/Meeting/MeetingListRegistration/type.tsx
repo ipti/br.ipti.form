@@ -6,6 +6,7 @@ export interface MeetingListRegisterTypes {
   CreateFouls: (data: CreateFouls) => void
   ArchivesMeeting: (data: any, id: number) => void
   isLoading: boolean
+  DeleteArchiveMeeting: (id: number) => void
 }
 
 export interface Meeting {
@@ -26,7 +27,19 @@ export interface Meeting {
 export interface Classroom {
   name: string
   register_classroom: RegisterClassroom[]
+  project: Project
 }
+
+export interface Project {
+  project: Project
+}
+
+export interface Project {
+  name: string
+  id: number
+  ruler_url: string
+}
+
 
 export interface RegisterClassroom {
   id: number

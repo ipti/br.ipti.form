@@ -9,12 +9,14 @@ const TextInput = ({
   disabled,
   onBlur,
   name,
+  type
 }: PropsInputText) => {
   return (
     <div>
       <InputText
         style={{ width: "100%" }}
         onBlur={onBlur}
+        type={type}
         disabled={disabled}
         value={value}
         name={name}

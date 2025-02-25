@@ -1,12 +1,13 @@
+import { Button } from "primereact/button";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { AplicationContext } from "../../../Context/Aplication/context";
-import { PropsAplicationContext } from "../../../Types/types";
-import { ROLE } from "../../../Controller/controllerGlobal";
-import { Container, Padding, Row } from "../../../Styles/styles";
-import { Button } from "primereact/button";
 import CardClassroom from "../../../Components/Card/CardClassroom";
+import ContentPage from "../../../Components/ContentPage";
+import { AplicationContext } from "../../../Context/Aplication/context";
 import TsOneProvider from "../../../Context/TecnologySocial/TecnologySocialOne/context";
+import { ROLE } from "../../../Controller/controllerGlobal";
+import { Padding, Row } from "../../../Styles/styles";
+import { PropsAplicationContext } from "../../../Types/types";
 
 const TecnologySocialOne = () => {
     return(
@@ -23,7 +24,7 @@ const TecnologySocial = () => {
     AplicationContext
   ) as PropsAplicationContext;
   return (
-    <Container>
+    <ContentPage title="Tecnologia" description="Tecnologia">
       {propsAplication.user?.role === ROLE.ADMIN && (
         <Row id="end" style={{ width: "100%" }}>
           <Button
@@ -46,7 +47,7 @@ const TecnologySocial = () => {
           );
         })}
       </div>
-    </Container>
+    </ContentPage>
   );
 };
 

@@ -7,6 +7,7 @@ import {
 import {
   requestArchivesMeeting,
   requestCreateMeeting,
+  requestDeleteArchivesMeeting,
   requestDeleteMeeting,
   requestUpdateFouls,
   requestUpdateMeeting,
@@ -23,8 +24,12 @@ export const MeetingController = () => {
     (data: CreateMeeting) => requestCreateMeeting(data),
     {
       onError: (error: any) => {
-        alert(error?.response.data.message);
-      },
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
       onSuccess: (data) => {
         Swal.fire({
           icon: "success",
@@ -44,8 +49,12 @@ export const MeetingController = () => {
       requestArchivesMeeting(data, id),
     {
       onError: (error: any) => {
-        alert(error?.response.data.message);
-      },
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
       onSuccess: (data) => {
         // Swal.fire({
         //     icon: 'success',
@@ -66,8 +75,12 @@ export const MeetingController = () => {
       requestUpdateMeeting(data, id),
     {
       onError: (error: any) => {
-        alert(error?.response.data.message);
-      },
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
       onSuccess: (data) => {
         Swal.fire({
           icon: "success",
@@ -86,8 +99,12 @@ export const MeetingController = () => {
     (data: CreateFouls) => requestUpdateFouls(data),
     {
       onError: (error: any) => {
-        alert(error?.response.data.message);
-      },
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
       onSuccess: (data) => {
         Swal.fire({
           icon: "success",
@@ -105,17 +122,47 @@ export const MeetingController = () => {
   const requestDeleteMeetingMutation = useMutation(
     (id: number) => requestDeleteMeeting(id),
     {
-      onError: (error) => {},
+      onError: (error: any) => {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
       onSuccess: (data) => {
         Swal.fire({
-            icon: "success",
-            title: "Encontro excluído com sucesso!",
-            confirmButtonColor: styles.colors.colorsBaseProductNormal,
-          }).then((result) => {
-            if (result.isConfirmed) {
-                queryClient.refetchQueries("useRequestsMeetingList");
-            }
-          });
+          icon: "success",
+          title: "Encontro excluído com sucesso!",
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            queryClient.refetchQueries("useRequestsMeetingList");
+          }
+        });
+      },
+    }
+  );
+
+  const requestDeleteArchivesMeetingMutation = useMutation(
+    (id: number) => requestDeleteArchivesMeeting(id),
+    {
+      onError: (error: any) => {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
+      onSuccess: (data) => {
+        Swal.fire({
+          icon: "success",
+          title: "Arquivo deletado com sucesso!",
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            queryClient.refetchQueries("useRequestsMeetingOne");
+          }
+        });
       },
     }
   );
@@ -126,5 +173,6 @@ export const MeetingController = () => {
     requestDeleteMeetingMutation,
     requestCreateFoulsMutation,
     requestArchvesMeetingMutation,
+    requestDeleteArchivesMeetingMutation,
   };
 };

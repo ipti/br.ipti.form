@@ -13,10 +13,17 @@ export interface CreatePreRegistration {
     responsable_telephone?: string | null;
     zone: number;
     classroom: number;
+    kinship: string | undefined | null
   }
 
   export interface CreateRegistrationClassroomType {
     registration: number;
     classroom: number;
+  }
+  
+  export interface CreateRegistrationTermType {
+    registration: number;
+    dataValid: string | Date;
+    dataTerm: string | Date;
   }
   

@@ -1,4 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import BeneficiariesCreate from "../Pages/Beneficiaries/BeneficiariesCreate";
+import BeneficiariesEdit from "../Pages/Beneficiaries/BeneficiariesEdit";
+import BeneficiariesList from "../Pages/Beneficiaries/BeneficiariesList";
 import ClassroomOne from "../Pages/Classroom/ClassroomOne";
 import MeetingList from "../Pages/Classroom/ClassroomOne/MeetingList";
 import CreateMeeting from "../Pages/Classroom/ClassroomOne/MeetingList/CreateMeeting";
@@ -7,29 +10,29 @@ import AttendanceListGenerate from "../Pages/Classroom/ClassroomOne/MeetingList/
 import RegistrationList from "../Pages/Classroom/ClassroomOne/RegistrationList";
 import Registration from "../Pages/Classroom/ClassroomOne/RegistrationList/Registration";
 import Report from "../Pages/Classroom/ClassroomOne/Report";
-import FormClassroom from "../Pages/Classroom/FormClassroom";
+import FormClassroom from "../Pages/Classroom/ClassroomCriar";
 import ListClassroom from "../Pages/Classroom/ListClassroom";
 import CreateOrEditForm from "../Pages/Form/CreateForms";
 import ViewForms from "../Pages/Form/ViewForms";
+import Help from "../Pages/Help";
 import Login from "../Pages/Login/Login";
+import CreateProjectsList from "../Pages/Projects/CreateProjects";
+import ProjectOne from "../Pages/Projects/ProjectOne";
+import ProjectsList from "../Pages/Projects/ProjectsList";
 import Register from "../Pages/Register";
 import FormSchedule from "../Pages/Schedule/FormSchedule";
+import FormEditSchedule from "../Pages/Schedule/FormSchedule/edit";
 import ListSchedule from "../Pages/Schedule/ListSchedule";
 import SignUp from "../Pages/SignUp/SignUp";
-import PrivateRoute from "./privaterouter";
-import FormEditSchedule from "../Pages/Schedule/FormSchedule/edit";
-import ListUsers from "../Pages/Users/ListUsers";
+import CreateTechnologySocial from "../Pages/TecnologySocial/CreateTechnologySocial";
+import TecnologySocial from "../Pages/TecnologySocial/TecnologySocialList";
 import CreateUser from "../Pages/Users/CreateUser";
 import EditUser from "../Pages/Users/EditUser";
-import ProjectsList from "../Pages/Projects/ProjectsList";
-import CreateProjectsList from "../Pages/Projects/CreateProjects";
-import TecnologySocial from "../Pages/TecnologySocial/TecnologySocialList";
+import ListUsers from "../Pages/Users/ListUsers";
+import PrivateRoute from "./privaterouter";
 import InitialPage from "../Pages/InitialPage";
-import Help from "../Pages/Help";
-import CreateTechnologySocial from "../Pages/TecnologySocial/CreateTechnologySocial";
-import BeneficiariesList from "../Pages/Beneficiaries/BeneficiariesList";
-import BeneficiariesCreate from "../Pages/Beneficiaries/BeneficiariesCreate";
-import BeneficiariesEdit from "../Pages/Beneficiaries/BeneficiariesEdit";
+import ReapplicatorsList from "../Pages/Reapplicators/ReapplicatorsList";
+import ChangePassword from "../Pages/Users/ChangePassword";
 
 const RoutesApp = () => {
   return (
@@ -76,6 +79,10 @@ const RoutesApp = () => {
           element={<PrivateRoute Component={<Report />} />}
           path="/turma/:id/relatorio"
         />
+        {/* <Route
+          element={<PrivateRouteNotLayout Component={<ReportClassroom />} />}
+          path="/turma/:id/relatorio/pdf"
+        /> */}
         <Route
           element={<PrivateRoute Component={<RegistrationList />} />}
           path="/turma/:id/alunos"
@@ -130,6 +137,10 @@ const RoutesApp = () => {
           path="/projetos/criar"
         />
         <Route
+          element={<PrivateRoute Component={<ProjectOne />} />}
+          path="/projetos/:id"
+        />
+        <Route
           element={<PrivateRoute Component={<TecnologySocial />} />}
           path="/tecnologias"
         />
@@ -138,12 +149,20 @@ const RoutesApp = () => {
           path="/tecnologias/criar"
         />
         <Route
+          element={<PrivateRoute Component={<ReapplicatorsList />} />}
+          path="/reaplicadores"
+        />
+        <Route
           element={<PrivateRoute Component={<CreateUser />} />}
           path="/users/criar"
         />
         <Route
           element={<PrivateRoute Component={<EditUser />} />}
           path="/users/:id"
+        />
+        <Route
+          element={<PrivateRoute Component={<ChangePassword />} />}
+          path="/users/senha/:id"
         />
         <Route element={<SignUp />} path="/register" />
         <Route element={<Login />} path="/login" />

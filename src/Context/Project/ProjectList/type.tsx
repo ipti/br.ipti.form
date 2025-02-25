@@ -1,5 +1,6 @@
 export interface ProjectListTypes {
-  tsOne: Tsone | undefined
+  tsOne: Tsone | undefined,
+  isLoading: boolean
 }
 
 export interface Tsone {

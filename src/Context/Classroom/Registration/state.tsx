@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { VerifyColor, VerifySex, formatarData, getStatus } from "../../../Controller/controllerGlobal";
+import { VerifyColor, VerifySex, converterData, formatarData, getStatus } from "../../../Controller/controllerGlobal";
 import { ControllerUpdateRegistration } from "../../../Services/PreRegistration/controller";
 import { useFetchRequestClassroomRegistrationOne } from "../../../Services/PreRegistration/query";
 import { RegistrationType, UpdateRegister } from "./type";
@@ -36,6 +36,8 @@ export const RegistrationClassroomState = () => {
     responsable_cpf: registration?.registration.responsable_cpf,
     responsable_telephone: registration?.registration.responsable_telephone,
     status: getStatus(registration?.status!),
+    deficiency_description: registration?.registration.deficiency_description,
+    kinship: registration?.registration.kinship,
   };
 
   const handleUpdateRegistration = (data: UpdateRegister, id: number) => {
@@ -43,11 +45,13 @@ export const RegistrationClassroomState = () => {
       data: {
         ...data,
         registration_classroom_id: registration?.id,
-        birthday: registration?.registration.birthday,
+        birthday: converterData(data.birthday?.toString()!),
         responsable_telephone: data?.responsable_telephone?.replace(
           /[^a-zA-Z0-9]/g,
           ""
         ),
+        kinship: data.kinship === "" ? "NAO_DEFINIDO" : data.kinship,
+        cpf: data?.cpf?.replace(/[^a-zA-Z0-9]/g, ""),
         responsable_cpf: data?.responsable_cpf?.replace(/[^a-zA-Z0-9]/g, ""),
       },
       id: id,

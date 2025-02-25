@@ -4,13 +4,14 @@ import { MultiSelect } from "primereact/multiselect";
 import { useContext } from "react";
 import { useParams } from "react-router-dom";
 import CalendarComponent from "../../../../../Components/Calendar";
+import ContentPage from "../../../../../Components/ContentPage";
 import TextInput from "../../../../../Components/TextInput";
 import CreateMeetingProvider, {
   CreateMeetingContext,
 } from "../../../../../Context/Classroom/Meeting/Create/context";
 import { CreateMeetingType } from "../../../../../Context/Classroom/Meeting/Create/type";
 import { useFetchRequestUsers } from "../../../../../Services/Users/query";
-import { Container, Padding, Row } from "../../../../../Styles/styles";
+import { Padding, Row } from "../../../../../Styles/styles";
 
 const CreateMeeting = () => {
   return (
@@ -23,14 +24,13 @@ const CreateMeeting = () => {
 const CreateMeetingPage = () => {
   const props = useContext(CreateMeetingContext) as CreateMeetingType;
 
-  const { data: userRequest } = useFetchRequestUsers();
+  const { data: userRequest } = useFetchRequestUsers(undefined);
 
   const { id } = useParams();
 
 
   return (
-    <Container>
-      <h2>Criar Encontro</h2>
+    <ContentPage title="Criar Encontro" description="Crie um novo encontro.">
       <Padding padding="16px" />
       <Formik
         initialValues={{ name: "", users: [], meeting_date: undefined, theme: "" }}
@@ -41,7 +41,6 @@ const CreateMeetingPage = () => {
         {({ values, handleChange }) => {
           return (
             <Form>
-              <div className="card">
                 <div className="grid">
                   <div className="col-12 md:col-6">
                     <label>Nome</label>
@@ -94,14 +93,13 @@ const CreateMeetingPage = () => {
                 </div>
                 <Padding padding="16px" />
                 <Row id="end">
-                  <Button label="Salvar" onClick={() => {}} />
+                  <Button label="Salvar" onClick={() => { }} />
                 </Row>
-              </div>
             </Form>
           );
         }}
       </Formik>
-    </Container>
+    </ContentPage>
   );
 };
 
