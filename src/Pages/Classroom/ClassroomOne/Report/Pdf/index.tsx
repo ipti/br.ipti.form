@@ -90,8 +90,8 @@ export const ReportClassroom = () => {
 
 
   const generatePDF = () => {
-    const maxMeetingsPerPage = 8;
-    const maxStudentsPerPage = 8;
+    const maxMeetingsPerPage = 7;
+    const maxStudentsPerPage = 7;
   
     const createTableBody = (registrationsSubset: any, meetingSubset: any, startIndex: number) => {
       const headerRow = [
@@ -105,7 +105,7 @@ export const ReportClassroom = () => {
       const bodyRows = registrationsSubset.map((item: any, index: number) => {
         return [
           startIndex + index + 1,
-          item.registration.name,
+          item.registration.name + " - " + item.registration.cpf,
           ...meetingSubset.map((meeting: any) => bodyMeeting(item, meeting)),
           bodyTotal(item).percentage + "%",
           parseInt(bodyTotal(item).percentage) > report?.project?.approval_percentage! ? "Aprovado" : "Reprovado",
