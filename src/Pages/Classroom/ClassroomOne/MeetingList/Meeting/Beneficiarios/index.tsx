@@ -20,8 +20,7 @@ import {
 import {
   Status,
   convertImageUrlToBase64,
-  formatCPF,
-  loadImageFileAsBase64,
+  loadImageFileAsBase64
 } from "../../../../../../Controller/controllerGlobal";
 import styles from "../../../../../../Styles";
 import { Padding, Row } from "../../../../../../Styles/styles";
@@ -153,7 +152,7 @@ const Beneficiarios = () => {
       return [
         ["Nº ", "NOME COMPLETO", "CPF", "ASSINATURA"],
         ...registrationsSubset.map((item: any, index: number) => {
-          return [startIndex + index + 1, item.registration.name, item.registration.cpf ? formatCPF(item.registration.cpf) : "", ""];
+          return [startIndex + index + 1, item.registration.name, item.registration.cpf ? item.registration.cpf : "", ""];
         }),
       ];
     };
@@ -369,7 +368,7 @@ const Beneficiarios = () => {
               header="Nome"
             ></Column>
             <Column
-              body={(row) => <>{formatCPF(row.registration.cpf ?? "")}</>}
+              body={(row) => <>{row.registration.cpf ?? ""}</>}
               align={"center"}
               header="CPF"
             >
