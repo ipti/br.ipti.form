@@ -47,10 +47,8 @@ export function isWithinOneYear(date1: any, date2: any, dateValid?: any) {
 }
 
 export function isDateTerm(dateValid?: any) {
-
-
   const dateNow = Date.now();
-  const dateValidTerm = new Date(dateValid).getTime()
+  const dateValidTerm = new Date(dateValid).getTime();
 
   return dateValidTerm >= dateNow; // Verifica se está dentro de um ano
 }
@@ -91,7 +89,6 @@ export const getStatusList = () => {
   const status = [
     { id: Status.APPROVED, name: "Aprovado" },
     { id: Status.PENDING, name: "Pendente de análise" },
-    { id: Status.PENDING_DOCUMENTATION, name: "Pendente de documentação" },
     { id: Status.PENDING_TERM, name: "Pendente de termo" },
   ];
   return status;
@@ -126,7 +123,6 @@ export const Status = {
   PENDING: "PENDING",
   REPROVED: "REPROVED",
   PENDING_TERM: "PENDING_TERM",
-  PENDING_DOCUMENTATION: "PENDING_DOCUMENTATION",
   CANCELED: "CANCELED",
 };
 
@@ -135,7 +131,6 @@ export const StatusEnum: any = {
   PENDING: "Pendente",
   REPROVED: "Reprovado",
   PENDING_TERM: "Pend. de termo",
-  PENDING_DOCUMENTATION: "Pend. de documentação",
 };
 
 export const ROLE = {
