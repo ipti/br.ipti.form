@@ -53,6 +53,8 @@ const StepOne = () => {
       .required("Data de nascimento é obrigatória"),
     zone: Yup.string().nullable().required("Zona é obrigatória"),
     sex: Yup.string().nullable().required("Sexo é obrigatória"),
+    neighborhood: Yup.string().nullable().required("Bairro/Povoado é obrigatória"),
+    address: Yup.string().nullable().required("Endereço é obrigatória"),
     state: Yup.string().nullable().required("Estado é obrigatório"),
     city: Yup.string().nullable().required("Cidade é obrigatório"),
   });

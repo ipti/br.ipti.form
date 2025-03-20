@@ -60,6 +60,8 @@ const InputAddress = ({ errors, handleChange, touched, values, setFieldValue }: 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [values.state])
 
+    console.log(errors, touched)
+
     return (
         <div className="grid">
             <div className="col-12 md:col-6">
@@ -90,22 +92,22 @@ const InputAddress = ({ errors, handleChange, touched, values, setFieldValue }: 
                     onChange={handleChange}
                     name="address"
                 />
-                {errors.address && touched.address ? (
+                {errors.address ? (
                     <div style={{ color: "red", marginTop: "8px" }}>
                         {errors.address}
                     </div>
                 ) : null}
             </div>
             <div className="col-12 md:col-6">
-                <label>Bairro </label>
+                <label>Bairro/Povoado </label>
                 <Padding />
                 <TextInput
                     value={values.neighborhood}
-                    placeholder="Bairro"
+                    placeholder="Bairro/Povoado"
                     onChange={handleChange}
                     name="neighborhood"
                 />
-                {errors.neighborhood && touched.neighborhood ? (
+                {errors.neighborhood ? (
                     <div style={{ color: "red", marginTop: "8px" }}>
                         {errors.neighborhood}
                     </div>
@@ -120,9 +122,9 @@ const InputAddress = ({ errors, handleChange, touched, values, setFieldValue }: 
                     onChange={handleChange}
                     name="complement"
                 />
-                {errors.neighborhood && touched.neighborhood ? (
+                {errors.complement && touched.complement ? (
                     <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.neighborhood}
+                        {errors.complement}
                     </div>
                 ) : null}
             </div>

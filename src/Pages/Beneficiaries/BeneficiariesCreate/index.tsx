@@ -40,12 +40,14 @@ const RegistrationPage = () => {
     name: Yup.string().required("Nome é obrigatório"),
     color_race: Yup.string().required("Raça/cor é obrigatório"),
     deficiency: Yup.boolean().required("Deficiência é obrigatória"),
-    cpf: Yup.string().test("cpf-valid", "CPF inválido", (value) => {
-      if (value && value.trim() !== "") {
-        return validaCPF(value);
-      }
-      return true;
-    }).required("CPF é obrigatório"),
+    cpf: Yup.string()
+      .test("cpf-valid", "CPF inválido", (value) => {
+        if (value && value.trim() !== "") {
+          return validaCPF(value);
+        }
+        return true;
+      })
+      .required("CPF é obrigatório"),
     responsable_cpf: Yup.string().test("cpf-valid", "CPF inválido", (value) => {
       if (value && value.trim() !== "") {
         return validaCPF(value);
@@ -57,8 +59,14 @@ const RegistrationPage = () => {
       .nullable()
       .required("Data de nascimento é obrigatória"),
     zone: Yup.string().nullable().required("Zona é obrigatório"),
-    project: Yup.string().nullable().required("Plano de Trabalho é obrigatório"),
+    project: Yup.string()
+      .nullable()
+      .required("Plano de Trabalho é obrigatório"),
     classroom: Yup.string().nullable().required("Turma é obrigatório"),
+    neighborhood: Yup.string()
+      .nullable()
+      .required("Bairro/Povoado é obrigatória"),
+    address: Yup.string().nullable().required("Endereço é obrigatória"),
     state: Yup.string().nullable().required("Estado é obrigatório"),
     city: Yup.string().nullable().required("Cidade é obrigatório"),
     sex: Yup.string().nullable().required("Sexo é obrigatória"),
@@ -92,17 +100,17 @@ const RegistrationPage = () => {
                   </Row>
                 </Column>
                 <Padding padding="8px" />
-                {errorArray.length > 0 && <div>
-                  <h3>Erros encontrados no formulários</h3>
-                  <Padding />
-                  {errorArray.map((error, index) => (
-                    <div key={index} style={{ color: 'red' }}>
-                      {error}
-                    </div>
-                  ))}
-                </div>}
-
-
+                {errorArray.length > 0 && (
+                  <div>
+                    <h3>Erros encontrados no formulários</h3>
+                    <Padding />
+                    {errorArray.map((error, index) => (
+                      <div key={index} style={{ color: "red" }}>
+                        {error}
+                      </div>
+                    ))}
+                  </div>
+                )}
                 <Padding padding="8px" />
                 <h3>Verificar Cadastro</h3>
                 <Padding padding="8px" />
@@ -229,7 +237,7 @@ const RegistrationPage = () => {
                       placeholder="Telefone para contato"
                     />
                     {errors.responsable_telephone &&
-                      touched.responsable_telephone ? (
+                    touched.responsable_telephone ? (
                       <div style={{ color: "red", marginTop: "8px" }}>
                         {errors.responsable_telephone}
                       </div>
@@ -376,26 +384,34 @@ const RegistrationPage = () => {
                       ) : null}
                     </div>
                   ) : null}
-                 {values.project && <div className="col-12 md:col-6">
-                  <label>Data de matricula</label>
-                  <Padding />
-                  <CalendarComponent
-                    value={values.date_registration}
-                    name="date_registration"
-                    dateFormat="dd/mm/yy"
-                    onChange={handleChange}
-                  />
-                  {errors.date_registration && touched.date_registration ? (
-                    <div style={{ color: "red", marginTop: "8px" }}>
-                      {String(errors.date_registration)}
+                  {values.project && (
+                    <div className="col-12 md:col-6">
+                      <label>Data de matricula</label>
+                      <Padding />
+                      <CalendarComponent
+                        value={values.date_registration}
+                        name="date_registration"
+                        dateFormat="dd/mm/yy"
+                        onChange={handleChange}
+                      />
+                      {errors.date_registration && touched.date_registration ? (
+                        <div style={{ color: "red", marginTop: "8px" }}>
+                          {String(errors.date_registration)}
+                        </div>
+                      ) : null}
                     </div>
-                  ) : null}
-                </div>}
+                  )}
                 </div>{" "}
                 <Padding />
                 <h3>Endereço</h3>
                 <Padding padding="8px" />
-                <InputAddress errors={errors} handleChange={handleChange} setFieldValue={setFieldValue} touched={touched} values={values} />
+                <InputAddress
+                  errors={errors}
+                  handleChange={handleChange}
+                  setFieldValue={setFieldValue}
+                  touched={touched}
+                  values={values}
+                />
                 {/* <h3>Endereço</h3>
                 <Padding />
                 <div className="grid">
