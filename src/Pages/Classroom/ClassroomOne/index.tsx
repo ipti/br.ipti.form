@@ -31,6 +31,9 @@ import ModalChange from "./ModalChangeClaassroom";
 import color from "../../../Styles/colors";
 
 import { requestChartFrequency } from "../../../Services/Chart/request";
+import { StateCard } from "../../../Types/states-cards";
+import { requestCountStates } from "../../../Services/Classroom/request";
+import CardQuant from "../../../Components/Chart/CardQuant";
 
 const ClassroomOne = () => {
   return (
@@ -47,6 +50,7 @@ const ClassroomOnePage = () => {
   const { data: classroom } = useFetchRequestClassroomOne(parseInt(id!));
   const [edit, setEdit] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [cards, setCards] = useState<StateCard[]>([]);
 
   const [chartData, setChartData] = useState({});
 
@@ -92,7 +96,13 @@ const ClassroomOnePage = () => {
       }
     };
 
+    const cardsData = async () => {
+      const counts = await requestCountStates(classroom?.id);
+      setCards(counts);
+    };
+
     fetchData();
+    cardsData();
   }, [classroom?.id]);
 
   const propsAplication = useContext(
@@ -233,6 +243,24 @@ const ClassroomOnePage = () => {
             icon={report}
           />
         </div>
+      </div>
+
+      <div className="grid">
+        {cards.map((item) => (
+          <div className="col-12 md:col-4 lg:col-2">
+            <CardQuant
+              title={item.status}
+              quant={item.number}
+              color={
+                item.status === "Aprovados"
+                  ? "orange"
+                  : item.status === "Pendentes"
+                  ? "blue"
+                  : "navy_blue"
+              }
+            />
+          </div>
+        ))}
       </div>
 
       <div

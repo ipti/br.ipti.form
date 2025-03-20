@@ -65,7 +65,10 @@ export const requestClassroomReport = (id: number) => {
     });
 };
 
-export const requestUpdateClassroom = (id: number, data: { name: string, status: string }) => {
+export const requestUpdateClassroom = (
+  id: number,
+  data: { name: string; status: string }
+) => {
   let path = "/classroom/";
   return http
     .put(path + id, data)
@@ -141,5 +144,18 @@ export const requestDeleteClassroom = (id: number) => {
       }
       alert(err.response.message);
       throw err;
+    });
+};
+
+export const requestCountStates = (id: number) => {
+  let path = "/classroom-bff/count-states";
+  return http
+    .get(path, { params: { idClassroom: id } })
+    .then((response) => response.data)
+    .catch((err) => {
+      if (err.response.status === 401) {
+        logout();
+        window.location.reload();
+      }
     });
 };
