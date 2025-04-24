@@ -14,8 +14,7 @@ import pdfFonts from "pdfmake/build/vfs_fonts";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
 import { convertImageUrlToBase64, loadImageFileAsBase64 } from "../../../../../Controller/controllerGlobal";
 
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
-
+pdfMake.vfs = pdfFonts.vfs;
 export const ReportClassroom = () => {
   const { id } = useParams();
 

@@ -24,7 +24,7 @@ import {
 } from "../../../../../../Controller/controllerGlobal";
 import styles from "../../../../../../Styles";
 import { Padding, Row } from "../../../../../../Styles/styles";
-(pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
+pdfMake.vfs = pdfFonts.vfs;
 
 const StyleComponent = styled.div`
   .p-datatable .p-datatable-tbody > tr > td {
