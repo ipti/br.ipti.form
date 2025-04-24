@@ -94,10 +94,12 @@ export const ReportClassroom = () => {
     const maxStudentsPerPage = 7;
   
     const createTableBody = (registrationsSubset: any, meetingSubset: any, startIndex: number) => {
+      
+      
       const headerRow = [
         "Nº",
         "NOME COMPLETO",
-        ...meetingSubset.map((item: any, index: number) => item.name.substring(0,3) + item.name.slice(-2)),
+        ...meetingSubset.map((item: any, index: number) => meetingSubset.length > 4 ?  item.name.substring(0,3) + item.name.slice(-2) : item.name.substring(0,20)),
         "FREQUÊNCIA",
         "STATUS",
       ];

@@ -1,4 +1,5 @@
-import { useContext } from "react";
+import { InputText } from "primereact/inputtext";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CardClassroom from "../../../Components/Card/CardClassroom";
 import ContentPage from "../../../Components/ContentPage";
@@ -28,10 +29,21 @@ const ListClassroomPage = () => {
   const propsAplication = useContext(
     AplicationContext
   ) as PropsAplicationContext;
+  const [filter, setFilter] = useState("");
 
   const props = useContext(ClassroomContext) as ClassroomTypes;
 
   if (props.isLoading) return <Loading />;
+
+  const search = () => {
+    if (filter !== "") {
+      const buscaLowerCase = filter.toLowerCase();
+      return props.classrooms?.filter((props: any) =>
+        props.name.toLowerCase().includes(buscaLowerCase)
+      );
+    }
+    return props.classrooms;
+  };
 
   return (
     <ContentPage
@@ -45,27 +57,47 @@ const ListClassroomPage = () => {
       onClick={() => history("/turma/criar/" + props.project)}
     >
       <Column>
-        <label>Plano de trabalho</label>
         <Padding />
-        <div className="w-12rem md:w-16rem">
-          <DropdownComponent
-            placerholder="Escolha o plano de trabalho"
-            options={props.tsOne?.project}
-            optionsLabel="name"
-            optionsValue="id"
-            value={props.project}
-            onChange={(e) => {
-              props.setProject(e.value);
-              idProject(e.value);
-            }}
-          />
+        <div style={{width: window.innerWidth > 600 ? "60%" : "100%"}}>
+          <div className="grid ">
+            <Column className="col-12 md:col-6" id="center">
+              <label>Nome da turma</label>
+              <Padding />
+              <span className="p-input-icon-left">
+                <i className="pi pi-search" />
+                <InputText
+                  placeholder="Pesquise pelo nome"
+                  onChange={(e) => {
+                    setFilter(e.target.value);
+                  }}
+                  style={{ width: "100%" }}
+                  value={filter}
+                />
+              </span>
+            </Column>
+            <div className="col-12 md:col-6">
+              <label>Plano de trabalho</label>
+              <Padding />
+              <DropdownComponent
+                placerholder="Escolha o plano de trabalho"
+                options={props.tsOne?.project}
+                optionsLabel="name"
+                optionsValue="id"
+                value={props.project}
+                onChange={(e) => {
+                  props.setProject(e.value);
+                  idProject(e.value);
+                }}
+              />
+            </div>
+          </div>
         </div>
       </Column>
 
       <Padding padding="8px" />
-      {props?.classrooms?.length > 0 ? (
+      {search()?.length > 0 ? (
         <div className="grid">
-          {props.classrooms?.map((item: any, index: number) => {
+          {search()?.map((item: any, index: number) => {
             return (
               <div className="col-12 md:col-6 lg:col-4">
                 <CardClassroom
