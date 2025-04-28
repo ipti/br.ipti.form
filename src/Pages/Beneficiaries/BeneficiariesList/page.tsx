@@ -147,7 +147,7 @@ export const BeneficiariesListPage = () => {
             body={(rowData) => {
               return (
                 <>
-                  {rowData.register_term.length > 0
+                  {rowData?.register_term?.length > 0
                     ? `${formatarData(
                         rowData.register_term[rowData.register_term.length - 1]
                           .dateTerm
