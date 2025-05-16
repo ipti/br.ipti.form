@@ -75,7 +75,7 @@ export const BeneficiariesEditState = () => {
     complement: registrations?.complement ?? "",
     state: registrations?.state_fk ?? "",
     city: registrations?.city_fk ?? "",
-    date_registration: new Date(registrations?.date_registration) ?? ""
+    date_registration:registrations?.date_registration ? new Date(registrations?.date_registration) : null
   };
 
   const CreateRegisterClassroom = (data: CreateRegistrationClassroomType) => {

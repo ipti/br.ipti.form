@@ -1,6 +1,8 @@
 import { Dispatch, SetStateAction } from "react";
+import { RegistrationCPF } from "../../Services/PreRegistration/types";
 
 export interface RegisterTypes {
+    registraionFind: RegistrationCPF
     padding: string,
     NextStep: (values: any) => void
     isOverAge: boolean | undefined

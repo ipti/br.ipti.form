@@ -26,3 +26,5 @@ export interface BeneficiariesCreateType {
   classrooms: any;
   CreateRegister: (values: any) => void
 }
+
+

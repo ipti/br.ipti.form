@@ -2,10 +2,11 @@
 // import { useFetchRequestQuiz } from "../../../query/quiz";
 
 import { useEffect, useState } from "react";
-import { useFetchRequestProjectList } from "../../Services/PreRegistration/query";
+import { useFetchRequestProjectList, useFetchRequestRegistrationOneCPF } from "../../Services/PreRegistration/query";
 import { Project, Projects, Registration } from "./type";
 import { ControllerPreRegistration } from "../../Services/PreRegistration/controller";
 import { useNavigate } from "react-router-dom";
+import { RegistrationCPF } from "../../Services/PreRegistration/types";
 
 export const RegisterState = () => {
   const padding = "16px";
@@ -54,6 +55,11 @@ export const RegisterState = () => {
     { value: 2, label: 'Feminino' },
   ];
 
+    const { data: registrationCpf } = useFetchRequestRegistrationOneCPF(dataValues?.cpf?.replace(/[^a-zA-Z0-9]/g, ''));
+  
+    var registraionFind: RegistrationCPF = registrationCpf;
+  
+
   const CreateRegister = () => {
     const data = new Date(dataValues?.birthday);
     const dataFormatada = data?.toISOString()?.split('T')[0];
@@ -87,6 +93,6 @@ export const RegisterState = () => {
     step,
     project,
     dataValues,
-    classroom, setClassroom, color_race, backStep, sex, CreateRegister
+    classroom, setClassroom, color_race, backStep, sex, CreateRegister,registraionFind
   };
 };

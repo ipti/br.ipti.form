@@ -60,7 +60,6 @@ const InputAddress = ({ errors, handleChange, touched, values, setFieldValue }: 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [values.state])
 
-    console.log(errors, touched)
 
     return (
         <div className="grid">

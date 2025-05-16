@@ -10,6 +10,7 @@ import { validaCPF } from "../../../../../../Controller/controllerValidCPF";
 import { Column, Padding, Row } from "../../../../../../Styles/styles";
 import DropdownComponent from "../../../../../../Components/Dropdown";
 import { kinship } from "../../../../../../Controller/controllerGlobal";
+import Swal from "sweetalert2";
 
 const UnderAge = () => {
   const props = useContext(RegisterContext) as RegisterTypes;
@@ -28,7 +29,6 @@ const UnderAge = () => {
       "Nome do responsável é obrigatório"
     ),
     kinship: Yup.string().required("Parentesco é obrigatório"),
-   
   });
 
   return (
@@ -38,7 +38,20 @@ const UnderAge = () => {
           initialValues={initialValue}
           validationSchema={schema}
           onSubmit={(values) => {
-            props.NextStep(values);
+            if (props.registraionFind) {
+              Swal.fire({
+                title:
+                  "Identificamos um cadastro existente com este CPF. Caso continue, os dados atuais serão atualizados com as novas informações. Deseja prosseguir?",
+                showCancelButton: true,
+                confirmButtonText: "Sim",
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  props.NextStep(values);
+                }
+              });
+            } else {
+              props.NextStep(values);
+            }
           }}
         >
           {({ values, handleChange, errors, touched }) => {

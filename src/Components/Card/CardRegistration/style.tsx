@@ -12,6 +12,7 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  padding-top: -16px;
   
   border-radius: 16px;
 

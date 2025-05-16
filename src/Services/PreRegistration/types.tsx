@@ -27,3 +27,32 @@ export interface CreatePreRegistration {
     dataTerm: string | Date;
   }
   
+  export interface RegistrationCPF {
+    id: number
+    avatar_url: any
+    name: string
+    birthday: string
+    cpf: string
+    sex: number
+    color_race: number
+    deficiency: boolean
+    deficiency_description: string
+    responsable_name: string
+    responsable_cpf: string
+    responsable_telephone: string
+    zone: number
+    kinship: string
+    kinship_description: any
+    status: string
+    createdAt: string
+    updatedAt: string
+    date_registration: string
+    cep: string
+    address: string
+    number: any
+    complement: string
+    neighborhood: string
+    city_fk: number
+    state_fk: number
+  }
+  

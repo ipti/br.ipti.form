@@ -6,6 +6,7 @@ import { RegisterContext } from "../../../../../../Context/Register/context";
 import { RegisterTypes } from "../../../../../../Context/Register/type";
 import { Column, Padding, Row } from "../../../../../../Styles/styles";
 import InputsEquals from "../InputsEquals";
+import Swal from "sweetalert2";
 
 const OverAge = () => {
   const props = useContext(RegisterContext) as RegisterTypes;
@@ -41,7 +42,21 @@ const OverAge = () => {
           initialValues={initialValue}
           validationSchema={schema}
           onSubmit={(values) => {
-            props.NextStep(values);
+            if (props.registraionFind) {
+              Swal.fire({
+                title:
+                  "Identificamos um cadastro existente com este CPF. Caso continue, os dados atuais serão atualizados com as novas informações. Deseja prosseguir?",
+                showCancelButton: true,
+                cancelButtonText: "Cancelar",
+                confirmButtonText: "Sim",
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  props.NextStep(values);
+                }
+              });
+            } else {
+              props.NextStep(values);
+            }
           }}
         >
           {({ values, handleChange, errors, touched, setFieldValue }) => {

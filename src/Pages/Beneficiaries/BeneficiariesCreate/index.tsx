@@ -1,6 +1,6 @@
 import { Form, Formik } from "formik";
 import { Button } from "primereact/button";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import * as Yup from "yup";
 import CalendarComponent from "../../../Components/Calendar";
 import ContentPage from "../../../Components/ContentPage";
@@ -22,6 +22,8 @@ import {
 import { validaCPF } from "../../../Controller/controllerValidCPF";
 import { Column, Padding, Row } from "../../../Styles/styles";
 import InputAddress from "../../../Components/InputsAddress";
+import { useFetchRequestRegistrationOneCPF } from "../../../Services/PreRegistration/query";
+import { RegistrationCPF } from "../../../Services/PreRegistration/types";
 
 const BeneficiariesCreate = () => {
   return (
@@ -35,6 +37,13 @@ const RegistrationPage = () => {
   const props = useContext(
     BeneficiariesCreateContext
   ) as BeneficiariesCreateType;
+
+  const [cpf, setCpf] = useState<string | undefined>();
+
+  const { data: registrationCpf } = useFetchRequestRegistrationOneCPF(cpf);
+
+  var registraionFind: RegistrationCPF = registrationCpf;
+
 
   const schema = Yup.object().shape({
     name: Yup.string().required("Nome é obrigatório"),
@@ -122,7 +131,10 @@ const RegistrationPage = () => {
                       value={values.cpf}
                       mask="999.999.999-99"
                       placeholder="CPF *"
-                      onChange={handleChange}
+                      onChange={(e) => {
+                        handleChange(e);
+                        setCpf(e.target.value ?? "");
+                      }}
                       name="cpf"
                     />
                     {errors.cpf && touched.cpf ? (
@@ -130,6 +142,20 @@ const RegistrationPage = () => {
                         {errors.cpf}
                       </div>
                     ) : null}
+                  </div>
+                  <div className="col-12 md:col-6">
+                    {registraionFind && (
+                      <div>
+                        <p>Existe um cadastro com esse cpf</p>
+                       
+                            <p className="mt-3">
+                              {registraionFind?.name}{" "}
+                              <a href={"/beneficiarios/" + registraionFind.id}>
+                                clique aqui para visualizar
+                              </a>
+                            </p>
+                      </div>
+                    )}
                   </div>
                 </div>{" "}
                 <Padding padding="8px" />

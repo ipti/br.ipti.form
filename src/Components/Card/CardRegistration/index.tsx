@@ -43,9 +43,9 @@ const CardRegistration = ({
   return (
     <>
       <Container
-        className="card"
+        className="card pt-3"
         onClick={(e) => {
-          e.stopPropagation();
+          // e.stopPropagation();
           if (
             propsAplication.user?.role === ROLE.ADMIN ||
             propsAplication.user?.role === ROLE.COORDINATORS
@@ -59,7 +59,7 @@ const CardRegistration = ({
             propsAplication.user?.role === ROLE.COORDINATORS) && (
             <div
               className="cursor-pointer"
-              style={{ marginBottom: "-32px" }}
+              // style={{ marginBottom: "-32px" }}
               onClick={(e) => {
                 e.stopPropagation();
                 setVisible(true);
