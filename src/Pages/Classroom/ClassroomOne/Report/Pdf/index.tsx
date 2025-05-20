@@ -87,6 +87,22 @@ export const ReportClassroom = () => {
     return !verifyFouls() ? "P" : "F";
   };
 
+  function abreviarNomeDinamico(texto: string): string {
+  return texto
+    .split("-")
+    .map(parte => {
+      return parte
+        .trim()
+        .split(" ")
+        .map(palavra => {
+          if (!isNaN(Number(palavra))) return palavra;
+          return palavra.charAt(0).toUpperCase();
+        })
+        .join("");
+    })
+    .join(" - ");
+}
+
 
   const generatePDF = () => {
     const maxMeetingsPerPage = 7;
@@ -98,7 +114,7 @@ export const ReportClassroom = () => {
       const headerRow = [
         "Nº",
         "NOME COMPLETO",
-        ...meetingSubset.map((item: any, index: number) => meetingSubset.length > 4 ?  item.name.substring(0,3) + item.name.slice(-2) : item.name.substring(0,20)),
+        ...meetingSubset.map((item: any, index: number) => meetingSubset.length > 4 ?  abreviarNomeDinamico(item.name) : item.name.substring(0,20)),
         "FREQUÊNCIA",
         "STATUS",
       ];
@@ -177,7 +193,7 @@ export const ReportClassroom = () => {
             marginTop: 32,
             table: {
               widths: [
-                "3%",
+                "4%",
                 "30%",
                 ...meetingSubset!.map(() => "*"),
                 "11%",
