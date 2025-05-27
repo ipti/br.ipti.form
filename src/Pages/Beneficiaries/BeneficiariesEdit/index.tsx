@@ -25,7 +25,7 @@ import {
   getStatus,
   isDateTerm,
   kinship,
-  typesex
+  typesex,
 } from "../../../Controller/controllerGlobal";
 import { validaCPF } from "../../../Controller/controllerValidCPF";
 import styles from "../../../Styles";
@@ -33,7 +33,6 @@ import color from "../../../Styles/colors";
 import { Container, Padding, Row } from "../../../Styles/styles";
 import ModalAddTerm from "./ModalAddTerm";
 import ModalCreateRegisterClassroom from "./ModalCreateRegisterClassroom";
-
 
 const BeneficiariesEdit = () => {
   return (
@@ -48,7 +47,7 @@ export const Avatar = styled.div`
   height: 128px;
   width: 128px;
   border-radius: 50%;
-  
+
   img {
     border-radius: 50%; /* This will make the image circular */
     height: 100%;
@@ -61,18 +60,18 @@ const BeneficiariesEditPage = () => {
   const [visible, setVisible] = useState<any>();
   const [visibleTerm, setVisibleTerm] = useState<any>();
 
-
   const schema = Yup.object().shape({
-
     name: Yup.string().required("Nome é obrigatório"),
     color_race: Yup.object().required("Raça/cor é obrigatório"),
     deficiency: Yup.object().required("Deficiência é obrigatória"),
-    cpf: Yup.string().test("cpf-valid", "CPF inválido", (value) => {
-      if (value && value.trim() !== "") {
-        return validaCPF(value);
-      }
-      return true;
-    }).required("CPF é obrigatório"),
+    cpf: Yup.string()
+      .test("cpf-valid", "CPF inválido", (value) => {
+        if (value && value.trim() !== "") {
+          return validaCPF(value);
+        }
+        return true;
+      })
+      .required("CPF é obrigatório"),
     responsable_cpf: Yup.string().test("cpf-valid", "CPF inválido", (value) => {
       if (value && value.trim() !== "") {
         return validaCPF(value);
@@ -87,7 +86,6 @@ const BeneficiariesEditPage = () => {
     city: Yup.string().nullable().required("Cidade é obrigatório"),
     sex: Yup.object().nullable().required("Sexo é obrigatória"),
   });
-
 
   const [visibleDelete, setVisibleDelete] = useState<any>();
 
@@ -124,6 +122,28 @@ const BeneficiariesEditPage = () => {
     );
   };
 
+  const renderActionTerm = (row: any) => {
+    return (
+      <Row id="center" style={{gap: "8px"}}>
+        <div
+          onClick={() => {
+            setVisibleTerm(row)
+          }}
+          style={{cursor: "pointer"}}
+        >
+          <Icon icon="pi pi-pencil" />
+        </div>
+        <div
+          onClick={() => {
+            window.open(row.blob_file.blob_url);
+          }}
+             style={{cursor: "pointer"}}
+        >
+          <Icon icon="pi pi-download" />
+        </div>
+      </Row>
+    );
+  };
 
   const StatusBody = (rowData: any) => {
     return <div>{getStatus(rowData?.status)?.name}</div>;
@@ -170,21 +190,31 @@ const BeneficiariesEditPage = () => {
                   </Row>
                 </div>
                 <Padding padding="8px" />
-                {errorArray.length > 0 && <div>
-                  <h3>Erros encontrados no formulários</h3>
-                  <Padding />
-                  {errorArray.map((error, index) => (
-                    <div key={index} style={{ color: 'red' }}>
-                      {error}
-                    </div>
-                  ))}
-                </div>}
+                {errorArray.length > 0 && (
+                  <div>
+                    <h3>Erros encontrados no formulários</h3>
+                    <Padding />
+                    {errorArray.map((error, index) => (
+                      <div key={index} style={{ color: "red" }}>
+                        {error}
+                      </div>
+                    ))}
+                  </div>
+                )}
                 <Padding padding="8px" />
                 <Avatar>
-                  <img alt="" src={props.file ? (URL.createObjectURL(props.file![0]) ?? undefined) : props.registrations?.avatar_url ? props.registrations?.avatar_url : avatar} />
+                  <img
+                    alt=""
+                    src={
+                      props.file
+                        ? URL.createObjectURL(props.file![0]) ?? undefined
+                        : props.registrations?.avatar_url
+                        ? props.registrations?.avatar_url
+                        : avatar
+                    }
+                  />
                 </Avatar>
                 <Padding padding="8px" />
-
                 <div className="grid">
                   <div className="col-12 md:col-6">
                     <label>Avatar </label>
@@ -297,27 +327,28 @@ const BeneficiariesEditPage = () => {
                       onChange={handleChange}
                       placeholder="name"
                     />
-                    {errors.responsable_telephone && touched.responsable_telephone ? (
+                    {errors.responsable_telephone &&
+                    touched.responsable_telephone ? (
                       <div style={{ color: "red", marginTop: "8px" }}>
                         {errors.responsable_telephone}
                       </div>
                     ) : null}
                   </div>
                   <div className="col-12 md:col-6">
-                  <label>Data de matricula</label>
-                  <Padding />
-                  <CalendarComponent
-                    value={values.date_registration}
-                    name="date_registration"
-                    dateFormat="dd/mm/yy"
-                    onChange={handleChange}
-                  />
-                  {errors.date_registration && touched.date_registration ? (
-                    <div style={{ color: "red", marginTop: "8px" }}>
-                      {String(errors.date_registration)}
-                    </div>
-                  ) : null}
-                </div>
+                    <label>Data de matricula</label>
+                    <Padding />
+                    <CalendarComponent
+                      value={values.date_registration}
+                      name="date_registration"
+                      dateFormat="dd/mm/yy"
+                      onChange={handleChange}
+                    />
+                    {errors.date_registration && touched.date_registration ? (
+                      <div style={{ color: "red", marginTop: "8px" }}>
+                        {String(errors.date_registration)}
+                      </div>
+                    ) : null}
+                  </div>
                 </div>{" "}
                 <div className="grid">
                   <div className="col-12 md:col-6">
@@ -405,27 +436,55 @@ const BeneficiariesEditPage = () => {
                       </div>
                     ) : null}
                   </div>
-
                 </div>{" "}
                 <Padding />
                 <h3>Endereço</h3>
                 <Padding padding="8px" />
-                <InputAddress errors={errors} handleChange={handleChange} setFieldValue={setFieldValue} touched={touched} values={values} />
+                <InputAddress
+                  errors={errors}
+                  handleChange={handleChange}
+                  setFieldValue={setFieldValue}
+                  touched={touched}
+                  values={values}
+                />
                 <Padding padding="8px" />
                 <h3>Termo</h3>
                 <Padding padding="8px" />
-                
                 <DataTable
                   value={props.registrations?.register_term}
                   tableStyle={{ minWidth: "50rem" }}
                   header={renderHeaderTerm}
                 >
-                  <Column body={(row) => { return (<>{formatarData(row?.dateTerm!)}</>) }} header="Data de assinatura"></Column>
-                  <Column body={(row) => { return (<>{formatarData(row?.dateValid ?? "")}</>) }} header="Data de validade"></Column>
+                  <Column
+                    body={(row) => {
+                      return <>{formatarData(row?.dateTerm!)}</>;
+                    }}
+                    header="Data de assinatura"
+                  ></Column>
+                  <Column
+                    body={(row) => {
+                      return <>{formatarData(row?.dateValid ?? "")}</>;
+                    }}
+                    header="Data de validade"
+                  ></Column>
 
-                  <Column body={(row) => { return (<>{isDateTerm(row?.dateValid!) ? "Termo ativo" : "Termo vencido"}</>) }} header="Status"></Column>
-                  <Column align={"center"} body={(row) => { return (<Row id="center" onClick={() => {window.open(row.blob_file.blob_url)}} style={{cursor: "pointer"}}><Icon icon="pi pi-download" /></Row>) }} header="Ações"></Column>
-
+                  <Column
+                    body={(row) => {
+                      return (
+                        <>
+                          {isDateTerm(row?.dateValid!)
+                            ? "Termo ativo"
+                            : "Termo vencido"}
+                        </>
+                      );
+                    }}
+                    header="Status"
+                  ></Column>
+                  <Column
+                    align={"center"}
+                    body={(e) => renderActionTerm(e)}
+                    header="Ações"
+                  ></Column>
                 </DataTable>
                 <Padding padding="8px" />
                 <h3>Matriculas</h3>
@@ -482,7 +541,10 @@ const BeneficiariesEditPage = () => {
         tableStyle={{ minWidth: "50rem" }}
         header={renderHeader}
       >
-        <Column field="classroom.project.name" header="Plano de trabalho"></Column>
+        <Column
+          field="classroom.project.name"
+          header="Plano de trabalho"
+        ></Column>
         <Column field="classroom.name" header="Turma"></Column>
         <Column body={StatusBody} header="Status"></Column>
         <Column header="Ações" body={ActionBeneficiariesBody}></Column>

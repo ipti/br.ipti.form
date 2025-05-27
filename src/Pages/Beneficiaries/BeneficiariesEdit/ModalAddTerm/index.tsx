@@ -7,21 +7,18 @@ import TextInput from "../../../../Components/TextInput";
 import { ControllerUpdateRegistration } from "../../../../Services/PreRegistration/controller";
 import { Column, Padding, Row } from "../../../../Styles/styles";
 
-
 const ModalAddTerm = ({
   onHide,
   visible,
-  id
+  id,
 }: {
   onHide(): void;
-  visible?: boolean | undefined;
-  id: number
+  visible?: any;
+  id: number;
 }) => {
 
-
-  const {
-    requestRegisterTermMutation
-  } = ControllerUpdateRegistration();
+  console.log(visible)
+  const { requestRegisterTermMutation } = ControllerUpdateRegistration();
   const CreateRegisterTerm = (data: FormData) => {
     requestRegisterTermMutation.mutate({ data: data });
   };
@@ -30,23 +27,35 @@ const ModalAddTerm = ({
     dateTerm: Yup.string().required("Data de assinatura é obrigatório"),
     dateValid: Yup.string().required("Data de validade é obrigatório"),
     file: Yup.string().required("Arquivo com termo é obrigatório"),
+  });
 
-   
+  const schemaEdit = Yup.object().shape({
+    dateTerm: Yup.string().required("Data de assinatura é obrigatório"),
+    dateValid: Yup.string().required("Data de validade é obrigatório"),
+    file: Yup.string().required("Arquivo com termo é obrigatório"),
   });
 
   return (
-    <Dialog onHide={onHide} header="Novo termo" visible={visible} style={{ width: window.innerWidth > 800 ? "50vw" : "70vw" }}>
+    <Dialog
+      onHide={onHide}
+      header="Novo termo"
+      visible={visible}
+      style={{ width: window.innerWidth > 800 ? "50vw" : "70vw" }}
+    >
       <Formik
-        initialValues={{ dateTerm: new Date(Date.now()), dateValid: "", file: undefined}}
-        validationSchema={schema}
+        initialValues={{
+          dateTerm: new Date(visible?.dateTerm) ?? new Date(Date.now()),
+          dateValid: new Date(visible?.dateValid) ?? "",
+          file: undefined,
+        }}
+        validationSchema={visible?.dateTerm ? schemaEdit : schema}
         onSubmit={(values) => {
           if (values.file) {
-
             const formData = new FormData();
-             formData.append("dateTerm",values.dateTerm.toString() )
-             formData.append("dateValid",values.dateValid?.toString() )
-             formData.append("registration", id?.toString())
-             formData.append("file", values.file[0])
+            formData.append("dateTerm", values.dateTerm.toString());
+            formData.append("dateValid", values.dateValid?.toString());
+            formData.append("registration", id?.toString());
+            formData.append("file", values.file[0]);
 
             CreateRegisterTerm(formData);
           }
@@ -54,6 +63,8 @@ const ModalAddTerm = ({
         }}
       >
         {({ values, handleChange, errors, touched, setFieldValue }) => {
+
+          console.log(values)
           return (
             <Form>
               <div className="grid">
@@ -88,7 +99,7 @@ const ModalAddTerm = ({
                     </div>
                   ) : null}
                 </div>
-                <div className="col-12 md:col-6">
+                {!visible?.dateTerm && <div className="col-12 md:col-6">
                   <label>Termo </label>
                   <Padding />
                   <TextInput
@@ -103,19 +114,18 @@ const ModalAddTerm = ({
                       {String(errors.file)}
                     </div>
                   ) : null}
-                </div>
+                </div>}
               </div>{" "}
               <Padding padding="16px" />
               <Column style={{ width: "100%" }}>
                 <Row id="end">
-                  <Button label="Adicionar" />
+                  <Button label={visible.dateTerm ? "Salvar" :"Adicionar"} />
                 </Row>
               </Column>
             </Form>
           );
         }}
       </Formik>
-
     </Dialog>
   );
 };
