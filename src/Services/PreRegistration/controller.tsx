@@ -94,6 +94,8 @@ export const ControllerUpdateRegistration = () => {
           title: "Alteração realizada com sucesso!",
           confirmButtonColor: styles.colors.colorsBaseProductNormal,
         });
+
+        queryClient.refetchQueries("useRequestsRegistrationOne")
       },
     }
   );
