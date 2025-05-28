@@ -23,7 +23,10 @@ const BeneficiariesEditProvider = ({
     setProject,
     file, 
     setFile,
-    CreateRegisterTerm
+    CreateRegisterTerm,
+    DeleteRegisterTerm,
+    UpdateRegisterTerm
+
   } = BeneficiariesEditState();
 
   return (
@@ -41,7 +44,9 @@ const BeneficiariesEditProvider = ({
         project,
         projectRequet,
         setProject,
-        CreateRegisterTerm
+        CreateRegisterTerm,
+        DeleteRegisterTerm,
+        UpdateRegisterTerm
       }}
     >
       {children}

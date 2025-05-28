@@ -1,0 +1,1 @@
+export interface UpdateRegisterTerm {dateTerm: any, dateValid: any}

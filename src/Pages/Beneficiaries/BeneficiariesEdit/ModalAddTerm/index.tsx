@@ -6,6 +6,9 @@ import CalendarComponent from "../../../../Components/Calendar";
 import TextInput from "../../../../Components/TextInput";
 import { ControllerUpdateRegistration } from "../../../../Services/PreRegistration/controller";
 import { Column, Padding, Row } from "../../../../Styles/styles";
+import { BeneficiariesEditContext } from "../../../../Context/Beneficiaries/BeneficiaresEdit/context";
+import { BeneficiariesEditType } from "../../../../Context/Beneficiaries/BeneficiaresEdit/type";
+import { useContext } from "react";
 
 const ModalAddTerm = ({
   onHide,
@@ -17,7 +20,9 @@ const ModalAddTerm = ({
   id: number;
 }) => {
 
-  console.log(visible)
+    const props = useContext(BeneficiariesEditContext) as BeneficiariesEditType;
+  
+
   const { requestRegisterTermMutation } = ControllerUpdateRegistration();
   const CreateRegisterTerm = (data: FormData) => {
     requestRegisterTermMutation.mutate({ data: data });
@@ -32,13 +37,12 @@ const ModalAddTerm = ({
   const schemaEdit = Yup.object().shape({
     dateTerm: Yup.string().required("Data de assinatura é obrigatório"),
     dateValid: Yup.string().required("Data de validade é obrigatório"),
-    file: Yup.string().required("Arquivo com termo é obrigatório"),
   });
 
   return (
     <Dialog
       onHide={onHide}
-      header="Novo termo"
+      header={visible?.dateTerm ? "Editar termo" : "Novo termo"}
       visible={visible}
       style={{ width: window.innerWidth > 800 ? "50vw" : "70vw" }}
     >
@@ -50,21 +54,27 @@ const ModalAddTerm = ({
         }}
         validationSchema={visible?.dateTerm ? schemaEdit : schema}
         onSubmit={(values) => {
+
+          console.log(values)
           if (values.file) {
             const formData = new FormData();
             formData.append("dateTerm", values.dateTerm.toString());
             formData.append("dateValid", values.dateValid?.toString());
             formData.append("registration", id?.toString());
             formData.append("file", values.file[0]);
-
             CreateRegisterTerm(formData);
+          } 
+
+          if(visible?.dateTerm){
+            props.UpdateRegisterTerm(visible.id, {dateTerm: values.dateTerm, dateValid: values.dateValid})
           }
+
           onHide();
         }}
       >
         {({ values, handleChange, errors, touched, setFieldValue }) => {
 
-          console.log(values)
+
           return (
             <Form>
               <div className="grid">
@@ -119,7 +129,7 @@ const ModalAddTerm = ({
               <Padding padding="16px" />
               <Column style={{ width: "100%" }}>
                 <Row id="end">
-                  <Button label={visible.dateTerm ? "Salvar" :"Adicionar"} />
+                  <Button type="submit" label={visible.dateTerm ? "Salvar" :"Adicionar"} />
                 </Row>
               </Column>
             </Form>
