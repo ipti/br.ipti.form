@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
-import { CreateRegistrationClassroomType, CreateRegistrationTermType } from "../../../Services/PreRegistration/types";
+import { UpdateRegisterTerm } from "../../../Services/Beneficiaries/type";
+import { CreateRegistrationClassroomType } from "../../../Services/PreRegistration/types";
 import { UpdateRegister } from "../../Classroom/Registration/type";
 
 export interface BeneficiariesEditType {
@@ -8,6 +9,8 @@ export interface BeneficiariesEditType {
   isLoading: boolean;
   handleUpdateRegistration: (data: UpdateRegister, id: number) => void;
   DeleteRegistration: (id: number) => void
+  UpdateRegisterTerm: (id: number, body: UpdateRegisterTerm) => void
+   DeleteRegisterTerm: (id: number) => void
   CreateRegisterClassroom: (data: CreateRegistrationClassroomType) => void
   projectRequet: any
   setProject: Dispatch<any>

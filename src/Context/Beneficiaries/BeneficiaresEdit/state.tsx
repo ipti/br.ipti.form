@@ -16,6 +16,8 @@ import {
 import { CreateRegistrationClassroomType } from "../../../Services/PreRegistration/types";
 import { UpdateRegister } from "../../Classroom/Registration/type";
 import { Registration } from "./type";
+import { BeneficiariesController } from "../../../Services/Beneficiaries/controller";
+import { UpdateRegisterTerm } from "../../../Services/Beneficiaries/type";
 
 export const BeneficiariesEditState = () => {
   const [project, setProject] = useState<any | undefined>();
@@ -30,8 +32,10 @@ export const BeneficiariesEditState = () => {
     requestDeleteRegistrationClassroomMutation,
     requestPreRegistrationMutation,
     requestCHangeAvatarRegistrationMutation,
-    requestRegisterTermMutation
+    requestRegisterTermMutation,
   } = ControllerUpdateRegistration();
+
+  const { requestDeleteTermRegisterMutation, requestUpdateTermRegisterMutation } = BeneficiariesController();
   const { data: registrationsRequests, isLoading } =
     useFetchRequestRegistrationOne(id!);
   const [registrations, setRegistrations] = useState<
@@ -75,7 +79,9 @@ export const BeneficiariesEditState = () => {
     complement: registrations?.complement ?? "",
     state: registrations?.state_fk ?? "",
     city: registrations?.city_fk ?? "",
-    date_registration:registrations?.date_registration ? new Date(registrations?.date_registration) : null
+    date_registration: registrations?.date_registration
+      ? new Date(registrations?.date_registration)
+      : null,
   };
 
   const CreateRegisterClassroom = (data: CreateRegistrationClassroomType) => {
@@ -83,12 +89,19 @@ export const BeneficiariesEditState = () => {
   };
 
   const CreateRegisterTerm = (data: FormData) => {
-    requestRegisterTermMutation.mutate({data: data});
+    requestRegisterTermMutation.mutate({ data: data });
   };
-
 
   const DeleteRegistration = (id: number) => {
     requestDeleteRegistrationClassroomMutation.mutate(id);
+  };
+
+  const DeleteRegisterTerm = (id: number) => {
+    requestDeleteTermRegisterMutation.mutate(id);
+  };
+
+   const UpdateRegisterTerm = (id: number, body: UpdateRegisterTerm) => {
+    requestUpdateTermRegisterMutation.mutate({body: body, id: id});
   };
 
   const handleUpdateRegistration = (data: UpdateRegister, id: number) => {
@@ -109,7 +122,6 @@ export const BeneficiariesEditState = () => {
         kinship: data.kinship === "" ? "NAO_DEFINIDO" : data.kinship,
         responsable_cpf: data?.responsable_cpf?.replace(/[^a-zA-Z0-9]/g, ""),
         cpf: data?.cpf?.replace(/[^a-zA-Z0-9]/g, ""),
-
       },
       id: id,
     });
@@ -120,6 +132,7 @@ export const BeneficiariesEditState = () => {
     isLoading,
     handleUpdateRegistration,
     DeleteRegistration,
+    DeleteRegisterTerm,
     CreateRegisterClassroom,
     projectRequet,
     project,
@@ -127,6 +140,7 @@ export const BeneficiariesEditState = () => {
     classrooms,
     file,
     setFile,
-    CreateRegisterTerm
+    CreateRegisterTerm,
+    UpdateRegisterTerm
   };
 };
