@@ -11,25 +11,43 @@ export interface ReportClassroomType {
     register_classroom: RegisterClassroom[]
   }
   
-  export interface Meeting {
-    id: number
-    name: string
-    meeting_date: string
-    status: string
-    description: any
-    theme: string
-    justification: any
-    classroom_fk: number
-    createdAt: string
-    updatedAt: string
-    fouls: Foul[]
-  }
-  
-  export interface Foul {
-    meeting_fk: number
-    registration_fk: number
-  }
-  
+
+
+export interface Meeting {
+  id: number
+  name: string
+  meeting_date: string
+  status: string
+  description: any
+  theme: string
+  justification: any
+  classroom_fk: number
+  createdAt: string
+  updatedAt: string
+  meeting_user: MeetingUser[]
+  fouls: Foul[]
+}
+
+export interface MeetingUser {
+  users: Users
+}
+
+export interface Users {
+  id: number
+  name: string
+  username: string
+  password: string
+  active: boolean
+  role: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface Foul {
+  meeting_fk: number
+  registration_fk: number
+}
+
   export interface Project {
     id: number
     name: string

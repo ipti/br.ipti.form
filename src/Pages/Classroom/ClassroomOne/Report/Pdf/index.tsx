@@ -12,7 +12,7 @@ import imgLateral from "../../../../../Assets/images/logoleftpdf.png";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
-import { convertImageUrlToBase64, loadImageFileAsBase64 } from "../../../../../Controller/controllerGlobal";
+import { convertImageUrlToBase64, formatarData, loadImageFileAsBase64 } from "../../../../../Controller/controllerGlobal";
 
 pdfMake.vfs = pdfFonts.vfs;
 export const ReportClassroom = () => {
@@ -87,34 +87,30 @@ export const ReportClassroom = () => {
     return !verifyFouls() ? "P" : "F";
   };
 
-  function abreviarNomeDinamico(texto: string): string {
-  return texto
-    .split("-")
-    .map(parte => {
-      return parte
-        .trim()
-        .split(" ")
-        .map(palavra => {
-          if (!isNaN(Number(palavra))) return palavra;
-          return palavra.charAt(0).toUpperCase();
-        })
-        .join("");
-    })
-    .join(" - ");
-}
+  const uniqueUsersMap = new Map();
+
+report?.meeting?.forEach((meeting: any) => {
+  meeting?.meeting_user?.forEach((entry: any) => {
+    const user = entry.users;
+    if (!uniqueUsersMap.has(user.id)) {
+      uniqueUsersMap.set(user.id, user);
+    }
+  });
+});
+
+const uniqueUsers = Array.from(uniqueUsersMap.values());
 
 
   const generatePDF = () => {
-    const maxMeetingsPerPage = 7;
-    const maxStudentsPerPage = 7;
+    const maxMeetingsPerPage = 5;
+    const maxStudentsPerPage = 25;
   
     const createTableBody = (registrationsSubset: any, meetingSubset: any, startIndex: number) => {
-      
-      
+            
       const headerRow = [
         "Nº",
         "NOME COMPLETO",
-        ...meetingSubset.map((item: any, index: number) => meetingSubset.length > 4 ?  abreviarNomeDinamico(item.name) : item.name.substring(0,20)),
+        ...meetingSubset.map((item: any, index: number) => formatarData(item.meeting_date)),
         "FREQUÊNCIA",
         "STATUS",
       ];
@@ -169,21 +165,22 @@ export const ReportClassroom = () => {
         text: `${report?.project.name}`,
         style: "header",
         alignment: "center",
-        fontSize: 14,
+        fontSize: 10,
       },
       {
         text: "Relatório de Presença",
         style: "header",
         alignment: "center",
-        fontSize: 12,
+        fontSize: 8,
         marginTop: 16,
       },
       {
         style: "tableExample",
         marginTop: 16,
+        fontSize: 8,
         table: {
           widths: ["*", "*"],
-          body: [["Filiação: ", `Turma: ${report?.name}`]],
+          body: [[`Reaplicador: ${uniqueUsers?.map(e =>{ return e.name + "; "} )}`, `Turma: ${report?.name}`]],
         },
       },
       ...studentPages.flatMap((studentSubset, studentPageIndex) => 
@@ -191,6 +188,7 @@ export const ReportClassroom = () => {
           {
             style: "tableExample",
             marginTop: 32,
+            fontSize: 8,
             table: {
               widths: [
                 "4%",
@@ -210,6 +208,7 @@ export const ReportClassroom = () => {
           {
             style: "tableExample",
             marginTop: 16,
+            fontSize: 8,
             table: {
               widths: ["*"],
               body: [
@@ -224,11 +223,11 @@ export const ReportClassroom = () => {
     ];
   
     const docDefinition: TDocumentDefinitions = {
-      pageOrientation: "landscape",
+      pageOrientation: "portrait",
       content: content,
       styles: {
         header: {
-          fontSize: 18,
+          fontSize: 12,
           bold: true,
           margin: [0, 0, 0, 10],
         },
