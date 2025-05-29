@@ -8,6 +8,7 @@ import ContentPage from "../../../../Components/ContentPage";
 import { useFetchRequestClassroomReport } from "../../../../Services/Classroom/query";
 import color from "../../../../Styles/colors";
 import { ReportClassroom } from "./Pdf";
+import { formatarData } from "../../../../Controller/controllerGlobal";
 
 const Report = () => {
   return <ReportPage />;
@@ -98,7 +99,7 @@ const ReportPage = () => {
             key={index}
             columnKey={index.toString()}
             body={bodyMeeting}
-            header={item.name}
+            header={formatarData(item.meeting_date)}
             />
           ))}
         <Column body={bodyTotal} frozen header={"Total"} />
