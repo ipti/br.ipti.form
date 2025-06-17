@@ -10,6 +10,7 @@ import { MeetingListRegisterTypes } from "../../../../../../Context/Classroom/Me
 import { ROLE, Status } from "../../../../../../Controller/controllerGlobal";
 import { Column, Padding, Row } from "../../../../../../Styles/styles";
 import { PropsAplicationContext } from "../../../../../../Types/types";
+import CalendarComponent from "../../../../../../Components/Calendar";
 
 const DataMeeting = () => {
   const [edit, setEdit] = useState(false);
@@ -27,7 +28,7 @@ const DataMeeting = () => {
     { id: Status.REPROVED, name: "Pendente de Revisão" },
     { id: Status.PENDING, name: "Pedente de Análise" },
   ];
-  
+
   const getStatus = (id: string) => {
     return status.find((props) => props.id === id);
   };
@@ -40,13 +41,14 @@ const DataMeeting = () => {
         justification: props.meeting?.justification,
         theme: props.meeting?.theme,
         status: getStatus(props.meeting?.status!),
+        meeting_date: new Date(props.meeting?.meeting_date!)
       }}
       onSubmit={(values) => {
         props.UpdateMeeting(values, props.meeting?.id!);
         setEdit(!edit);
       }}
     >
-      {({ values, errors, handleChange }) => {
+      {({ values, errors, handleChange, touched }) => {
         return (
           <Form>
             <Row id="space-between">
@@ -100,6 +102,22 @@ const DataMeeting = () => {
                 />
               </div>
             </div>
+            <div className="col-12 md:col-6">
+              <label>Data do encontro</label>
+              <Padding />
+              <CalendarComponent
+                value={values.meeting_date}
+                name="meeting_date"
+                dateFormat="dd/mm/yy"
+                disabled={!edit}
+                onChange={handleChange}
+              />
+              {errors.meeting_date && touched.meeting_date ? (
+                <div style={{ color: "red", marginTop: "8px" }}>
+                  {String(errors.meeting_date)}
+                </div>
+              ) : null}
+            </div>
             <Padding padding="16px" />
             {(propsAplication.user?.role === ROLE.ADMIN ||
               propsAplication.user?.role === ROLE.COORDINATORS) && (
@@ -115,8 +133,8 @@ const DataMeeting = () => {
                         name="status"
                         placerholder="Status"
                         optionsLabel="name"
-                        options={!props.ArchivesMeeting ? status.filter((i)=> i.id !== Status.APPROVED):status}
-                        
+                        options={!props.ArchivesMeeting ? status.filter((i) => i.id !== Status.APPROVED) : status}
+
                       />
                     </div>
                     {values.status?.id === Status.REPROVED && <div className="col-12 md:col-6">

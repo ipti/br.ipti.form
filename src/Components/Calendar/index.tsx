@@ -80,6 +80,7 @@ const CalendarComponent = ({
       style={{ width: "100%" }}
       locale="pt-br"
       name={name}
+      disabled={disabled}
       placeholder={placeholder}
     />
   );

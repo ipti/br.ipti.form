@@ -10,6 +10,7 @@ export interface EditMeeting {
   name?: string;
   description?: string;
   status?: { id: string; name: string };
+  meeting_date?: Date;
 }
 
 export interface CreateFouls {

@@ -20,8 +20,8 @@ const ModalAddTerm = ({
   id: number;
 }) => {
 
-    const props = useContext(BeneficiariesEditContext) as BeneficiariesEditType;
-  
+  const props = useContext(BeneficiariesEditContext) as BeneficiariesEditType;
+
 
   const { requestRegisterTermMutation } = ControllerUpdateRegistration();
   const CreateRegisterTerm = (data: FormData) => {
@@ -51,22 +51,23 @@ const ModalAddTerm = ({
           dateTerm: new Date(visible?.dateTerm) ?? new Date(Date.now()),
           dateValid: new Date(visible?.dateValid) ?? "",
           file: undefined,
+          observation: visible?.observation ?? ""
         }}
         validationSchema={visible?.dateTerm ? schemaEdit : schema}
         onSubmit={(values) => {
 
-          console.log(values)
           if (values.file) {
             const formData = new FormData();
             formData.append("dateTerm", values.dateTerm.toString());
             formData.append("dateValid", values.dateValid?.toString());
             formData.append("registration", id?.toString());
+            formData.append("observation", values.observation)
             formData.append("file", values.file[0]);
             CreateRegisterTerm(formData);
-          } 
+          }
 
-          if(visible?.dateTerm){
-            props.UpdateRegisterTerm(visible.id, {dateTerm: values.dateTerm, dateValid: values.dateValid})
+          if (visible?.dateTerm) {
+            props.UpdateRegisterTerm(visible.id, { dateTerm: values.dateTerm, dateValid: values.dateValid, observation: values.observation })
           }
 
           onHide();
@@ -125,11 +126,26 @@ const ModalAddTerm = ({
                     </div>
                   ) : null}
                 </div>}
+                <div className="col-12 md:col-6">
+                  <label>Observações</label>
+                  <Padding />
+                  <TextInput
+                    value={values.observation}
+                    placeholder="Observações"
+                    onChange={handleChange}
+                    name="observation"
+                  />
+                  {errors.file && touched.file ? (
+                    <div style={{ color: "red", marginTop: "8px" }}>
+                      {String(errors.file)}
+                    </div>
+                  ) : null}
+                </div>
               </div>{" "}
               <Padding padding="16px" />
               <Column style={{ width: "100%" }}>
                 <Row id="end">
-                  <Button type="submit" label={visible.dateTerm ? "Salvar" :"Adicionar"} />
+                  <Button type="submit" label={visible.dateTerm ? "Salvar" : "Adicionar"} />
                 </Row>
               </Column>
             </Form>

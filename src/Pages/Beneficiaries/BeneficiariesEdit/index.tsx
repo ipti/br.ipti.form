@@ -177,7 +177,7 @@ const BeneficiariesEditPage = () => {
                     justifyContent: "center",
                   }}
                 >
-                  <Icon icon="pi pi-pencil" size="16px"  />
+                  <Icon icon="pi pi-pencil" size="16px" />
                 </div>
                 <p>Editar</p>
               </Row>
@@ -197,7 +197,7 @@ const BeneficiariesEditPage = () => {
                       justifyContent: "center",
                     }}
                   >
-                    <Icon icon="pi pi-trash" size="16px"  />
+                    <Icon icon="pi pi-trash" size="16px" />
                   </div>
                   <p>Excluir</p>
                 </Row>
@@ -281,8 +281,8 @@ const BeneficiariesEditPage = () => {
                       props.file
                         ? URL.createObjectURL(props.file![0]) ?? undefined
                         : props.registrations?.avatar_url
-                        ? props.registrations?.avatar_url
-                        : avatar
+                          ? props.registrations?.avatar_url
+                          : avatar
                     }
                   />
                 </Avatar>
@@ -400,7 +400,7 @@ const BeneficiariesEditPage = () => {
                       placeholder="name"
                     />
                     {errors.responsable_telephone &&
-                    touched.responsable_telephone ? (
+                      touched.responsable_telephone ? (
                       <div style={{ color: "red", marginTop: "8px" }}>
                         {errors.responsable_telephone}
                       </div>
@@ -545,12 +545,22 @@ const BeneficiariesEditPage = () => {
                       return (
                         <>
                           {isDateTerm(row?.dateValid!)
-                            ? "Termo ativo"
-                            : "Termo vencido"}
+                            ? "Termo virgência"
+                            : "Termo fora da virgência"}
                         </>
                       );
                     }}
                     header="Status"
+                  ></Column>
+                  <Column
+                    body={(row) => {
+                      return (
+                        <>
+                          {row?.observation}
+                        </>
+                      );
+                    }}
+                    header="Observações"
                   ></Column>
                   <Column
                     align={"center"}

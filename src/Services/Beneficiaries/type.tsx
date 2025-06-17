@@ -1,1 +1,1 @@
-export interface UpdateRegisterTerm {dateTerm: any, dateValid: any}
+export interface UpdateRegisterTerm {dateTerm: any, dateValid: any, observation: string}
