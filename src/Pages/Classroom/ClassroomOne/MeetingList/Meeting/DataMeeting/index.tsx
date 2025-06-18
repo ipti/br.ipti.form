@@ -41,7 +41,7 @@ const DataMeeting = () => {
         justification: props.meeting?.justification,
         theme: props.meeting?.theme,
         status: getStatus(props.meeting?.status!),
-        meeting_date: new Date(props.meeting?.meeting_date!)
+        meeting_date: new Date(new Date(props.meeting?.meeting_date!).setDate(new Date(props.meeting?.meeting_date!).getDate() + 1))
       }}
       onSubmit={(values) => {
         props.UpdateMeeting(values, props.meeting?.id!);
@@ -93,6 +93,7 @@ const DataMeeting = () => {
             <div className="grid">
               <div className="col-12 md:col-6">
                 <label>Tema</label>
+                <Padding />
                 <TextInput
                   name="theme"
                   placeholder="Tema do encontro"
@@ -101,22 +102,22 @@ const DataMeeting = () => {
                   onChange={handleChange}
                 />
               </div>
-            </div>
-            <div className="col-12 md:col-6">
-              <label>Data do encontro</label>
-              <Padding />
-              <CalendarComponent
-                value={values.meeting_date}
-                name="meeting_date"
-                dateFormat="dd/mm/yy"
-                disabled={!edit}
-                onChange={handleChange}
-              />
-              {errors.meeting_date && touched.meeting_date ? (
-                <div style={{ color: "red", marginTop: "8px" }}>
-                  {String(errors.meeting_date)}
-                </div>
-              ) : null}
+              <div className="col-12 md:col-6">
+                <label>Data do encontro</label>
+                <Padding />
+                <CalendarComponent
+                  value={values.meeting_date}
+                  name="meeting_date"
+                  dateFormat="dd/mm/yy"
+                  disabled={!edit}
+                  onChange={handleChange}
+                />
+                {errors.meeting_date && touched.meeting_date ? (
+                  <div style={{ color: "red", marginTop: "8px" }}>
+                    {String(errors.meeting_date)}
+                  </div>
+                ) : null}
+              </div>
             </div>
             <Padding padding="16px" />
             {(propsAplication.user?.role === ROLE.ADMIN ||
@@ -136,18 +137,18 @@ const DataMeeting = () => {
                         options={!props.ArchivesMeeting ? status.filter((i) => i.id !== Status.APPROVED) : status}
 
                       />
+                      {values.status?.id === Status.REPROVED && <div className="col-12 md:col-6">
+                        <label>Justificativa</label>
+                        <Padding />
+                        <TextAreaComponent
+                          disabled={!edit}
+                          onChange={handleChange}
+                          value={values.justification}
+                          name="justification"
+                          placeholder="Justicativa sobre a escolha do status"
+                        />
+                      </div>}
                     </div>
-                    {values.status?.id === Status.REPROVED && <div className="col-12 md:col-6">
-                      <label>Justificativa</label>
-                      <Padding />
-                      <TextAreaComponent
-                        disabled={!edit}
-                        onChange={handleChange}
-                        value={values.justification}
-                        name="justification"
-                        placeholder="Justicativa sobre a escolha do status"
-                      />
-                    </div>}
                   </div>
                 </>
               )}{" "}
