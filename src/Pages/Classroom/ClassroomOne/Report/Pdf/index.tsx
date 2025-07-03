@@ -12,7 +12,7 @@ import imgLateral from "../../../../../Assets/images/logoleftpdf.png";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
-import { convertImageUrlToBase64, formatarData, loadImageFileAsBase64 } from "../../../../../Controller/controllerGlobal";
+import { convertImageUrlToBase64, formatarDataAnoDuas, loadImageFileAsBase64 } from "../../../../../Controller/controllerGlobal";
 
 pdfMake.vfs = pdfFonts.vfs;
 export const ReportClassroom = () => {
@@ -102,7 +102,7 @@ const uniqueUsers = Array.from(uniqueUsersMap.values());
 
 
   const generatePDF = () => {
-    const maxMeetingsPerPage = 5;
+    const maxMeetingsPerPage = 12;
     const maxStudentsPerPage = 25;
   
     const createTableBody = (registrationsSubset: any, meetingSubset: any, startIndex: number) => {
@@ -110,7 +110,7 @@ const uniqueUsers = Array.from(uniqueUsersMap.values());
       const headerRow = [
         "Nº",
         "NOME COMPLETO",
-        ...meetingSubset.map((item: any, index: number) => formatarData(item.meeting_date)),
+        ...meetingSubset.map((item: any, index: number) => formatarDataAnoDuas(item.meeting_date)),
         "FREQUÊNCIA",
         "STATUS",
       ];
@@ -172,12 +172,12 @@ const uniqueUsers = Array.from(uniqueUsersMap.values());
         style: "header",
         alignment: "center",
         fontSize: 8,
-        marginTop: 16,
+        marginTop: 4,
       },
       {
         style: "tableExample",
-        marginTop: 16,
-        fontSize: 8,
+        marginTop: 4,
+        fontSize: 6,
         table: {
           widths: ["*", "*"],
           body: [[`Reaplicador: ${uniqueUsers?.map(e =>{ return e.name + "; "} )}`, `Turma: ${report?.name}`]],
@@ -187,15 +187,15 @@ const uniqueUsers = Array.from(uniqueUsersMap.values());
         meetingPages.map((meetingSubset, meetingPageIndex) => [
           {
             style: "tableExample",
-            marginTop: 32,
-            fontSize: 8,
+            marginTop: 8,
+            fontSize: 6,
             table: {
               widths: [
-                "4%",
-                "30%",
+                "3%",
+                "20%",
                 ...meetingSubset!.map(() => "*"),
-                "11%",
-                "10%",
+                "6%",
+                "5%",
               ],
               body: createTableBody(
                 studentSubset || [], 
@@ -207,8 +207,8 @@ const uniqueUsers = Array.from(uniqueUsersMap.values());
           },
           {
             style: "tableExample",
-            marginTop: 16,
-            fontSize: 8,
+            marginTop: 8,
+            fontSize: 6,
             table: {
               widths: ["*"],
               body: [
@@ -223,7 +223,7 @@ const uniqueUsers = Array.from(uniqueUsersMap.values());
     ];
   
     const docDefinition: TDocumentDefinitions = {
-      pageOrientation: "portrait",
+      pageOrientation: "landscape",
       content: content,
       styles: {
         header: {

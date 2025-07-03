@@ -37,6 +37,13 @@ export function formatarData(data: string): string {
   return dataEdit;
 }
 
+export function formatarDataAnoDuas(data: string): string {
+  const date = data.toString().split("T")[0];
+  const [ano, mes, dia] = date.split("-");
+  const anoDoisDigitos = ano.slice(-2);
+  return `${dia}/${mes}/${anoDoisDigitos}`;
+}
+
 export function isWithinOneYear(date1: any, date2: any, dateValid?: any) {
   const oneYearInMilliseconds = 365 * 24 * 60 * 60 * 1000; // Um ano em milissegundos
 
