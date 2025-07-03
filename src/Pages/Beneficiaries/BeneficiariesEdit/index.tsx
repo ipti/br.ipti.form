@@ -62,7 +62,6 @@ const BeneficiariesEditPage = () => {
   const [visible, setVisible] = useState<any>();
   const [visibleTerm, setVisibleTerm] = useState<any>();
   const [visibleDeleteTerm, setVisibleDeleteTerm] = useState<any>();
-  const [isPopoverOpen, setIsPopoverOpen] = useState<any>();
 
   const schema = Yup.object().shape({
     name: Yup.string().required("Nome é obrigatório"),
@@ -126,96 +125,8 @@ const BeneficiariesEditPage = () => {
     );
   };
 
-  const renderActionTerm = (row: any) => {
-    return (
-      <Row id="center" style={{ gap: "8px" }}>
-        <Popover
-          isOpen={isPopoverOpen}
-          positions={["top", "bottom", "left", "right"]} // preferred positions by priority
-          onClickOutside={() => setIsPopoverOpen(!isPopoverOpen)}
-          content={
-            <div
-              style={{
-                backgroundColor: "white",
-                padding: "8px",
-                minWidth: "128px",
-                boxShadow:
-                  "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
-              }}
-            >
-              <Row
-                onClick={() => {
-                  window.open(row.blob_file.blob_url);
-                  setIsPopoverOpen(!isPopoverOpen);
-                }}
-                id="space-between"
-                style={{ cursor: "pointer", padding: "8px", gap: "8px" }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Icon icon="pi pi-download" size="16px" />
-                </div>
-                <p>Baixar</p>
-              </Row>
-              <Row
-                onClick={() => {
-                  setVisibleTerm(row);
-                  setIsPopoverOpen(!isPopoverOpen);
-                }}
-                id="space-between"
-                style={{ cursor: "pointer", padding: "8px", gap: "8px" }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Icon icon="pi pi-pencil" size="16px" />
-                </div>
-                <p>Editar</p>
-              </Row>
-              <div className="w-full">
-                <Row
-                  onClick={() => {
-                    setVisibleDeleteTerm(row);
-                    setIsPopoverOpen(!isPopoverOpen);
-                  }}
-                  id="space-between"
-                  style={{ cursor: "pointer", padding: "8px", gap: "8px" }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Icon icon="pi pi-trash" size="16px" />
-                  </div>
-                  <p>Excluir</p>
-                </Row>
-              </div>
-            </div>
-          }
-        >
-          <div
-            style={{ cursor: "pointer" }}
-            onClick={() => setIsPopoverOpen(!isPopoverOpen)}
-          >
-            {" "}
-            <Icon icon="pi pi-ellipsis-v" />
-          </div>
-        </Popover>
-      </Row>
-    );
-  };
+
+
 
   const StatusBody = (rowData: any) => {
     return <div>{getStatus(rowData?.status)?.name}</div>;
@@ -545,8 +456,8 @@ const BeneficiariesEditPage = () => {
                       return (
                         <>
                           {isDateTerm(row?.dateValid!)
-                            ? "Termo virgência"
-                            : "Termo fora da virgência"}
+                            ? "Termo vigente"
+                            : "Termo fora da vigência"}
                         </>
                       );
                     }}
@@ -564,7 +475,7 @@ const BeneficiariesEditPage = () => {
                   ></Column>
                   <Column
                     align={"center"}
-                    body={(e) => renderActionTerm(e)}
+                    body={(e) => <RenderActionTerm row={e} setVisibleDeleteTerm={setVisibleDeleteTerm} setVisibleTerm={setVisibleTerm} />}
                     header="Ações"
                   ></Column>
                 </DataTable>
@@ -662,4 +573,98 @@ const BeneficiariesEditPage = () => {
     </Container>
   );
 };
+
+  const RenderActionTerm = ({row, setVisibleTerm, setVisibleDeleteTerm}:{row: any, setVisibleTerm: any, setVisibleDeleteTerm: any}) => {
+
+      const [isPopoverOpen, setIsPopoverOpen] = useState<any>();
+
+    return (
+      <Row id="center" style={{ gap: "8px" }}>
+        <Popover
+          isOpen={isPopoverOpen}
+          positions={["top", "bottom", "left", "right"]} // preferred positions by priority
+          onClickOutside={() => setIsPopoverOpen(!isPopoverOpen)}
+          content={
+            <div
+              style={{
+                backgroundColor: "white",
+                padding: "8px",
+                minWidth: "128px",
+                boxShadow:
+                  "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
+              }}
+            >
+              <Row
+                onClick={() => {
+                  window.open(row.blob_file.blob_url);
+                  setIsPopoverOpen(!isPopoverOpen);
+                }}
+                id="space-between"
+                style={{ cursor: "pointer", padding: "8px", gap: "8px" }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Icon icon="pi pi-download" size="16px" />
+                </div>
+                <p>Baixar</p>
+              </Row>
+              <Row
+                onClick={() => {
+                  setVisibleTerm(row);
+                  setIsPopoverOpen(!isPopoverOpen);
+                }}
+                id="space-between"
+                style={{ cursor: "pointer", padding: "8px", gap: "8px" }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Icon icon="pi pi-pencil" size="16px" />
+                </div>
+                <p>Editar</p>
+              </Row>
+              <div className="w-full">
+                <Row
+                  onClick={() => {
+                    setVisibleDeleteTerm(row);
+                    setIsPopoverOpen(!isPopoverOpen);
+                  }}
+                  id="space-between"
+                  style={{ cursor: "pointer", padding: "8px", gap: "8px" }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Icon icon="pi pi-trash" size="16px" />
+                  </div>
+                  <p>Excluir</p>
+                </Row>
+              </div>
+            </div>
+          }
+        >
+          <div
+            style={{ cursor: "pointer" }}
+            onClick={() => setIsPopoverOpen(!isPopoverOpen)}
+          >
+            {" "}
+            <Icon icon="pi pi-ellipsis-v" />
+          </div>
+        </Popover>
+      </Row>
+    );
+  };
 export default BeneficiariesEdit;

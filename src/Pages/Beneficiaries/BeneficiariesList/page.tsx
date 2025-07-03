@@ -139,7 +139,7 @@ export const BeneficiariesListPage = () => {
           <Column field="cpf" header="CPF"></Column>
           <Column
             body={(rowData) => {
-              return <>{formatarData(rowData.createdAt)}</>;
+              return <>{formatarData(rowData.date_registration)}</>;
             }}
             header="Data de matricula"
           ></Column>
