@@ -32,9 +32,9 @@ export const getErrorsAsArray = (errors: FormikErrors<any>): string[] => {
 };
 
 export function formatarData(data: string): string {
-  var date = data.toString().split("T")[0];
-  var dataEdit = date.split("-").reverse().join("/");
-  return dataEdit;
+  var date = data?.toString()?.split("T")[0];
+  var dataEdit = date?.split("-")?.reverse()?.join("/");
+  return dataEdit ?? "-";
 }
 
 export function formatarDataAnoDuas(data: string): string {
