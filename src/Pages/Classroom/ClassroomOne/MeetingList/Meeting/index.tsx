@@ -85,15 +85,7 @@ const MeetingPage = () => {
 
           <Padding padding="8px" />
           <DataMeeting />
-          <div className="col-12 md:col-6">
-            <label>Responsáveis pelo encontro</label>
-            <Padding />
-            <div className="flex flex-wrap gap-2">
-              {props.meeting.meeting_user.map((item) => {
-                return <Chip label={item.users.name} />;
-              })}
-            </div>
-          </div>
+          
           <Padding padding="16px" />
           {!(
             props.meeting.status === Status.APPROVED &&

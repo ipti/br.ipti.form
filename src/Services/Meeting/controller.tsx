@@ -3,6 +3,7 @@ import {
   CreateFouls,
   CreateMeeting,
   EditMeeting,
+  EditMeetingUser,
 } from "../../Context/Classroom/Meeting/Create/type";
 import {
   requestArchivesMeeting,
@@ -11,6 +12,7 @@ import {
   requestDeleteMeeting,
   requestUpdateFouls,
   requestUpdateMeeting,
+  requestUpdateMeetingUser,
 } from "./request";
 import Swal from "sweetalert2";
 import styles from "../../Styles";
@@ -73,6 +75,31 @@ export const MeetingController = () => {
   const requestUpdateMeetingMutation = useMutation(
     ({ data, id }: { data: EditMeeting; id: number }) =>
       requestUpdateMeeting(data, id),
+    {
+      onError: (error: any) => {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
+      onSuccess: (data) => {
+        Swal.fire({
+          icon: "success",
+          title: "Encontro Alterado com sucesso!",
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            queryClient.refetchQueries("useRequestsMeetingOne");
+          }
+        });
+      },
+    }
+  );
+
+   const requestUpdateMeetinUsergMutation = useMutation(
+    ({ data}: { data: EditMeetingUser }) =>
+      requestUpdateMeetingUser(data),
     {
       onError: (error: any) => {
         Swal.fire({
@@ -174,5 +201,6 @@ export const MeetingController = () => {
     requestCreateFoulsMutation,
     requestArchvesMeetingMutation,
     requestDeleteArchivesMeetingMutation,
+    requestUpdateMeetinUsergMutation
   };
 };

@@ -17,6 +17,7 @@ const MeetingListRegistrationProvider = ({
     ArchivesMeeting,
     isLoading,
     DeleteArchiveMeeting,
+    UpdateMeetingUser
   } = MeetingListRegistrationState();
 
   return (
@@ -28,6 +29,7 @@ const MeetingListRegistrationProvider = ({
         ArchivesMeeting,
         isLoading,
         DeleteArchiveMeeting,
+        UpdateMeetingUser
       }}
     >
       {children}

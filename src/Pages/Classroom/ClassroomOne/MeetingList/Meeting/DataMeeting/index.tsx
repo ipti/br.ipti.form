@@ -11,8 +11,14 @@ import { ROLE, Status } from "../../../../../../Controller/controllerGlobal";
 import { Column, Padding, Row } from "../../../../../../Styles/styles";
 import { PropsAplicationContext } from "../../../../../../Types/types";
 import CalendarComponent from "../../../../../../Components/Calendar";
+import { Chip } from "primereact/chip";
+import { useFetchRequestUsers } from "../../../../../../Services/Users/query";
+import { MultiSelect } from "primereact/multiselect";
 
 const DataMeeting = () => {
+
+  const { data: userRequest } = useFetchRequestUsers(undefined);
+
   const [edit, setEdit] = useState(false);
 
   const props = useContext(
@@ -41,10 +47,14 @@ const DataMeeting = () => {
         justification: props.meeting?.justification,
         theme: props.meeting?.theme,
         status: getStatus(props.meeting?.status!),
-        meeting_date: new Date(new Date(props.meeting?.meeting_date!).setDate(new Date(props.meeting?.meeting_date!).getDate() + 1))
+        meeting_date: new Date(new Date(props.meeting?.meeting_date!).setDate(new Date(props.meeting?.meeting_date!).getDate() + 1)),
+        users: props.meeting?.meeting_user.map((item) => item.users) ?? [],
       }}
       onSubmit={(values) => {
-        props.UpdateMeeting(values, props.meeting?.id!);
+        props.UpdateMeetingUser({ id: props.meeting?.id!, users: values.users.map((item) => item.id) });
+        var body: any = values
+        delete body.users
+        props.UpdateMeeting(body, props.meeting?.id!);
         setEdit(!edit);
       }}
     >
@@ -165,6 +175,30 @@ const DataMeeting = () => {
                 />
               </div>
             </div>
+            {!edit ? <div className="col-12 md:col-6">
+              <label>Responsáveis pelo encontro</label>
+              <Padding />
+              <div className="flex flex-wrap gap-2">
+                {props.meeting?.meeting_user.map((item) => {
+                  return <Chip label={item.users.name} />;
+                })}
+              </div>
+            </div>
+              : <div className="col-12 md:col-6">
+                <label>Responsavel</label>
+                <Padding />
+                <MultiSelect
+                  optionLabel="name"
+                  onChange={handleChange}
+                  filter
+                  maxSelectedLabels={3}
+                  className="w-full"
+                  name="users"
+                  placeholder="Responsável"
+                  value={values.users}
+                  options={userRequest}
+                />
+              </div>}
           </Form>
         );
       }}

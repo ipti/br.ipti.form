@@ -1,4 +1,4 @@
-import { CreateFouls, CreateMeeting, EditMeeting } from "../../Context/Classroom/Meeting/Create/type";
+import { CreateFouls, CreateMeeting, EditMeeting, EditMeetingUser } from "../../Context/Classroom/Meeting/Create/type";
 import http from "../axios";
 import { logout } from "../localstorage";
 
@@ -19,6 +19,20 @@ export const requestCreateMeeting = (data: CreateMeeting) => {
 export const requestUpdateMeeting = (data: EditMeeting, id: number) => {
   return http
       .put("/meeting/"+id, { ...data, status: data.status?.id })
+      .then((response) => response.data)
+      .catch((err) => {
+          if (err.response.status === 401) {
+              logout();
+              window.location.reload();
+          }
+          alert(err.response.message);
+          throw err;
+      });
+}
+
+export const requestUpdateMeetingUser = (data: EditMeetingUser) => {
+  return http
+      .put("/meeting-bff/update-members", { ...data})
       .then((response) => response.data)
       .catch((err) => {
           if (err.response.status === 401) {

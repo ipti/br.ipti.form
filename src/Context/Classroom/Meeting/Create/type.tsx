@@ -13,6 +13,12 @@ export interface EditMeeting {
   meeting_date?: Date;
 }
 
+export interface EditMeetingUser {
+  users: number[]
+  id: number
+}
+
+
 export interface CreateFouls {
   meeting: number;
   registration?: Array<number>;

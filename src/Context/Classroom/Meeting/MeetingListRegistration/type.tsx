@@ -1,4 +1,4 @@
-import { CreateFouls, EditMeeting } from "../Create/type";
+import { CreateFouls, EditMeeting, EditMeetingUser } from "../Create/type";
 
 export interface MeetingListRegisterTypes {
   meeting: Meeting | undefined;
@@ -7,6 +7,7 @@ export interface MeetingListRegisterTypes {
   ArchivesMeeting: (data: any, id: number) => void
   isLoading: boolean
   DeleteArchiveMeeting: (id: number) => void
+  UpdateMeetingUser: (data: EditMeetingUser) => void
 }
 
 export interface Meeting {
