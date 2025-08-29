@@ -1,5 +1,7 @@
 import { Message } from "primereact/message";
 import { useContext, useState } from "react";
+import Loading from "../../../../../Components/Loading";
+import TextAreaComponent from "../../../../../Components/TextArea";
 import Upload from "../../../../../Components/Upload";
 import { AplicationContext } from "../../../../../Context/Aplication/context";
 import MeetingListRegistrationProvider, {
@@ -11,11 +13,8 @@ import { Column, Container, Padding } from "../../../../../Styles/styles";
 import { PropsAplicationContext } from "../../../../../Types/types";
 import Beneficiarios from "./Beneficiarios";
 import DataMeeting from "./DataMeeting";
-import ListArchivesAttendanceList from "./UploadArchivesAttendanceList";
-import Loading from "../../../../../Components/Loading";
-import TextAreaComponent from "../../../../../Components/TextArea";
-import { Chip } from "primereact/chip";
 import ModalFiles from "./ModalFiles";
+import ListArchivesAttendanceList from "./UploadArchivesAttendanceList";
 
 const Meeting = () => {
   return (

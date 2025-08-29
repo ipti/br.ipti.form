@@ -44,22 +44,61 @@ export interface RegistrationType {
 }
 
 export interface Registration {
+
   id: number
+  avatar_url: any
   name: string
   birthday: string
   cpf: string
   sex: number
   color_race: number
   deficiency: boolean
-  deficiency_description: any
+  deficiency_description: string
   responsable_name: string
   responsable_cpf: string
   responsable_telephone: string
   zone: number
+  kinship: string
+  kinship_description: any
   status: string
   createdAt: string
   updatedAt: string
-  kinship: string
-  register_term?: any
-  date_registration: any
+  date_registration: string
+  cep: string
+  address: string
+  number: string
+  complement: string
+  neighborhood: string
+  city_fk: number
+  state_fk: number
+  city: City
+  state: State
+  register_term: RegisterTerm[]
+}
+
+export interface City {
+  id: number
+  state_fk: number
+  name: string
+  cep_initial: string
+  cep_final: string
+  ddd1: number
+  ddd2: number
+}
+
+export interface State {
+  id: number
+  acronym: string
+  name: string
+}
+
+export interface RegisterTerm {
+  id: number
+  dateTerm: string
+  dateValid: string
+  observation: string
+  createdAt: string
+  updatedAt: string
+  registration_fk: number
+  blob_file_fk: number
 }

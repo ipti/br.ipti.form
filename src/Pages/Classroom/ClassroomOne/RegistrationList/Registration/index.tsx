@@ -1,7 +1,7 @@
 import { Form, Formik } from "formik";
 import { Button } from "primereact/button";
 import { useContext, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import avatar from "../../../../../Assets/images/avatar.svg";
 import ContentPage from "../../../../../Components/ContentPage";
 import DropdownComponent from "../../../../../Components/Dropdown";
@@ -20,7 +20,7 @@ import {
   typesex
 } from "../../../../../Controller/controllerGlobal";
 import { useFetchRequestClassroomOne } from "../../../../../Services/Classroom/query";
-import { Padding } from "../../../../../Styles/styles";
+import { Padding, Row } from "../../../../../Styles/styles";
 import { Avatar } from "../../../../Beneficiaries/BeneficiariesEdit";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -41,6 +41,7 @@ const RegistrationPage = () => {
     RegistrationDetailsContext
   ) as RegistrationDetailsTypes;
   const [visibleTerm, setVisibleTerm] = useState<any>();
+  const history = useNavigate();
 
 
   const { id } = useParams();
@@ -68,7 +69,6 @@ const RegistrationPage = () => {
   return (
     <ContentPage title={classroom?.name} description="Detalhes da matricula do beneficiário">
       <Padding padding="16px" />
-
 
       {props.registration ? (
         <Formik
@@ -241,30 +241,30 @@ const RegistrationPage = () => {
                 >
                   <Column body={(row) => { return (<>{formatarData(row?.dateTerm!)}</>) }} header="Data de assinatura"></Column>
                   <Column body={(row) => { return (<>{isWithinOneYear(new Date(Date.now()), row?.dateTerm!) ? "Termo ativo" : "Termo vencido"}</>) }} header="Status"></Column>
-
                 </DataTable>
-                {/* <h3>Endereço</h3>
+                <h3 className="mt-4">Endereço</h3>
                 <Padding />
                 <div className="grid">
                   <div className="col-12 md:col-6">
                     <label>CEP</label>
                     <Padding />
                     <TextInput
-                      value={values.responsable_name}
+                      value={props.registration?.registration?.cep}
+                      disabled
                       placeholder="name"
                     />
                   </div>
                   <div className="col-12 md:col-6">
                     <label>Endereço</label>
                     <Padding />
-                    <TextInput value={values.responsable_cpf} />
+                    <TextInput value={props.registration?.registration?.address} disabled />
                   </div>
                 </div>{" "}
                 <div className="grid">
                   <div className="col-12 md:col-6">
                     <label>Complemento</label>
                     <Padding />
-                    <TextInput value={values.responsable_cpf} />
+                    <TextInput value={props.registration?.registration?.complement} disabled />
                   </div>
                 </div>{" "}
                 <div className="grid">
@@ -272,7 +272,8 @@ const RegistrationPage = () => {
                     <label>Estado </label>
                     <Padding />
                     <TextInput
-                      value={values.responsable_telephone}
+                      value={props.registration?.registration?.state?.name}
+                      disabled
                       placeholder="name"
                     />
                   </div>
@@ -280,16 +281,23 @@ const RegistrationPage = () => {
                     <label>Cidade </label>
                     <Padding />
                     <TextInput
-                      value={values.responsable_telephone}
+                      value={props.registration?.registration?.city?.name}
+                      disabled
                       placeholder="name"
                     />
                   </div>
-                </div>{" "} */}
+                </div>{" "}
+
               </Form>
             );
           }}
+
         </Formik>
       ) : null}
+
+      <Row id="center" className="mt-4">
+        <Button label="Ver mais informações" onClick={() => history('/beneficiarios/'+props.registration?.registration?.id)} />
+      </Row>
       <ModalAddTerm
         onHide={() => setVisibleTerm(false)}
         visible={visibleTerm}
