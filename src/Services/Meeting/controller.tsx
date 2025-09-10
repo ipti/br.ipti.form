@@ -92,6 +92,7 @@ export const MeetingController = () => {
           if (result.isConfirmed) {
             queryClient.refetchQueries("useRequestsMeetingOne");
           }
+          window.location.reload();
         });
       },
     }

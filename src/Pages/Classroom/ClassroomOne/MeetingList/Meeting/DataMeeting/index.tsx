@@ -39,6 +39,8 @@ const DataMeeting = () => {
     return status.find((props) => props.id === id);
   };
 
+  const date = new Date(new Date(props.meeting?.meeting_date!).setDate(new Date(props.meeting?.meeting_date!).getDate() + 1))
+
   return (
     <Formik
       initialValues={{
@@ -47,14 +49,18 @@ const DataMeeting = () => {
         justification: props.meeting?.justification,
         theme: props.meeting?.theme,
         status: getStatus(props.meeting?.status!),
-        meeting_date: new Date(new Date(props.meeting?.meeting_date!).setDate(new Date(props.meeting?.meeting_date!).getDate() + 1)),
+        meeting_date: date,
         users: props.meeting?.meeting_user.map((item) => item.users) ?? [],
       }}
       onSubmit={(values) => {
         props.UpdateMeetingUser({ id: props.meeting?.id!, users: values.users.map((item) => item.id) });
         var body: any = values
         delete body.users
-        props.UpdateMeeting(body, props.meeting?.id!);
+        props.UpdateMeeting({...body, 
+          meeting_date: (props.meeting?.meeting_date && values.meeting_date && date.getTime() === values.meeting_date.getTime())
+            ? new Date(new Date(values?.meeting_date!).setDate(new Date(values?.meeting_date!).getDate() - 1)) 
+            : values.meeting_date
+        }, props.meeting?.id!);
         setEdit(!edit);
       }}
     >
