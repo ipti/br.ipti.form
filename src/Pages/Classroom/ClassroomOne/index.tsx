@@ -216,7 +216,7 @@ const ClassroomOnePage = () => {
                 propsAplication.user?.role === ROLE.COORDINATORS) && (
                 <Button
                   text
-                  label="Baixar evidê,ncias"
+                  label="Baixar evidências"
                   icon="pi pi-download"
                   onClick={handleDownload}
                 />
