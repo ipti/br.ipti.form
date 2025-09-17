@@ -51,6 +51,7 @@ const ClassroomOnePage = () => {
   const [edit, setEdit] = useState(false);
   const [visible, setVisible] = useState(false);
   const [cards, setCards] = useState<StateCard[]>([]);
+  const [loadingEvi, setLoadingEvi] = useState(false);
 
   const [chartData, setChartData] = useState({});
 
@@ -113,6 +114,7 @@ const ClassroomOnePage = () => {
 
  const handleDownload = async () => {
   try {
+    setLoadingEvi(true);
     const response = await requestClassroomZipArchives(classroom?.id!);
     // gera URL do blob
     const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -136,8 +138,10 @@ const ClassroomOnePage = () => {
     a.remove();
 
     window.URL.revokeObjectURL(url);
+    setLoadingEvi(false);
   } catch (err) {
     console.error(err);
+    setLoadingEvi(false);
     alert('Não foi possível baixar o arquivo');
   }
 };
@@ -219,6 +223,7 @@ const ClassroomOnePage = () => {
                   label="Baixar evidências"
                   icon="pi pi-download"
                   onClick={handleDownload}
+                  loading={loadingEvi}
                 />
               )}
             </Row>
