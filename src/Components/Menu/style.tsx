@@ -9,9 +9,9 @@ interface PropsActive {
 export const Container = styled.div<PropsActive>`
     background-color: ${styles.colors.colorsBaseProductLighter};
     min-width: 256px;
-    @media screen and (max-width: 1080px) {
+    /* @media screen and (max-width: 1080px) { */
         display: ${props => props.active ? "" : "none" };
-    }
+    /* } */
 `;
 
 export const TopBar = styled.div`

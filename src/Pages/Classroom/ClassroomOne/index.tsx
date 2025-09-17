@@ -32,7 +32,7 @@ import color from "../../../Styles/colors";
 
 import { requestChartFrequency } from "../../../Services/Chart/request";
 import { StateCard } from "../../../Types/states-cards";
-import { requestCountStates } from "../../../Services/Classroom/request";
+import { requestClassroomZipArchives, requestCountStates } from "../../../Services/Classroom/request";
 import CardQuant from "../../../Components/Chart/CardQuant";
 
 const ClassroomOne = () => {
@@ -111,6 +111,37 @@ const ClassroomOnePage = () => {
 
   if (props.isLoading) return <Loading />;
 
+ const handleDownload = async () => {
+  try {
+    const response = await requestClassroomZipArchives(classroom?.id!);
+    // gera URL do blob
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+
+    // tenta extrair nome do arquivo do header (se o backend mandar)
+    const contentDisposition = response.headers['content-disposition'];
+
+    let fileName = `turma-${classroom?.name}.zip`;
+    if (contentDisposition) {
+      const match = contentDisposition.match(/filename="(.+)"/);
+      if (match?.[1]) {
+        fileName = match[1];
+      }
+    }
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    window.URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error(err);
+    alert('Não foi possível baixar o arquivo');
+  }
+};
+
   return (
     <ContentPage title={classroom?.name} description="Detalhes da sua turma.">
       {edit ? (
@@ -179,6 +210,18 @@ const ClassroomOnePage = () => {
       ) : (
         <Column>
           <Row id="end">
+            <Row>
+              <Padding />
+              {(propsAplication.user?.role === ROLE.ADMIN ||
+                propsAplication.user?.role === ROLE.COORDINATORS) && (
+                <Button
+                  text
+                  label="Baixar evidê,ncias"
+                  icon="pi pi-download"
+                  onClick={handleDownload}
+                />
+              )}
+            </Row>
             <Row>
               <Padding />
               {(propsAplication.user?.role === ROLE.ADMIN ||

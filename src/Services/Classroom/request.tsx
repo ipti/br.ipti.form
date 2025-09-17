@@ -159,3 +159,10 @@ export const requestCountStates = (id: number) => {
       }
     });
 };
+
+export const requestClassroomZipArchives = (id: number) => {
+  return http.get(`/classroom-bff/zip-archives`, {
+    params: { idClassroom: id },
+    responseType: 'blob', // <-- importantíssimo!
+  });
+};

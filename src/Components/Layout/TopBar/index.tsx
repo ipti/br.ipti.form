@@ -37,7 +37,7 @@ const TopBar = ({
     <Container>
       <Column style={{ width: "auto" }} id="center">
         <Row>
-          <Column id="center" className="iconResponsive">
+          <Column id="center">
             <i
               className="pi pi-bars cursor-pointer"
               style={{ fontSize: "1.5rem" }}
