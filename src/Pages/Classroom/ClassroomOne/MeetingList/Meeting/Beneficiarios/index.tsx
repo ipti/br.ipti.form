@@ -20,6 +20,7 @@ import {
 import {
   Status,
   convertImageUrlToBase64,
+  formatarData,
   loadImageFileAsBase64
 } from "../../../../../../Controller/controllerGlobal";
 import styles from "../../../../../../Styles";
@@ -160,11 +161,27 @@ const Beneficiarios = () => {
     const docDefinition: TDocumentDefinitions = {
       content: [
         {
+          text: "[Não edite este documento. Baixe o arquivo e salve na pasta do projeto] ",
+          style: "subheader",
+          alignment: "center",
+          color: 'red',
+          fontSize: 8,
+          // marginTop: 2,
+        },
+        {
+          text: "Orientações: Renomeie o arquivo adicionando o nome do projeto, da turma e a data referente.",
+          style: "subheader",
+          alignment: "center",
+          color: 'red',
+          fontSize: 8,
+          // marginTop: 2,
+        },
+        {
           text: `${props.meeting?.classroom.project.name}`,
           style: "header",
           alignment: "center",
           bold: true,
-          marginTop: 16,
+          marginTop: 8,
         },
         {
           text: `${props.meeting?.name}`,
@@ -177,14 +194,30 @@ const Beneficiarios = () => {
           style: "subheader",
           alignment: "center",
           fontSize: 12,
-          marginTop: 32,
+          marginTop: 8,
         },
         {
           style: "tableExample",
-          marginTop: 16,
+          marginTop: 8,
+          table: {
+            widths: ["20%", "*"],
+            body: [[`Data: ${formatarData(props.meeting?.meeting_date ?? '')}`, "Local: "]],
+          },
+        },
+        {
+          style: "tableExample",
+           marginTop: -8,
+          table: {
+            widths: ["70%", "*"],
+            body: [[`Atividade: `,`Carga-Horária: ` ]],
+          },
+        },
+        {
+          style: "tableExample",
+          marginTop: -8,
           table: {
             widths: ["*", "*"],
-            body: [["Data: ", `Turma: ${props.meeting?.classroom?.name}`]],
+            body: [[`Facilitador: ${props.meeting?.meeting_user.map((user) => user.users.name).join(", ").substring(0,40) + ((props.meeting?.meeting_user.map((user) => user.users.name).join(", ").length ?? 0)> 39 ? '...' : '')}`,`Turma: ${props.meeting?.classroom?.name}` ]],
           },
         },
         ...registrations.reduce((acc: any, curr, index) => {
@@ -193,7 +226,7 @@ const Beneficiarios = () => {
               style: "tableExample",
               marginTop: 16,
               table: {
-                widths: ["3%", "40%", "15%", "42%"],
+                widths: ["4.5%", "40%", "15%", "40.5%"],
                 body: createTableBody(
                   registrations.slice(index, index + pageSize),
                   index
@@ -278,12 +311,12 @@ const Beneficiarios = () => {
         return logoBaseRegua64 ? {
           image: logoBaseRegua64 || '',
           alignment: "center",
-          margin: [0, 0, 20, 20],
+          margin: [0, 0, 0, 20],
           fit: [400, 400]
         } : {
           image: logoBase64 || '',
           alignment: "center",
-          margin: [0, 0, 20, 20],
+          margin: [0, 0, 0, 20],
           fit: [400, 400]
         }
       },
