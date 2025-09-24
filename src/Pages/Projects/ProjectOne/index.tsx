@@ -180,7 +180,7 @@ const ProjectOnePage = () => {
             <Column>
               <label>* Imagem para adicionar aos relatórios</label>
               <Padding />
-              <img alt="" src={props.project?.project.ruler_url} />
+              <img style={{width: '100%'}} alt="" src={props.project?.project.ruler_url} />
             </Column>
           </div>}
         </Column>
