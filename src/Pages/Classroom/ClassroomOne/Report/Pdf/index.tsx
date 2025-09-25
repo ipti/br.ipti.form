@@ -121,7 +121,7 @@ const uniqueUsers = Array.from(uniqueUsersMap.values());
           item.registration.name + " - " + item.registration.cpf,
           ...meetingSubset.map((meeting: any) => bodyMeeting(item, meeting)),
           bodyTotal(item).percentage + "%",
-          parseInt(bodyTotal(item).percentage) > report?.project?.approval_percentage! ? "Aprovado" : "Reprovado",
+          parseInt(bodyTotal(item).percentage) >= report?.project?.approval_percentage! ? "Aprovado" : "Reprovado",
         ];
       });
   

@@ -55,7 +55,7 @@ const ReportPage = () => {
       <div
         style={{
           background:
-            data?.project?.approval_percentage < verifyFouls()
+            data?.project?.approval_percentage <= verifyFouls()
               ? color.green
               : color.red,
           padding: 4,
