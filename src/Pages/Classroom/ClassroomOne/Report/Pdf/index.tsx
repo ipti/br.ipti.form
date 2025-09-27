@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import img from "../../../../../Assets/images/logothp.png";
-import { useFetchRequestClassroomReport } from "../../../../../Services/Classroom/query";
+import { useFetchRequestClassroomReport, useFetchRequestFoulsClassroomOne } from "../../../../../Services/Classroom/query";
 import {
   RegisterClassroom,
   ReportClassroomType,
@@ -13,6 +13,7 @@ import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
 import { convertImageUrlToBase64, formatarDataAnoDuas, loadImageFileAsBase64 } from "../../../../../Controller/controllerGlobal";
+import { MediafrequencyType } from "../../../../../Context/Classroom/type";
 
 pdfMake.vfs = pdfFonts.vfs;
 export const ReportClassroom = () => {
@@ -23,8 +24,17 @@ export const ReportClassroom = () => {
   const [logoBaseRegua64, setLogoBaseRegua64] = useState<string | null>(null);
 
   const [report, setReport] = useState<ReportClassroomType | undefined>();
+  const { data: foulsRequest } = useFetchRequestFoulsClassroomOne(parseInt(id!));
 
   const { data } = useFetchRequestClassroomReport(parseInt(id!));
+
+   var fouls = foulsRequest as MediafrequencyType;
+  
+  
+    const totalMedia = fouls?.reduce((sum, item) => sum + item.media, 0);
+  
+    // Calcula a média das médias
+    const mediaDasMedias = totalMedia / ( fouls?.length || 1) ;
 
   useEffect(() => {
     if (data) {
@@ -213,7 +223,7 @@ const uniqueUsers = Array.from(uniqueUsersMap.values());
               widths: ["*"],
               body: [
                 [
-                  `Critério Mínimo de Aprovação: ${report?.project?.approval_percentage}%    Quantidade de Encontros: ${report?.meeting.length}    Quantidade de Alunos: ${report?.register_classroom?.length}`,
+                  `Critério Mínimo de Aprovação: ${report?.project?.approval_percentage}%    Quantidade de Encontros: ${report?.meeting.length}    Quantidade de Alunos: ${report?.register_classroom?.length}     Média de Presença da Turma: ${mediaDasMedias.toFixed(2)}%`,
                 ],
               ],
             },

@@ -14,7 +14,7 @@ const CardQuant = ({ title, quant, color }: { title: string; quant: number | str
   return (
     <div className="card" style={{background: color === "blue" ? styles.colors.colorsBaseProductNormalActive : color === "orange" ? styles.colors.colorCardOrange : color === "navy_blue" ? styles.colors.colorNavyBlue : "", minHeight: 150, height: "70%", borderRadius: "32px", padding:"32px 0px",position: "relative", zIndex: 1}}>
       <Column id="space-between" style={{alignItems: "center", height: "100%", zIndex: 3}}>
-        <h3 style={{textAlign: "center", color: "white", fontSize: 14, zIndex: 3}}>{title}</h3>
+        <h3 style={{textAlign: "center", color: "white", fontSize: 14, zIndex: 3, width: '90%'}}>{title}</h3>
         <h1 style={{color: "white", fontSize: 35, zIndex: 3}}>{quant}</h1>
       </Column>
       <img

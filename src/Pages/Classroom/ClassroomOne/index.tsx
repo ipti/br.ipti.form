@@ -18,12 +18,12 @@ import { AplicationContext } from "../../../Context/Aplication/context";
 import ClassroomProvider, {
   ClassroomContext,
 } from "../../../Context/Classroom/context";
-import { ClassroomTypes } from "../../../Context/Classroom/type";
+import { ClassroomTypes, MediafrequencyType } from "../../../Context/Classroom/type";
 import {
   getStatusClassroomList,
   ROLE,
 } from "../../../Controller/controllerGlobal";
-import { useFetchRequestClassroomOne } from "../../../Services/Classroom/query";
+import { useFetchRequestClassroomOne, useFetchRequestFoulsClassroomOne } from "../../../Services/Classroom/query";
 import { Column, Padding, Row } from "../../../Styles/styles";
 import { PropsAplicationContext } from "../../../Types/types";
 import CardItensClassrooom from "./CardItensClassroom";
@@ -48,10 +48,19 @@ const ClassroomOnePage = () => {
   const { id } = useParams();
   const props = useContext(ClassroomContext) as ClassroomTypes;
   const { data: classroom } = useFetchRequestClassroomOne(parseInt(id!));
+  const { data: foulsRequest } = useFetchRequestFoulsClassroomOne(parseInt(id!));
   const [edit, setEdit] = useState(false);
   const [visible, setVisible] = useState(false);
   const [cards, setCards] = useState<StateCard[]>([]);
   const [loadingEvi, setLoadingEvi] = useState(false);
+
+  var fouls = foulsRequest as MediafrequencyType;
+
+
+  const totalMedia = fouls.reduce((sum, item) => sum + item.media, 0);
+
+  // Calcula a média das médias
+  const mediaDasMedias = totalMedia / fouls.length;
 
   const [chartData, setChartData] = useState({});
 
@@ -112,39 +121,39 @@ const ClassroomOnePage = () => {
 
   if (props.isLoading) return <Loading />;
 
- const handleDownload = async () => {
-  try {
-    setLoadingEvi(true);
-    const response = await requestClassroomZipArchives(classroom?.id!);
-    // gera URL do blob
-    const url = window.URL.createObjectURL(new Blob([response.data]));
+  const handleDownload = async () => {
+    try {
+      setLoadingEvi(true);
+      const response = await requestClassroomZipArchives(classroom?.id!);
+      // gera URL do blob
+      const url = window.URL.createObjectURL(new Blob([response.data]));
 
-    // tenta extrair nome do arquivo do header (se o backend mandar)
-    const contentDisposition = response.headers['content-disposition'];
+      // tenta extrair nome do arquivo do header (se o backend mandar)
+      const contentDisposition = response.headers['content-disposition'];
 
-    let fileName = `turma-${classroom?.name}.zip`;
-    if (contentDisposition) {
-      const match = contentDisposition.match(/filename="(.+)"/);
-      if (match?.[1]) {
-        fileName = match[1];
+      let fileName = `turma-${classroom?.name}.zip`;
+      if (contentDisposition) {
+        const match = contentDisposition.match(/filename="(.+)"/);
+        if (match?.[1]) {
+          fileName = match[1];
+        }
       }
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      window.URL.revokeObjectURL(url);
+      setLoadingEvi(false);
+    } catch (err) {
+      console.error(err);
+      setLoadingEvi(false);
+      alert('Não foi possível baixar o arquivo');
     }
-
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-
-    window.URL.revokeObjectURL(url);
-    setLoadingEvi(false);
-  } catch (err) {
-    console.error(err);
-    setLoadingEvi(false);
-    alert('Não foi possível baixar o arquivo');
-  }
-};
+  };
 
   return (
     <ContentPage title={classroom?.name} description="Detalhes da sua turma.">
@@ -218,36 +227,36 @@ const ClassroomOnePage = () => {
               <Padding />
               {(propsAplication.user?.role === ROLE.ADMIN ||
                 propsAplication.user?.role === ROLE.COORDINATORS) && (
-                <Button
-                  text
-                  label="Baixar evidências"
-                  icon="pi pi-download"
-                  onClick={handleDownload}
-                  loading={loadingEvi}
-                />
-              )}
+                  <Button
+                    text
+                    label="Baixar evidências"
+                    icon="pi pi-download"
+                    onClick={handleDownload}
+                    loading={loadingEvi}
+                  />
+                )}
             </Row>
             <Row>
               <Padding />
               {(propsAplication.user?.role === ROLE.ADMIN ||
                 propsAplication.user?.role === ROLE.COORDINATORS) && (
-                <Button
-                  text
-                  label="Editar"
-                  icon="pi pi-pencil"
-                  onClick={() => setEdit(true)}
-                />
-              )}
+                  <Button
+                    text
+                    label="Editar"
+                    icon="pi pi-pencil"
+                    onClick={() => setEdit(true)}
+                  />
+                )}
             </Row>
             {(propsAplication.user?.role === ROLE.ADMIN ||
               propsAplication.user?.role === ROLE.COORDINATORS) && (
-              <Button
-                text
-                label="Tranferir turma"
-                icon="pi pi-sync"
-                onClick={() => setVisible(true)}
-              />
-            )}
+                <Button
+                  text
+                  label="Tranferir turma"
+                  icon="pi pi-sync"
+                  onClick={() => setVisible(true)}
+                />
+              )}
           </Row>
         </Column>
       )}
@@ -297,18 +306,28 @@ const ClassroomOnePage = () => {
         {cards.map((item) => (
           <div className="col-12 md:col-4 lg:col-2">
             <CardQuant
-              title={item.status}
+              title={'Matriculas '+item.status}
               quant={item.number}
               color={
                 item.status === "Aprovados"
                   ? "orange"
                   : item.status === "Pendentes"
-                  ? "blue"
-                  : "navy_blue"
+                    ? "blue"
+                    : "navy_blue"
               }
             />
+
           </div>
         ))}
+        <div className="col-12 md:col-4 lg:col-2">
+          {fouls.length > 0 && <CardQuant
+            title={'Média de presença da turma'}
+            quant={mediaDasMedias.toFixed(2) + '%'}
+            color={
+                  "navy_blue"
+            }
+          />}
+        </div>
       </div>
 
       <div

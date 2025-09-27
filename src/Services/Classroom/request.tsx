@@ -51,6 +51,20 @@ export const requestClassroomOne = (id: number) => {
     });
 };
 
+export const requestFoulsClassroomOne = (id: number) => {
+  let path = "/fouls-bff";
+  return http
+    .get(path, { params: { idClassroom: id } })
+    .then((response) => response.data)
+    .catch((err) => {
+      if (err.response.status === 401) {
+        logout();
+        window.location.reload();
+      }
+      throw err;
+    });
+};
+
 export const requestClassroomReport = (id: number) => {
   let path = "/classroom-bff/report";
   return http

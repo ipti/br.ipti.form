@@ -43,3 +43,10 @@ export interface CreateClassroom {
   project: number;
   year: number;
 }
+
+export type MediafrequencyType = Mediafrequency[]
+
+export interface Mediafrequency {
+  media: number
+  id: number
+}
