@@ -320,9 +320,9 @@ const ClassroomOnePage = () => {
           </div>
         ))}
         <div className="col-12 md:col-4 lg:col-2">
-          {fouls.length > 0 && <CardQuant
+          {fouls?.length > 0 && <CardQuant
             title={'Média de presença da turma'}
-            quant={mediaDasMedias.toFixed(2) + '%'}
+            quant={mediaDasMedias?.toFixed(2) + '%'}
             color={
                   "navy_blue"
             }
