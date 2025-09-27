@@ -57,10 +57,10 @@ const ClassroomOnePage = () => {
   var fouls = foulsRequest as MediafrequencyType;
 
 
-  const totalMedia = fouls.reduce((sum, item) => sum + item.media, 0);
+  const totalMedia = fouls?.reduce((sum, item) => sum + item.media, 0);
 
   // Calcula a média das médias
-  const mediaDasMedias = totalMedia / fouls.length;
+  const mediaDasMedias = totalMedia / (fouls?.length || 1);
 
   const [chartData, setChartData] = useState({});
 
