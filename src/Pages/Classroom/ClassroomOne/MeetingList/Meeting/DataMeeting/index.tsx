@@ -174,6 +174,7 @@ const DataMeeting = () => {
                 <Padding />
                 <TextAreaComponent
                   disabled={!edit}
+                  maxLength={1000}
                   onChange={handleChange}
                   value={values.description}
                   name="description"
