@@ -161,22 +161,6 @@ const Beneficiarios = () => {
     const docDefinition: TDocumentDefinitions = {
       content: [
         {
-          text: "[Não edite este documento. Baixe o arquivo e salve na pasta do projeto] ",
-          style: "subheader",
-          alignment: "center",
-          color: 'red',
-          fontSize: 8,
-          // marginTop: 2,
-        },
-        {
-          text: "Orientações: Renomeie o arquivo adicionando o nome do projeto, da turma e a data referente.",
-          style: "subheader",
-          alignment: "center",
-          color: 'red',
-          fontSize: 8,
-          // marginTop: 2,
-        },
-        {
           text: `${props.meeting?.classroom.project.name}`,
           style: "header",
           alignment: "center",
