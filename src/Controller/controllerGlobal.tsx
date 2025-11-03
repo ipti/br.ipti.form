@@ -96,7 +96,7 @@ export const getStatusList = () => {
   const status = [
     { id: Status.APPROVED, name: "Aprovado" },
     { id: Status.PENDING, name: "Pendente de análise" },
-    { id: Status.PENDING_TERM, name: "Pendente de termo" },
+    { id: Status.PENDING_TERM, name: "Aguardando assinatura" },
   ];
   return status;
 };
@@ -137,7 +137,7 @@ export const StatusEnum: any = {
   APPROVED: "Aprovado",
   PENDING: "Pendente",
   REPROVED: "Reprovado",
-  PENDING_TERM: "Pend. de termo",
+  PENDING_TERM: "Aguar. assinatura",
 };
 
 export const ROLE = {

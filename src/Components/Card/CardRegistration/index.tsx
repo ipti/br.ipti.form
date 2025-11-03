@@ -89,15 +89,15 @@ const CardRegistration = ({
                 padding: 4,
                 textAlign: "center",
                 minWidth: "96px",
-                maxWidth: "150px",
+                maxWidth: "180px",
                 color: "white",
                 borderRadius: "16px",
                 backgroundColor: `${
                   status === statuGlobal.APPROVED
                     ? color.green
-                    : status === statuGlobal.PENDING
+                    : status === statuGlobal.PENDING_TERM
                     ? color.colorCardOrange
-                    : status === statuGlobal.REPROVED
+                    : status === statuGlobal.PENDING
                     ? color.red
                     : color.colorCardOrange
                 }`,
