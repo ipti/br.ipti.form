@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useFetchRequestAllRegistration } from "../../../Services/Beneficiaries/query";
 import { ControllerUpdateRegistration } from "../../../Services/PreRegistration/controller";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export const BeneficiariesListState = () => {
   const [registrations, setRegistrations] = useState<any | undefined>();
@@ -14,6 +15,9 @@ export const BeneficiariesListState = () => {
   const [filter, setFilter] = useState<
     { value: string; content: string }[] | undefined
   >();
+
+   const navigate = useNavigate();
+  const location = useLocation();
   const { data: registrationsRequests } = useFetchRequestAllRegistration({
     limite: limite,
     page: Math.floor(page / 10 + 1),
@@ -39,6 +43,27 @@ export const BeneficiariesListState = () => {
     requestDeleteRegistrationMutation.mutate(id);
   };
 
+   const updateAllFilter = (newFilter: string) => {
+    setallFilter(newFilter);
+
+    // Define os parâmetros atuais da query string
+    const queryParams = new URLSearchParams(location.search);
+    if (newFilter) {
+      queryParams.set("allFilter", newFilter); // Adiciona ou atualiza o filtro
+    } else {
+      queryParams.delete("allFilter"); // Remove o filtro se vazio
+    }
+
+    // Atualiza a URL sem recarregar a página
+    navigate(`${location.pathname}?${queryParams.toString()}`);
+  };
+
+  useEffect(() => {
+  const queryParams = new URLSearchParams(location.search);
+  const initialAllFilter = queryParams.get("allFilter") || "";
+  setallFilter(initialAllFilter);
+}, [location.search]);
+
   return {
     registrations,
     page,
@@ -53,6 +78,6 @@ export const BeneficiariesListState = () => {
     cpfFilter,
     allFilter,
     setallFilter,
-    tsId, setTsId
+    tsId, setTsId, updateAllFilter
   };
 };

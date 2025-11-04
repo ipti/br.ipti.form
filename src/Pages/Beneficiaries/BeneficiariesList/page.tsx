@@ -8,18 +8,17 @@ import { Paginator } from "primereact/paginator";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ContentPage from "../../../Components/ContentPage";
+import DropdownComponent from "../../../Components/Dropdown";
+import { AplicationContext } from "../../../Context/Aplication/context";
+import { BeneficiariesListContext } from "../../../Context/Beneficiaries/BeneficiariesList/context";
 import { BeneficiariesListType } from "../../../Context/Beneficiaries/BeneficiariesList/type";
 import {
   formatarData,
   somarNumeros,
 } from "../../../Controller/controllerGlobal";
-import color from "../../../Styles/colors";
 import { Padding, Row } from "../../../Styles/styles";
-import ModalFilter from "./ModalFilter";
-import DropdownComponent from "../../../Components/Dropdown";
 import { PropsAplicationContext } from "../../../Types/types";
-import { AplicationContext } from "../../../Context/Aplication/context";
-import { BeneficiariesListContext } from "../../../Context/Beneficiaries/BeneficiariesList/context";
+import ModalFilter from "./ModalFilter";
 
 export const BeneficiariesListPage = () => {
   const props = useContext(BeneficiariesListContext) as BeneficiariesListType;
@@ -37,7 +36,6 @@ export const BeneficiariesListPage = () => {
     return (
       <div
         className="flex justify-content-between"
-        style={{ background: color.colorCard }}
       >
         <Button
           label={window.innerWidth > 800 ? "Adicionar beneficiario" : undefined}
@@ -49,7 +47,7 @@ export const BeneficiariesListPage = () => {
           <InputText
             value={props.allFilter}
             placeholder="Pesquisar..."
-            onChange={(e) => props.setallFilter(e.target.value)}
+            onChange={(e) => {props.setallFilter(e.target.value); props.updateAllFilter(e.target.value)}}
           />
         </span>
       </div>

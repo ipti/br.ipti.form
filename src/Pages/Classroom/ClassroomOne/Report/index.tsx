@@ -9,6 +9,7 @@ import { useFetchRequestClassroomReport } from "../../../../Services/Classroom/q
 import color from "../../../../Styles/colors";
 import { ReportClassroom } from "./Pdf";
 import { formatarData } from "../../../../Controller/controllerGlobal";
+import http from "../../../../Services/axios";
 
 const Report = () => {
   return <ReportPage />;
@@ -69,8 +70,30 @@ const ReportPage = () => {
     );
   };
 
+   const downloadCSV = async () => {
+    try {
+      const response = await http.get("/classroom-bff/frequency-csv?classroomId=" + id);
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download",`${data.name}.csv` );
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      console.error("Erro ao baixar o arquivo:", error);
+    }
+  };
+
   const header = (
     <div className="flex align-items-center justify-content-end gap-2">
+      <Button
+        type="button"
+        icon="pi pi-file-excel"
+        severity="success"
+        rounded
+        onClick={downloadCSV}
+        data-pr-tooltip="CSV"
+      />
       <Button
         type="button"
         icon="pi pi-file-pdf"

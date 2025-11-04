@@ -25,7 +25,8 @@ const BeneficiariesListProvider = ({
     allFilter,
     setallFilter,
     setTsId,
-    tsId
+    tsId,
+    updateAllFilter
   } = BeneficiariesListState();
 
   return (
@@ -45,7 +46,8 @@ const BeneficiariesListProvider = ({
         allFilter,
         setallFilter,
         setTsId,
-        tsId
+        tsId,
+        updateAllFilter
       }}
     >
       {children}
