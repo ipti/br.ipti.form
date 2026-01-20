@@ -45,16 +45,16 @@ export const ChartMatriculatedState = ({
         const data: Chart[] = response.data;
 
         // Pegando apenas os meses disponíveis nos dados recebidos
-        const availableMonths = Array.from(
-          new Set(data.map((item) => item.month))
-        ).sort((a, b) => a - b);
+        const availableMonths = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 
-        const mesInital = dates[0]?.getMonth() ?? 0;
-        const mesFinal = dates[1]?.getMonth() ?? 0;
+        // const mesInital = dates[0]?.getMonth() ?? 0;
+        // const mesFinal = dates[1]?.getMonth() ?? 0;
         // Criando labels dinâmicos baseados nos meses retornados
         const labels = dates[0]
-          ? getMonthNumber(mesInital, mesFinal)
+          ? getMonthNumber(0, 11)
           : availableMonths.map((m) => month[m]);
+
+          console.log(labels)
 
         const datasets = [
           {

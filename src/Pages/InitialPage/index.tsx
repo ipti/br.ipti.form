@@ -201,7 +201,7 @@ const InitialPage = () => {
         </div>
         <div className="col-12 md:col-4 lg:col-2">
           <CardQuant
-            title="Total de Projetos"
+            title="Total de Planos de Trabalho"
             quant={chartTSData?.totalProjects!}
             color="blue"
           />
