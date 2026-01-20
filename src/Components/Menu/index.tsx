@@ -38,6 +38,7 @@ import ajuda_hover from "../../Assets/images/iconsMenu/question_mark_active.svg"
 
 import user from "../../Assets/images/iconsMenu/person.svg";
 import user_hover from "../../Assets/images/iconsMenu/person_active.svg";
+import { controllerYears } from "../../Controller/controllerYears";
 
 const Menu = ({ viewdMenu }: { viewdMenu: boolean }) => {
   const [active, setActive] = useState(parseInt(getMenuItem()!));
@@ -197,13 +198,7 @@ const ModalYear = ({
   visible: boolean | undefined;
   onHide(): void;
 }) => {
-  const years = [
-    { value: 2025 },
-    { value: 2024 },
-    { value: 2023 },
-    { value: 2022 },
-    { value: 2021 },
-  ];
+  const years = controllerYears()
 
   const [year, setYearState] = useState<any>();
 
@@ -222,7 +217,7 @@ const ModalYear = ({
       <div>
         <div>
           <DropdownComponent
-            options={years}
+            options={years.yearsOptions}
             placerholder="Ano"
             onChange={(e) => {
               setYearState(e.target.value);

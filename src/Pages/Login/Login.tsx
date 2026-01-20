@@ -11,6 +11,7 @@ import TextInput from "../../Components/TextInput";
 import PasswordInput from "../../Components/TextPassword";
 import LoginProvider, { LoginContext } from "../../Context/Login/context";
 import { LoginContextText } from "../../Context/Login/types";
+import { controllerYears } from "../../Controller/controllerYears";
 import { setYear } from "../../Services/localstorage";
 import { Padding, Row } from "../../Styles/styles";
 import { ContainerLogin } from "./styles";
@@ -26,14 +27,7 @@ const Login = () => {
 const LoginPage = () => {
   const props = useContext(LoginContext) as LoginContextText;
 
-  const years = [
-    { value: 2025 },
-    { value: 2024 },
-    { value: 2023 },
-    { value: 2022 },
-    { value: 2021 },
-  ];
-
+  const years = controllerYears()
 
   const [year, setYearState] = useState<any>();
 
@@ -43,9 +37,9 @@ const LoginPage = () => {
   });
 
   useEffect(() => {
-    setYear("2025");
-    setYearState(2025);
-  }, []);
+    setYear(years.yearsOptions[years.yearsOptions.length - 1].value.toString());
+    setYearState(years.yearsOptions[years.yearsOptions.length - 1].value);
+  }, [years.yearsOptions]);
 
   return (
     <ContainerLogin>
@@ -148,7 +142,7 @@ const LoginPage = () => {
                           <label>Ano</label>
                           <Padding />
                           <DropdownComponent
-                            options={years}
+                            options={years.yearsOptions}
                             placerholder="Ano"
                             onChange={(e) => {
                               setYearState(e.target.value);

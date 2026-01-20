@@ -8,6 +8,7 @@ import { Column, Padding, Row } from "../../../../../Styles/styles";
 import ImageTextSteps from "../../ImageTextStpes";
 import { getYear, setYear } from "../../../../../Services/localstorage";
 import queryClient from "../../../../../Services/reactquery";
+import { controllerYears } from "../../../../../Controller/controllerYears";
 // import { RegistrationContext } from "../../containers/Registration/Context/context";
 
 const ChoiceYear = () => {
@@ -19,13 +20,7 @@ const ChoiceYear = () => {
 
   const props = useContext(RegisterContext) as RegisterTypes;
 
-  const years = [
-    { value: 2025 },
-    { value: 2024 },
-    { value: 2023 },
-    { value: 2022 },
-    { value: 2021 },
-  ];
+  const years = controllerYears()
 
   return (
     <>
@@ -49,7 +44,7 @@ const ChoiceYear = () => {
                 setYear(e.target.value);
                 queryClient.refetchQueries("useRequestProjectsAndClassroom");
               }}
-              options={years}
+              options={years.yearsOptions}
               optionsLabel="value"
               value={year}
             />
