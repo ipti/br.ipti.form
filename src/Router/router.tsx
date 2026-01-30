@@ -33,11 +33,14 @@ import PrivateRoute from "./privaterouter";
 import InitialPage from "../Pages/InitialPage";
 import ReapplicatorsList from "../Pages/Reapplicators/ReapplicatorsList";
 import ChangePassword from "../Pages/Users/ChangePassword";
+import PageAtt from "../Pages/Att/page";
 
 const RoutesApp = () => {
   return (
     <BrowserRouter>
-      <Routes>
+  {true ? <Routes>
+    <Route path="/*" element={<PageAtt />} />
+    </Routes>  :  <Routes>
         <Route
           element={<PrivateRoute Component={<CreateOrEditForm />} />}
           path="/create"
@@ -168,7 +171,7 @@ const RoutesApp = () => {
         <Route element={<Login />} path="/login" />
         <Route element={<Register />} path="/matricula" />
         {/* <Route path="/*" element={<NotFoundPage />} /> */}
-      </Routes>
+      </Routes>}
     </BrowserRouter>
   );
 };
