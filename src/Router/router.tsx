@@ -38,9 +38,9 @@ import PageAtt from "../Pages/Att/page";
 const RoutesApp = () => {
   return (
     <BrowserRouter>
-  {true ? <Routes>
-    <Route path="/*" element={<PageAtt />} />
-    </Routes>  :  <Routes>
+      {false ? <Routes>
+        <Route path="/*" element={<PageAtt />} />
+      </Routes> : <Routes>
         <Route
           element={<PrivateRoute Component={<CreateOrEditForm />} />}
           path="/create"
