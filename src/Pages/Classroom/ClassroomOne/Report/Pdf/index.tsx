@@ -8,12 +8,12 @@ import {
 } from "../../../../../Services/Classroom/type";
 
 import imgLateral from "../../../../../Assets/images/logoleftpdf.png";
-
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
 import { convertImageUrlToBase64, formatarDataAnoDuas, loadImageFileAsBase64 } from "../../../../../Controller/controllerGlobal";
 import { MediafrequencyType } from "../../../../../Context/Classroom/type";
+import styles from "../../../../../Styles";
 
 pdfMake.vfs = pdfFonts.vfs;
 export const ReportClassroom = () => {
@@ -28,13 +28,14 @@ export const ReportClassroom = () => {
 
   const { data } = useFetchRequestClassroomReport(parseInt(id!));
 
-   var fouls = foulsRequest as MediafrequencyType;
-  
-  
-    const totalMedia = fouls?.reduce((sum, item) => sum + item.media, 0);
-  
-    // Calcula a média das médias
-    const mediaDasMedias = totalMedia / ( fouls?.length || 1) ;
+  var fouls = foulsRequest as MediafrequencyType;
+
+  const approvedCount = data ?  approvedRegistration(data)?.approved?.filter(item => item >= (report?.project.approval_percentage || 0)).length : 0;
+
+  const totalMedia = fouls?.reduce((sum, item) => sum + item.media, 0);
+
+  // Calcula a média das médias
+  const mediaDasMedias = totalMedia / (fouls?.length || 1);
 
   useEffect(() => {
     if (data) {
@@ -99,24 +100,24 @@ export const ReportClassroom = () => {
 
   const uniqueUsersMap = new Map();
 
-report?.meeting?.forEach((meeting: any) => {
-  meeting?.meeting_user?.forEach((entry: any) => {
-    const user = entry.users;
-    if (!uniqueUsersMap.has(user.id)) {
-      uniqueUsersMap.set(user.id, user);
-    }
+  report?.meeting?.forEach((meeting: any) => {
+    meeting?.meeting_user?.forEach((entry: any) => {
+      const user = entry.users;
+      if (!uniqueUsersMap.has(user.id)) {
+        uniqueUsersMap.set(user.id, user);
+      }
+    });
   });
-});
 
-const uniqueUsers = Array.from(uniqueUsersMap.values());
+  const uniqueUsers = Array.from(uniqueUsersMap.values());
 
 
   const generatePDF = () => {
     const maxMeetingsPerPage = 12;
     const maxStudentsPerPage = 25;
-  
+
     const createTableBody = (registrationsSubset: any, meetingSubset: any, startIndex: number) => {
-            
+
       const headerRow = [
         "Nº",
         "NOME COMPLETO",
@@ -124,46 +125,50 @@ const uniqueUsers = Array.from(uniqueUsersMap.values());
         "FREQUÊNCIA",
         "STATUS",
       ];
-  
+
       const bodyRows = registrationsSubset.map((item: any, index: number) => {
+        const isApproved = parseInt(bodyTotal(item).percentage) >= report?.project?.approval_percentage!;
         return [
           startIndex + index + 1,
           item.registration.name + " - " + item.registration.cpf,
           ...meetingSubset.map((meeting: any) => bodyMeeting(item, meeting)),
           bodyTotal(item).percentage + "%",
-          parseInt(bodyTotal(item).percentage) >= report?.project?.approval_percentage! ? "Aprovado" : "Reprovado",
+          {
+            text: isApproved ? "Aprovado" : "Reprovado",
+            color: isApproved ? styles.colors.green : styles.colors.red,
+          },
         ];
       });
-  
+
       return [headerRow, ...bodyRows];
     };
-  
+
     const splitMeetingsIntoPages = () => {
       const meetingPages = [];
       const totalMeetings = report?.meeting.length || 0;
-  
+
       for (let i = 0; i < totalMeetings; i += maxMeetingsPerPage) {
         meetingPages.push(report?.meeting.slice(i, i + maxMeetingsPerPage));
       }
-  
+
       return meetingPages;
     };
-  
+
     const splitStudentsIntoPages = () => {
       const studentPages = [];
       const totalStudents = report?.register_classroom.length || 0;
-  
+
       for (let i = 0; i < totalStudents; i += maxStudentsPerPage) {
         studentPages.push(report?.register_classroom.slice(i, i + maxStudentsPerPage));
       }
-  
+
       return studentPages;
     };
-  
+
     const meetingPages = splitMeetingsIntoPages();
     const studentPages = splitStudentsIntoPages();
-  
-    const content:any[] = [
+
+    const content: any[] = [
       {
         text: `${report?.project.social_technology.name}`,
         style: "header",
@@ -190,10 +195,10 @@ const uniqueUsers = Array.from(uniqueUsersMap.values());
         fontSize: 6,
         table: {
           widths: ["*", "*"],
-          body: [[`Reaplicador: ${uniqueUsers?.map(e =>{ return e.name + "; "} )}`, `Turma: ${report?.name}`]],
+          body: [[`Reaplicador: ${uniqueUsers?.map(e => { return e.name + "; " })}`, `Turma: ${report?.name}`]],
         },
       },
-      ...studentPages.flatMap((studentSubset, studentPageIndex) => 
+      ...studentPages.flatMap((studentSubset, studentPageIndex) =>
         meetingPages.map((meetingSubset, meetingPageIndex) => [
           {
             style: "tableExample",
@@ -208,9 +213,9 @@ const uniqueUsers = Array.from(uniqueUsersMap.values());
                 "5%",
               ],
               body: createTableBody(
-                studentSubset || [], 
-                meetingSubset, 
-                studentPageIndex * maxStudentsPerPage 
+                studentSubset || [],
+                meetingSubset,
+                studentPageIndex * maxStudentsPerPage
               ),
             },
             pageBreak: studentPageIndex === 0 && meetingPageIndex === 0 ? undefined : "before",
@@ -223,7 +228,7 @@ const uniqueUsers = Array.from(uniqueUsersMap.values());
               widths: ["*"],
               body: [
                 [
-                  `Critério Mínimo de Aprovação: ${report?.project?.approval_percentage}%    Quantidade de Encontros: ${report?.meeting.length}    Quantidade de Alunos: ${report?.register_classroom?.length}     Média de Presença da Turma: ${mediaDasMedias.toFixed(2)}%`,
+                  `Critério Mínimo de Aprovação: ${report?.project?.approval_percentage}%    Quantidade de Encontros: ${report?.meeting.length}    Quantidade de Alunos: ${report?.register_classroom?.length}   Quantidade de aprovados: ${approvedCount}    Média de Presença da Turma: ${mediaDasMedias.toFixed(2)}%`,
                 ],
               ],
             },
@@ -231,7 +236,7 @@ const uniqueUsers = Array.from(uniqueUsersMap.values());
         ])
       ),
     ];
-  
+
     const docDefinition: TDocumentDefinitions = {
       pageOrientation: "landscape",
       content: content,
@@ -245,34 +250,34 @@ const uniqueUsers = Array.from(uniqueUsersMap.values());
       header: (currentPage, pageCount) => {
         return logoBase64
           ? {
-              image: logoBase64 || "",
-              alignment: "center",
-              marginTop: 32,
-              marginBottom: 128,
-              fit: [400, 400],
-            }
-          : {
-              image: logoBase64 || "",
-              alignment: "center",
-              marginTop: 32,
+            image: logoBase64 || "",
+            alignment: "center",
+            marginTop: 32,
             marginBottom: 128,
-              fit: [400, 400],
-            };
+            fit: [400, 400],
+          }
+          : {
+            image: logoBase64 || "",
+            alignment: "center",
+            marginTop: 32,
+            marginBottom: 128,
+            fit: [400, 400],
+          };
       },
       footer: (currentPage, pageCount) => {
         return logoBaseRegua64
           ? {
-              image: logoBaseRegua64 || "",
-              alignment: "center",
-              margin: [0, 0, 20, 20],
-              fit: [400, 400],
-            }
+            image: logoBaseRegua64 || "",
+            alignment: "center",
+            margin: [0, 0, 20, 20],
+            fit: [400, 400],
+          }
           : {
-              image: logoBase64 || "",
-              alignment: "center",
-              margin: [0, 0, 20, 20],
-              fit: [400, 400],
-            };
+            image: logoBase64 || "",
+            alignment: "center",
+            margin: [0, 0, 20, 20],
+            fit: [400, 400],
+          };
       },
       pageMargins: [40, 100, 40, 60],
       background: (currentPage, pageCount) => {
@@ -308,14 +313,14 @@ const uniqueUsers = Array.from(uniqueUsersMap.values());
         };
       },
     };
-  
+
     pdfMake.createPdf(docDefinition).open();
   };
-  
-  
-  
-  
-  
+
+
+
+
+
 
 
   const bodyTotal = (rowData: RegisterClassroom) => {
@@ -338,8 +343,38 @@ const uniqueUsers = Array.from(uniqueUsersMap.values());
     return { percentage: verifyFouls().toFixed(0), count: count };
   };
 
+
+
   return { generatePDF };
 
 
-  
+
 };
+
+
+  const approvedRegistration = (rowData: ReportClassroomType) => {
+    const count: number[] = [];
+
+    const verifyFouls = () => {
+      for (const register of rowData?.register_classroom) {
+        var countFouls = 0;
+
+        for (const meeting of rowData?.meeting) {
+          const verify = meeting?.fouls?.find(
+            (props: any) => props.registration_fk === register.registration_fk
+          );
+
+          if (verify) {
+            countFouls++;
+          }
+        }
+
+        count.push(rowData.meeting.length !== 0
+          ? ((rowData.meeting.length - countFouls) / rowData.meeting.length) * 100
+          : 0);
+
+        }
+        return count;
+    };
+    return { approved: verifyFouls() };
+  };

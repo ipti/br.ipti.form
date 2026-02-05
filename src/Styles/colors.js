@@ -12,6 +12,8 @@ const color = {
   green: "#28A138",
   blueClear: "#dcefed",
   colorCard: "#F5F8FF",
+  colorCardRed: "#efbfb8ff",
+  colorCardGreen: "#bdf5c1ff",
   colorGrayElephant: "#5F738C",
   colorBorderCard: "#DBE6FF",
   colorsBaseProductNormal: "#3f45ea",
