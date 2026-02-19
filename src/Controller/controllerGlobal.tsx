@@ -140,6 +140,26 @@ export const StatusEnum: any = {
   PENDING_TERM: "Aguar. assinatura",
 };
 
+export const StatusTermEnum: any = {
+  TERM_ANALYSIS: "Em análise",
+  ACTIVE_TERM: "Termo ativo",
+  INACTIVE_TERM: "Termo inativo",
+  PENDING_TERM: "Aguar. assinatura",
+};
+
+export const TypeTermEnum: any = {
+  IMAGE_VOICE: "Imagem e voz",
+  DATA: "Termo de dados",
+  ACCESSION: "Termo de adesão",
+  UNSPECIFIED: "Termo não especificado",
+};
+
+export const StatusRegistrationEnum: any = {
+  ACTIVE: "Ativo",
+  INACTIVE: "Inativo",
+  PENDING: "Pend. de análise"
+};
+
 export const ROLE = {
   ADMIN: "ADMIN",
   USER: "USER",

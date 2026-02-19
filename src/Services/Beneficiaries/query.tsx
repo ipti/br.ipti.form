@@ -1,22 +1,19 @@
 import { useQuery } from "react-query";
 import { requestAllRegistration } from "./request";
+import { BeneficiariesFilterType } from "../../Context/Beneficiaries/BeneficiariesList/type";
 
 export const useFetchRequestAllRegistration = ({
   page,
   limite,
-  cpf,
-  name,
   allFilter,
-  idTs
+  filter
 }: {
   page: number;
   limite: number;
-  name?: string;
-  cpf?: string;
   allFilter?: string,
-  idTs?: string,
+  filter?: BeneficiariesFilterType,
 }) => {
-  return useQuery(["useRequestAllRegistration", page, limite, cpf, name, allFilter, idTs], () =>
-    requestAllRegistration({ limite: limite, page: page, cpf: cpf, name: name, allFilter: allFilter, idTs: idTs })
+  return useQuery(["useRequestAllRegistration", page, limite, allFilter, filter], () =>
+    requestAllRegistration({ limite: limite, page: page, allFilter: allFilter, filter  })
   );
 };

@@ -1,5 +1,7 @@
 import { Form, Formik } from "formik";
 import { Button } from "primereact/button";
+import { Column } from "primereact/column";
+import { DataTable } from "primereact/datatable";
 import { useContext, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import avatar from "../../../../../Assets/images/avatar.svg";
@@ -16,15 +18,14 @@ import {
   color_race,
   formatarData,
   getStatusList,
-  isWithinOneYear,
-  typesex
+  StatusTermEnum,
+  typesex,
+  TypeTermEnum
 } from "../../../../../Controller/controllerGlobal";
 import { useFetchRequestClassroomOne } from "../../../../../Services/Classroom/query";
+import color from "../../../../../Styles/colors";
 import { Padding, Row } from "../../../../../Styles/styles";
 import { Avatar } from "../../../../Beneficiaries/BeneficiariesEdit";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
-import color from "../../../../../Styles/colors";
 import ModalAddTerm from "../../../../Beneficiaries/BeneficiariesEdit/ModalAddTerm";
 
 
@@ -239,8 +240,49 @@ const RegistrationPage = () => {
                   tableStyle={{ minWidth: "50rem" }}
                   header={renderHeaderTerm}
                 >
-                  <Column body={(row) => { return (<>{formatarData(row?.dateTerm!)}</>) }} header="Data de assinatura"></Column>
-                  <Column body={(row) => { return (<>{isWithinOneYear(new Date(Date.now()), row?.dateTerm!) ? "Termo ativo" : "Termo vencido"}</>) }} header="Status"></Column>
+                  <Column
+                    body={(row) => {
+                      return <>{formatarData(row?.dateTerm!)}</>;
+                    }}
+                    header="Data de assinatura"
+                  ></Column>
+                  <Column
+                    body={(row) => {
+                      return <>{formatarData(row?.dateValid ?? "")}</>;
+                    }}
+                    header="Data de validade"
+                  ></Column>
+                  <Column
+                    body={(row) => {
+                      return (
+
+                        <>
+                          {TypeTermEnum[row?.type ?? ""] && `${TypeTermEnum[row?.type ?? ""]}`}
+                        </>
+                      );
+                    }}
+                    header="Tipo do termo"
+                  ></Column>
+                  <Column
+                    body={(row) => {
+                      return (
+                        <>
+                          {StatusTermEnum[row?.status ?? ""] && `${StatusTermEnum[row?.status ?? ""]}`}
+                        </>
+                      );
+                    }}
+                    header="Status"
+                  ></Column>
+                  <Column
+                    body={(row) => {
+                      return (
+                        <>
+                          {row?.observation}
+                        </>
+                      );
+                    }}
+                    header="Observações"
+                  ></Column>
                 </DataTable>
                 <h3 className="mt-4">Endereço</h3>
                 <Padding />
@@ -296,7 +338,7 @@ const RegistrationPage = () => {
       ) : null}
 
       <Row id="center" className="mt-4">
-        <Button label="Ver mais informações" onClick={() => history('/beneficiarios/'+props.registration?.registration?.id)} />
+        <Button label="Ver mais informações" onClick={() => history('/beneficiarios/' + props.registration?.registration?.id)} />
       </Row>
       <ModalAddTerm
         onHide={() => setVisibleTerm(false)}

@@ -23,18 +23,20 @@ import {
   formatarData,
   getErrorsAsArray,
   getStatus,
-  isDateTerm,
   kinship,
+  StatusRegistrationEnum,
+  StatusTermEnum,
   typesex,
+  TypeTermEnum
 } from "../../../Controller/controllerGlobal";
 import { validaCPF } from "../../../Controller/controllerValidCPF";
 import styles from "../../../Styles";
 import color from "../../../Styles/colors";
 import { Container, Padding, Row } from "../../../Styles/styles";
 
+import { Popover } from "react-tiny-popover";
 import ModalAddTerm from "./ModalAddTerm";
 import ModalCreateRegisterClassroom from "./ModalCreateRegisterClassroom";
-import { Popover } from "react-tiny-popover";
 
 const BeneficiariesEdit = () => {
   return (
@@ -332,6 +334,20 @@ const BeneficiariesEditPage = () => {
                       </div>
                     ) : null}
                   </div>
+                    <div className="col-12 md:col-6">
+                    <label>Status</label>
+                    <Padding />
+                    <TextInput
+                      value={props.registrations?.status ? StatusRegistrationEnum[props.registrations?.status] :props.registrations?.status}
+                      name="status"
+                      disabled
+                    />
+                    {errors.status && touched.status ? (
+                      <div style={{ color: "red", marginTop: "8px" }}>
+                        {String(errors.status)}
+                      </div>
+                    ) : null}
+                  </div>
                 </div>{" "}
                 <div className="grid">
                   <div className="col-12 md:col-6">
@@ -450,14 +466,22 @@ const BeneficiariesEditPage = () => {
                     }}
                     header="Data de validade"
                   ></Column>
+                  <Column
+                    body={(row) => {
+                      return (
 
+                        <>
+                          {TypeTermEnum[row?.type ?? ""] && `${TypeTermEnum[row?.type ?? ""]}`}
+                        </>
+                      );
+                    }}
+                    header="Tipo do termo"
+                  ></Column>
                   <Column
                     body={(row) => {
                       return (
                         <>
-                          {isDateTerm(row?.dateValid!)
-                            ? "Termo vigente"
-                            : "Termo fora da vigência"}
+                          {StatusTermEnum[row?.status ?? ""] && `${StatusTermEnum[row?.status ?? ""]}`}
                         </>
                       );
                     }}
@@ -574,97 +598,97 @@ const BeneficiariesEditPage = () => {
   );
 };
 
-  const RenderActionTerm = ({row, setVisibleTerm, setVisibleDeleteTerm}:{row: any, setVisibleTerm: any, setVisibleDeleteTerm: any}) => {
+const RenderActionTerm = ({ row, setVisibleTerm, setVisibleDeleteTerm }: { row: any, setVisibleTerm: any, setVisibleDeleteTerm: any }) => {
 
-      const [isPopoverOpen, setIsPopoverOpen] = useState<any>();
+  const [isPopoverOpen, setIsPopoverOpen] = useState<any>();
 
-    return (
-      <Row id="center" style={{ gap: "8px" }}>
-        <Popover
-          isOpen={isPopoverOpen}
-          positions={["top", "bottom", "left", "right"]} // preferred positions by priority
-          onClickOutside={() => setIsPopoverOpen(!isPopoverOpen)}
-          content={
-            <div
-              style={{
-                backgroundColor: "white",
-                padding: "8px",
-                minWidth: "128px",
-                boxShadow:
-                  "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
-              }}
-            >
-              <Row
-                onClick={() => {
-                  window.open(row.blob_file.blob_url);
-                  setIsPopoverOpen(!isPopoverOpen);
-                }}
-                id="space-between"
-                style={{ cursor: "pointer", padding: "8px", gap: "8px" }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Icon icon="pi pi-download" size="16px" />
-                </div>
-                <p>Baixar</p>
-              </Row>
-              <Row
-                onClick={() => {
-                  setVisibleTerm(row);
-                  setIsPopoverOpen(!isPopoverOpen);
-                }}
-                id="space-between"
-                style={{ cursor: "pointer", padding: "8px", gap: "8px" }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Icon icon="pi pi-pencil" size="16px" />
-                </div>
-                <p>Editar</p>
-              </Row>
-              <div className="w-full">
-                <Row
-                  onClick={() => {
-                    setVisibleDeleteTerm(row);
-                    setIsPopoverOpen(!isPopoverOpen);
-                  }}
-                  id="space-between"
-                  style={{ cursor: "pointer", padding: "8px", gap: "8px" }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Icon icon="pi pi-trash" size="16px" />
-                  </div>
-                  <p>Excluir</p>
-                </Row>
-              </div>
-            </div>
-          }
-        >
+  return (
+    <Row id="center" style={{ gap: "8px" }}>
+      <Popover
+        isOpen={isPopoverOpen}
+        positions={["top", "bottom", "left", "right"]} // preferred positions by priority
+        onClickOutside={() => setIsPopoverOpen(!isPopoverOpen)}
+        content={
           <div
-            style={{ cursor: "pointer" }}
-            onClick={() => setIsPopoverOpen(!isPopoverOpen)}
+            style={{
+              backgroundColor: "white",
+              padding: "8px",
+              minWidth: "128px",
+              boxShadow:
+                "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
+            }}
           >
-            {" "}
-            <Icon icon="pi pi-ellipsis-v" />
+            <Row
+              onClick={() => {
+                window.open(row.blob_file.blob_url);
+                setIsPopoverOpen(!isPopoverOpen);
+              }}
+              id="space-between"
+              style={{ cursor: "pointer", padding: "8px", gap: "8px" }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                <Icon icon="pi pi-download" size="16px" />
+              </div>
+              <p>Baixar</p>
+            </Row>
+            <Row
+              onClick={() => {
+                setVisibleTerm(row);
+                setIsPopoverOpen(!isPopoverOpen);
+              }}
+              id="space-between"
+              style={{ cursor: "pointer", padding: "8px", gap: "8px" }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                }}
+              >
+                <Icon icon="pi pi-pencil" size="16px" />
+              </div>
+              <p>Editar</p>
+            </Row>
+            <div className="w-full">
+              <Row
+                onClick={() => {
+                  setVisibleDeleteTerm(row);
+                  setIsPopoverOpen(!isPopoverOpen);
+                }}
+                id="space-between"
+                style={{ cursor: "pointer", padding: "8px", gap: "8px" }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Icon icon="pi pi-trash" size="16px" />
+                </div>
+                <p>Excluir</p>
+              </Row>
+            </div>
           </div>
-        </Popover>
-      </Row>
-    );
-  };
+        }
+      >
+        <div
+          style={{ cursor: "pointer" }}
+          onClick={() => setIsPopoverOpen(!isPopoverOpen)}
+        >
+          {" "}
+          <Icon icon="pi pi-ellipsis-v" />
+        </div>
+      </Popover>
+    </Row>
+  );
+};
 export default BeneficiariesEdit;

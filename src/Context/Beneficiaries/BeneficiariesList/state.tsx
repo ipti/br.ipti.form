@@ -2,35 +2,56 @@ import { useEffect, useState } from "react";
 import { useFetchRequestAllRegistration } from "../../../Services/Beneficiaries/query";
 import { ControllerUpdateRegistration } from "../../../Services/PreRegistration/controller";
 import { useLocation, useNavigate } from "react-router-dom";
+import { BeneficiariesFilterType } from "./type";
 
 export const BeneficiariesListState = () => {
   const [registrations, setRegistrations] = useState<any | undefined>();
   const [page, setPage] = useState(0);
   const [limite, setLimite] = useState(10);
-  const [nameFilter, setnameFilter] = useState<string | undefined>();
   const [tsId, setTsId] = useState<number | undefined>()
 
-  const [cpfFilter, setcpfFilter] = useState<string | undefined>();
   const [allFilter, setallFilter] = useState<string | undefined>("");
-  const [filter, setFilter] = useState<
-    { value: string; content: string }[] | undefined
-  >();
+
+  // Função para ler filtros dos query params
+  const getFilterFromQuery = (search: string): BeneficiariesFilterType => {
+    const queryParams = new URLSearchParams(search);
+    return {
+      idClassroom: queryParams.get("idClassroom") ? Number(queryParams.get("idClassroom")) : undefined,
+      idProject: queryParams.get("idProject") ? Number(queryParams.get("idProject")) : undefined,
+      idTs: queryParams.get("idTs") ? Number(queryParams.get("idTs")) : undefined,
+      statusTerm: queryParams.get("statusTerm") || undefined,
+      status: queryParams.get("status") || undefined,
+    };
+  };
+
+  // Inicializa filtro a partir da URL
+  const [filter, setFilterState] = useState<BeneficiariesFilterType>(() => getFilterFromQuery(window.location.search));
+
+  // Atualiza filtro e sincroniza com query params
+  const setFilter = (newFilter: BeneficiariesFilterType) => {
+    setFilterState(newFilter);
+    const queryParams = new URLSearchParams(location.search);
+    // Atualiza cada filtro nos query params
+    if (newFilter.idClassroom !== undefined) queryParams.set("idClassroom", String(newFilter.idClassroom)); else queryParams.delete("idClassroom");
+    if (newFilter.idProject !== undefined) queryParams.set("idProject", String(newFilter.idProject)); else queryParams.delete("idProject");
+    if (newFilter.idTs !== undefined) queryParams.set("idTs", String(newFilter.idTs)); else queryParams.delete("idTs");
+    if (newFilter.statusTerm !== undefined) queryParams.set("statusTerm", newFilter.statusTerm); else queryParams.delete("statusTerm");
+    if (newFilter.status !== undefined) queryParams.set("status", newFilter.status); else queryParams.delete("status");
+    navigate(`${location.pathname}?${queryParams.toString()}`);
+  };
+
+  console.log("🚀 ~ file: state.tsx:24 ~ BeneficiariesListState ~ filter:", filter)
 
    const navigate = useNavigate();
   const location = useLocation();
   const { data: registrationsRequests } = useFetchRequestAllRegistration({
     limite: limite,
     page: Math.floor(page / 10 + 1),
-    name: nameFilter !== "" ? nameFilter : undefined,
-    cpf: cpfFilter !== "" ? cpfFilter?.replace(/[^a-zA-Z0-9]/g, '') : undefined,
     allFilter: allFilter !== "" ? allFilter : undefined,
-    idTs: tsId?.toString(),
+    filter,
   });
 
-  const handleFilter = (values: { name: string; cpf: string }) => {
-    setnameFilter(values.name);
-    setcpfFilter(values.cpf);
-  };
+
   const { requestDeleteRegistrationMutation } = ControllerUpdateRegistration();
 
   useEffect(() => {
@@ -58,11 +79,14 @@ export const BeneficiariesListState = () => {
     navigate(`${location.pathname}?${queryParams.toString()}`);
   };
 
+
+  // Atualiza filtro e allFilter ao mudar a URL (ex: atualizar página)
   useEffect(() => {
-  const queryParams = new URLSearchParams(location.search);
-  const initialAllFilter = queryParams.get("allFilter") || "";
-  setallFilter(initialAllFilter);
-}, [location.search]);
+    const queryParams = new URLSearchParams(location.search);
+    const initialAllFilter = queryParams.get("allFilter") || "";
+    setallFilter(initialAllFilter);
+    setFilterState(getFilterFromQuery(location.search));
+  }, [location.search]);
 
   return {
     registrations,
@@ -73,9 +97,6 @@ export const BeneficiariesListState = () => {
     filter,
     setFilter,
     DeleteRegistration,
-    handleFilter,
-    nameFilter,
-    cpfFilter,
     allFilter,
     setallFilter,
     tsId, setTsId, updateAllFilter

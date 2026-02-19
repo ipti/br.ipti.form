@@ -13,15 +13,12 @@ const BeneficiariesListProvider = ({
   const {
     registrations,
     limite,
-    handleFilter,
     page,
     setLimite,
     setPage,
     filter,
     setFilter,
     DeleteRegistration,
-    cpfFilter,
-    nameFilter,
     allFilter,
     setallFilter,
     setTsId,
@@ -33,7 +30,6 @@ const BeneficiariesListProvider = ({
     <BeneficiariesListContext.Provider
       value={{
         registrations,
-        handleFilter,
         limite,
         page,
         setLimite,
@@ -41,8 +37,6 @@ const BeneficiariesListProvider = ({
         filter,
         setFilter,
         DeleteRegistration,
-        cpfFilter,
-        nameFilter,
         allFilter,
         setallFilter,
         setTsId,

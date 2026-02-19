@@ -9,6 +9,8 @@ import { Column, Padding, Row } from "../../../../Styles/styles";
 import { BeneficiariesEditContext } from "../../../../Context/Beneficiaries/BeneficiaresEdit/context";
 import { BeneficiariesEditType } from "../../../../Context/Beneficiaries/BeneficiaresEdit/type";
 import { useContext } from "react";
+import { Dropdown } from "primereact/dropdown";
+import { StatusTermEnum, TypeTermEnum } from "../../../../Controller/controllerGlobal";
 
 const ModalAddTerm = ({
   onHide,
@@ -39,6 +41,9 @@ const ModalAddTerm = ({
     dateValid: Yup.string().required("Data de validade é obrigatório"),
   });
 
+        const optionsStatus = Object.keys(StatusTermEnum).map((key) => ({ id: key, name: StatusTermEnum[key] })) || [];
+        const optionsType = Object.keys(TypeTermEnum).map((key) => ({ id: key, name: TypeTermEnum[key] })) || [];
+
   return (
     <Dialog
       onHide={onHide}
@@ -48,10 +53,12 @@ const ModalAddTerm = ({
     >
       <Formik
         initialValues={{
-          dateTerm: new Date(visible?.dateTerm) ?? new Date(Date.now()),
-          dateValid: new Date(visible?.dateValid) ?? "",
+          dateTerm: new Date(visible?.dateTerm || Date.now()) ?? new Date(Date.now()),
+          dateValid: new Date(visible?.dateValid || Date.now()) ?? new Date(Date.now()),
           file: undefined,
-          observation: visible?.observation ?? ""
+          observation: visible?.observation ?? "",
+          status: visible?.status ?? "",
+          type: visible?.type ?? "",
         }}
         validationSchema={visible?.dateTerm ? schemaEdit : schema}
         onSubmit={(values) => {
@@ -62,19 +69,21 @@ const ModalAddTerm = ({
             formData.append("dateValid", values.dateValid?.toString());
             formData.append("registration", id?.toString());
             formData.append("observation", values.observation)
+            formData.append("status", values.status)
+            formData.append("type", values.type)
             formData.append("file", values.file[0]);
             CreateRegisterTerm(formData);
           }
 
           if (visible?.dateTerm) {
-            props.UpdateRegisterTerm(visible.id, { dateTerm: values.dateTerm, dateValid: values.dateValid, observation: values.observation })
+            props.UpdateRegisterTerm(visible.id, { dateTerm: values.dateTerm, dateValid: values.dateValid, observation: values.observation, status: values.status, type: values.type });  
           }
 
           onHide();
         }}
       >
         {({ values, handleChange, errors, touched, setFieldValue }) => {
-
+    
 
           return (
             <Form>
@@ -86,6 +95,7 @@ const ModalAddTerm = ({
                     value={values.dateTerm}
                     name="dateTerm"
                     dateFormat="dd/mm/yy"
+                    placeholder="Data de assinatura"
                     onChange={handleChange}
                   />
                   {errors.dateTerm && touched.dateTerm ? (
@@ -123,6 +133,44 @@ const ModalAddTerm = ({
                   {errors.file && touched.file ? (
                     <div style={{ color: "red", marginTop: "8px" }}>
                       {String(errors.file)}
+                    </div>
+                  ) : null}
+                </div>}
+                 { <div className="col-12 md:col-6">
+                  <label>Status </label>
+                  <Padding />
+                  <Dropdown
+                      value={values.status}
+                      options={optionsStatus || []}
+                      optionLabel="name"
+                      optionValue="id"
+                    placeholder="Status"
+                    onChange={(e) => setFieldValue("status", e.value)}
+                    name="status"
+                    className="w-full"
+                  />
+                  {errors.status && touched.status ? (
+                    <div style={{ color: "red", marginTop: "8px" }}>
+                      {String(errors.status)}
+                    </div>
+                  ) : null}
+                </div>}
+                   { <div className="col-12 md:col-6">
+                  <label>Tipo </label>
+                  <Padding />
+                  <Dropdown
+                      value={values.type}
+                      options={optionsType || []}
+                      optionLabel="name"
+                      optionValue="id"
+                    placeholder="Tipo"
+                    onChange={(e) => setFieldValue("type", e.value)}
+                    name="type"
+                    className="w-full"
+                  />
+                  {errors.type && touched.type ? (
+                    <div style={{ color: "red", marginTop: "8px" }}>
+                      {String(errors.type)}
                     </div>
                   ) : null}
                 </div>}

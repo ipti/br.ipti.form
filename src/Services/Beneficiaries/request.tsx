@@ -1,3 +1,4 @@
+import { BeneficiariesFilterType } from "../../Context/Beneficiaries/BeneficiariesList/type";
 import http from "../axios";
 import { logout } from "../localstorage";
 import { UpdateRegisterTerm } from "./type";
@@ -5,34 +6,35 @@ import { UpdateRegisterTerm } from "./type";
 export const requestAllRegistration = ({
   page,
   limite,
-  cpf,
-  name,
   allFilter,
-  idTs,
+  filter,
 }: {
   page: number;
   limite: number;
-  name?: string;
-  idTs?: string;
-  cpf?: string;
+  filter?: BeneficiariesFilterType;
   allFilter?: string;
 }) => {
-  const nameFilter = name ? "&nameFilter=" + name : "";
-  const cpfFilter = cpf ? "&cpfFilter=" + cpf : "";
-  const idTsFilter = idTs ? "&idTs=" + idTs : "";
-  const allFilterRequest = allFilter
-    ? "&allFilter=" + allFilter.replace(/[^a-zA-Z0-9 ]/g, "")
-    : "";
+ const params = new URLSearchParams({
+    page: page.toString(),
+    limit: limite.toString(),
+  });
 
-  let path =
-    "/registration-token-bff/registration-all?page=" +
-    page +
-    "&limit=" +
-    limite +
-    idTsFilter +
-    nameFilter +
-    cpfFilter +
-    allFilterRequest;
+  // 2. Adicionamos o allFilter se existir (com o seu regex de limpeza)
+  if (allFilter) {
+    params.append("allFilter", allFilter.replace(/[^a-zA-Z0-9 ]/g, ""));
+  }
+
+  // 3. Mapeamos o objeto filter dinamicamente
+  if (filter) {
+    Object.entries(filter).forEach(([key, value]) => {
+      // Verificamos se o valor não é nulo ou indefinido antes de adicionar
+      if (value !== undefined && value !== null && value !== "") {
+        params.append(key, value.toString());
+      }
+    });
+  }
+
+  const path = `/registration-token-bff/registration-all?${params.toString()}`;
   return http
     .get(path)
     .then((response) => response.data)

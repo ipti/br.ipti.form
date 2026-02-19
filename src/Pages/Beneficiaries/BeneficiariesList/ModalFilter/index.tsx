@@ -7,6 +7,9 @@ import { Form, Formik } from "formik";
 import { useContext } from "react";
 import { BeneficiariesListContext } from "../../../../Context/Beneficiaries/BeneficiariesList/context";
 import { BeneficiariesListType } from "../../../../Context/Beneficiaries/BeneficiariesList/type";
+import DropdownComponent from "../../../../Components/Dropdown";
+import { AplicationContext } from "../../../../Context/Aplication/context";
+import { PropsAplicationContext } from "../../../../Types/types";
 
 const ModalFilter = ({
   onHide,
@@ -16,75 +19,84 @@ const ModalFilter = ({
   visible?: boolean | undefined;
 }) => {
   const props = useContext(BeneficiariesListContext) as BeneficiariesListType;
+  const propsAplication = useContext(
+    AplicationContext
+  ) as PropsAplicationContext;
   return (
     <Dialog
       onHide={onHide}
       visible={visible}
+      header="Filtrar beneficiários"
       style={{ width: window.innerWidth < 800 ? "80vw" : "50vw" }}
     >
       <Formik
-        initialValues={{
-          name: props.nameFilter ?? "",
-          cpf: props.cpfFilter ?? "",
-        }}
+        initialValues={props.filter}
         onSubmit={(values) => {
-          props.handleFilter(values);
+          props.setFilter(values);
           onHide();
         }}
       >
         {({ values, handleChange }) => {
           return (
             <Form>
-              <div className="grid">
-                <div className="col-12 md:col-6">
-                  <label>Nome</label>
-                  <Padding />
-                  <TextInput
-                    value={values.name}
-                    placeholder="Digite um nome"
-                    onChange={handleChange}
-                    name="name"
-                  />
+              {propsAplication.project && (
+                <div className="grid">
+                  <div className="col-12 md:col-6">
+                    <label>Filtrar por tecnologia</label>
+                    <Padding />
+                    <DropdownComponent
+                      placerholder="Escolha uma tecnologia"
+                      name="idTs"
+                      options={[
+                        { name: "Todos", id: undefined },
+                        ...propsAplication.project,
+                      ]}
+                      value={values.idTs}
+                      optionsValue="id"
+                      onChange={(e) => {
+                         handleChange(e);
+                      }}
+                    />
+                  </div>
+                  <div className="col-12 md:col-6">
+                    <label>Filtrar por Status do beneficiário</label>
+                    <Padding />
+                    <DropdownComponent
+                      placerholder="Escolha um status"
+                      options={[
+                        { name: "Todos", id: undefined },
+                        { name: "Beneficiário Ativo", id: 'ACTIVE' },
+                        { name: "Beneficiário Inativo", id: 'INACTIVE' },
+                      ]}
+                      name="status"
+                      value={values.status}
+                      optionsValue="id"
+                      onChange={(e) => {
+                        handleChange(e);
+                      }}
+                    />
+                  </div>
+                  <div className="col-12 md:col-6">
+                    <label>Filtrar por Status de termo</label>
+                    <Padding />
+                    <DropdownComponent
+                      placerholder="Escolha um status do termo"
+                      options={[
+                        { name: "Todos", id: undefined },
+                        { name: "Termo em analise", id: 'TERM_ANALYSIS' },
+                        { name: "Termo Ativo", id: 'ACTIVE_TERM' },
+                        { name: "Termo Inativo", id: 'INACTIVE_TERM' },
+                      ]}
+                      name="statusTerm"
+                      value={values.statusTerm}
+                      optionsValue="id"
+                      onChange={(e) => {
+                        handleChange(e);
+                      }}
+                    />
+                  </div>
                 </div>
-                <div className="col-12 md:col-6">
-                  <label>CPF</label>
-                  <Padding />
-                  <MaskInput
-                    value={values.cpf}
-                    mask="999.999.999-99"
-                    placeholder="CPF"
-                    onChange={handleChange}
-                    name="cpf"
-                  />
-                </div>
-                {/* <div className="col-12 md:col-6">
-                  <label>Sexo</label>
-                  <Padding />
-                  <DropdownComponent
-                    //   value={values.sex}
-                    optionsLabel="type"
-                      options={props.typesex}
-                    name="sex"
-                    //   onChange={handleChange}
-                  />
-                </div> */}
-              </div>{" "}
-              <div className="grid">
-                {/* <div className="col-12 md:col-6">
-                  <label>Deficiente</label>
-                  <Padding />
-                  <DropdownComponent
-                    //   value={values.deficiency}
-                    placerholder="Deficiente"
-                    name="deficiency"
-                    //   onChange={handleChange}
-                    options={[
-                      { id: true, name: "Sim" },
-                      { id: false, name: "Não" },
-                    ]}
-                  />
-                </div> */}
-              </div>{" "}
+              )}
               <Padding padding="16px" />
               <Column style={{ width: "100%" }}>
                 <Row id="end">
@@ -92,7 +104,7 @@ const ModalFilter = ({
                     label="Limpar filtro"
                     text
                     type="button"
-                    onClick={() => {props.handleFilter({ name: "", cpf: "" }); onHide()}}
+                    onClick={() => { props.setFilter({idClassroom: undefined, idProject: undefined, idTs: undefined, statusTerm: undefined, status: undefined }); onHide() }}
                   />
                   <Padding />
                   <Button label="Filtrar" />

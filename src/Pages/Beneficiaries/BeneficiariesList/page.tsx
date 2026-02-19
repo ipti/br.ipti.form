@@ -1,31 +1,33 @@
 import { Button } from "primereact/button";
-import { Chip } from "primereact/chip";
 import { Column } from "primereact/column";
 import { ConfirmDialog } from "primereact/confirmdialog";
 import { DataTable } from "primereact/datatable";
 import { InputText } from "primereact/inputtext";
 import { Paginator } from "primereact/paginator";
 import { useContext, useState } from "react";
+import { Chip } from "primereact/chip";
 import { useNavigate } from "react-router-dom";
 import ContentPage from "../../../Components/ContentPage";
-import DropdownComponent from "../../../Components/Dropdown";
-import { AplicationContext } from "../../../Context/Aplication/context";
 import { BeneficiariesListContext } from "../../../Context/Beneficiaries/BeneficiariesList/context";
 import { BeneficiariesListType } from "../../../Context/Beneficiaries/BeneficiariesList/type";
 import {
   formatarData,
   somarNumeros,
+  StatusRegistrationEnum,
+  StatusTermEnum,
 } from "../../../Controller/controllerGlobal";
 import { Padding, Row } from "../../../Styles/styles";
-import { PropsAplicationContext } from "../../../Types/types";
 import ModalFilter from "./ModalFilter";
+import { AplicationContext } from "../../../Context/Aplication/context";
+import { PropsAplicationContext } from "../../../Types/types";
 
 export const BeneficiariesListPage = () => {
   const props = useContext(BeneficiariesListContext) as BeneficiariesListType;
-
-  const propsAplication = useContext(
+  
+const propsAplication = useContext(
     AplicationContext
   ) as PropsAplicationContext;
+
   const history = useNavigate();
 
   const [visible, setVisible] = useState<any>();
@@ -47,7 +49,7 @@ export const BeneficiariesListPage = () => {
           <InputText
             value={props.allFilter}
             placeholder="Pesquisar..."
-            onChange={(e) => {props.setallFilter(e.target.value); props.updateAllFilter(e.target.value)}}
+            onChange={(e) => { props.setallFilter(e.target.value); props.updateAllFilter(e.target.value) }}
           />
         </span>
       </div>
@@ -82,47 +84,58 @@ export const BeneficiariesListPage = () => {
         title="Beneficiários"
         description="Visualização dos beneficiários da tecnologia."
       >
-        <Padding padding="4px" />
-        {propsAplication.project && (
-          <div className="grid">
-            <div className="col-12 md:col-6">
-              <label>Filtrar por tecnologia</label>
-              <Padding />
-              <DropdownComponent
-                placerholder="Escolha uma tecnologia"
-                options={[
-                  { name: "Todos", id: undefined },
-                  ...propsAplication.project,
-                ]}
-                value={props.tsId}
-                optionsValue="id"
-                onChange={(e) => {
-                  props.setTsId(e.target.value);
-                }}
-              />
-            </div>
-          </div>
-        )}
-
-        <Row style={{ gap: 8 }}>
-          {props.nameFilter?.length! > 0 && (
-            <Chip label={"Nome: " + props.nameFilter} />
+        {/* Chips de filtros selecionados */}
+        <Row style={{ gap: 8, flexWrap: 'wrap' }}>
+          {props.filter.idTs && (
+            <Chip
+              label={`TS: ${propsAplication.project?.find(ts => ts.id === props.filter.idTs)?.name || props.filter.idTs}`}
+              removable
+              onRemove={() => props.setFilter({ ...props.filter, idTs: undefined })}
+            />
           )}
-          {props.cpfFilter?.length! > 0 && (
-            <Chip label={"CPF: " + props.cpfFilter} />
+          {props.filter.idProject && (
+            <Chip
+              label={`Projeto: ${props.filter.idProject}`}
+              removable
+              onRemove={() => props.setFilter({ ...props.filter, idProject: undefined })}
+            />
           )}
-          {(props.cpfFilter?.length! > 0 || props.nameFilter?.length! > 0) && (
+          {props.filter.idClassroom && (
+            <Chip
+              label={`Turma: ${props.filter.idClassroom}`}
+              removable
+              onRemove={() => props.setFilter({ ...props.filter, idClassroom: undefined })}
+            />
+          )}
+          {props.filter.statusTerm && (
+            <Chip
+              label={`Status Termo: ${StatusTermEnum[props.filter.statusTerm]}`}
+              removable
+              onRemove={() => props.setFilter({ ...props.filter, statusTerm: undefined })}
+            />
+          )}
+          {props.filter.status && (
+            <Chip
+              label={`Status: ${StatusRegistrationEnum[props.filter.status]}`}
+              removable
+              onRemove={() => props.setFilter({ ...props.filter, status: undefined })}
+            />
+          )}
+          {(props.filter.idTs || props.filter.idProject || props.filter.idClassroom || props.filter.statusTerm || props.filter.status) && (
             <Button
-              label="Limpar filtro"
+              label="Limpar filtros"
               text
               type="button"
-              onClick={() => {
-                props.handleFilter({ name: "", cpf: "" });
-              }}
+              onClick={() => props.setFilter({})}
+              icon="pi pi-times"
             />
           )}
         </Row>
         <Padding padding="8px" />
+        <Button label="Filtrar" onClick={() => setVisibleFilter(!visibleFilter)} />
+        <Padding padding="8px" />
+        <h3>{props?.registrations?.total} Beneficiários</h3>
+        <Padding padding="4px" />
         <DataTable
           value={props.registrations?.content}
           tableStyle={{ minWidth: "50rem" }}
@@ -130,10 +143,10 @@ export const BeneficiariesListPage = () => {
           showGridlines
         >
           <Column field="name" header="Nome"></Column>
-          <Column
+          {/* <Column
             field="responsable_name"
             header="Nome do responsável"
-          ></Column>
+          ></Column> */}
           <Column field="cpf" header="CPF"></Column>
           <Column
             body={(rowData) => {
@@ -141,22 +154,33 @@ export const BeneficiariesListPage = () => {
             }}
             header="Data de matricula"
           ></Column>
+          <Column header={'Status'} align={"center"} body={(bodyRow) => {
+            return (
+              <div >{StatusRegistrationEnum[bodyRow.status]}</div>
+            )
+          }}></Column>
+          <Column header="Último termo" align={"center"} body={(bodyRow) => {
+            return (
+              <div >{bodyRow?.register_term?.length > 0 ? StatusTermEnum[ bodyRow?.register_term[bodyRow?.register_term.length - 1].status] : 'Pend. de termo'}</div>
+            )
+          }}></Column>
           <Column
             body={(rowData) => {
               return (
                 <>
                   {rowData?.register_term?.length > 0
                     ? `${formatarData(
-                        rowData.register_term[rowData.register_term.length - 1]
-                          .dateTerm
-                      )} - ${formatarData(
-                        rowData.register_term[rowData.register_term.length - 1]
-                          .dateValid
-                      )}`
-                    : "Sem documento"}
+                      rowData.register_term[rowData.register_term.length - 1]
+                        .dateTerm
+                    )} - ${formatarData(
+                      rowData.register_term[rowData.register_term.length - 1]
+                        .dateValid
+                    )}`
+                    : "Pend. de termo"}
                 </>
               );
             }}
+            align={'center'}
             header="Vigência do termo assinado"
           ></Column>
           <Column header="Ações" body={ActionBeneficiariesBody}></Column>
