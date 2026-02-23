@@ -142,6 +142,7 @@ const propsAplication = useContext(
           header={renderHeader}
           showGridlines
         >
+          <Column field="thp_id" header="Id THP"></Column>
           <Column field="name" header="Nome"></Column>
           {/* <Column
             field="responsable_name"

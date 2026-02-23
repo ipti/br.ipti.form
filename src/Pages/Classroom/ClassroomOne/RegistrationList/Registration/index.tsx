@@ -18,6 +18,7 @@ import {
   color_race,
   formatarData,
   getStatusList,
+  StatusRegistrationEnum,
   StatusTermEnum,
   typesex,
   TypeTermEnum
@@ -109,6 +110,28 @@ const RegistrationPage = () => {
                 <Padding padding="16px" />
                 <h3>Dados basicos</h3>
                 <Padding />
+                <div className="grid">
+                  <div className="col-12 md:col-6">
+                    <label>Id THP</label>
+                    <Padding />
+                    <TextInput
+                      value={props.registration?.registration.thp_id}
+                      placeholder="Id THP"
+                      disabled
+                      name="thp_id"
+                    />
+
+                  </div>
+                  <div className="col-12 md:col-6">
+                    <label>Status do beneficiário</label>
+                    <Padding />
+                    <TextInput
+                      value={props.registration?.registration.status ? StatusRegistrationEnum[props.registration?.registration.status] : props.registration?.registration.status}
+                      name="status"
+                      disabled
+                    />
+                  </div>
+                </div>
                 <div className="grid">
                   <div className="col-12 md:col-6">
                     <label>Name</label>

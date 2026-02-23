@@ -22,6 +22,7 @@ export interface BeneficiariesEditType {
 }
 
 export interface Registration {
+  thp_id: string
   id: number
   avatar_url: any
   name: string

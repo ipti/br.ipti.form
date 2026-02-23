@@ -44,7 +44,7 @@ export interface RegistrationType {
 }
 
 export interface Registration {
-
+  thp_id: string
   id: number
   avatar_url: any
   name: string

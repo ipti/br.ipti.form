@@ -186,6 +186,7 @@ const BeneficiariesEditPage = () => {
                     ))}
                   </div>
                 )}
+
                 <Padding padding="8px" />
                 <Avatar>
                   <img
@@ -212,10 +213,38 @@ const BeneficiariesEditPage = () => {
                       name="name"
                     />
                   </div>
+
                 </div>
                 <Padding padding="8px" />
                 <h3>Dados basicos</h3>
                 <Padding />
+                <div className="grid">
+                  <div className="col-12 md:col-6">
+                    <label>Id THP</label>
+                    <Padding />
+                    <TextInput
+                      value={props.registrations?.thp_id}
+                      placeholder="Id THP"
+                      disabled
+                      name="thp_id"
+                    />
+
+                  </div>
+                  <div className="col-12 md:col-6">
+                    <label>Status</label>
+                    <Padding />
+                    <TextInput
+                      value={props.registrations?.status ? StatusRegistrationEnum[props.registrations?.status] : props.registrations?.status}
+                      name="status"
+                      disabled
+                    />
+                    {errors.status && touched.status ? (
+                      <div style={{ color: "red", marginTop: "8px" }}>
+                        {String(errors.status)}
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
                 <div className="grid">
                   <div className="col-12 md:col-6">
                     <label>Name</label>
@@ -334,20 +363,7 @@ const BeneficiariesEditPage = () => {
                       </div>
                     ) : null}
                   </div>
-                    <div className="col-12 md:col-6">
-                    <label>Status</label>
-                    <Padding />
-                    <TextInput
-                      value={props.registrations?.status ? StatusRegistrationEnum[props.registrations?.status] :props.registrations?.status}
-                      name="status"
-                      disabled
-                    />
-                    {errors.status && touched.status ? (
-                      <div style={{ color: "red", marginTop: "8px" }}>
-                        {String(errors.status)}
-                      </div>
-                    ) : null}
-                  </div>
+
                 </div>{" "}
                 <div className="grid">
                   <div className="col-12 md:col-6">
