@@ -16,6 +16,7 @@ const ClassroomProvider = ({ children }: { children: React.ReactNode }) => {
     project,
     setProject,
     ChangeClassroom,
+    ReuseClassroom
   } = ClassroomState();
 
   return (
@@ -31,6 +32,7 @@ const ClassroomProvider = ({ children }: { children: React.ReactNode }) => {
         project,
         setProject,
         ChangeClassroom,
+        ReuseClassroom
       }}
     >
       {children}

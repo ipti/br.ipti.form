@@ -6,9 +6,10 @@ import {
   requestChangeClassroom,
   requestCreateClassroom,
   requestDeleteClassroom,
+  requestReuseClassroom,
   requestUpdateClassroom,
 } from "./request";
-import { ChangeClassroom, CreateClassroom } from "../../Context/Classroom/type";
+import { ChangeClassroom, CreateClassroom, ReuseClassroom } from "../../Context/Classroom/type";
 import queryClient from "../reactquery";
 
 export const ControllerClassroom = () => {
@@ -51,6 +52,30 @@ export const ControllerClassroom = () => {
         Swal.fire({
           icon: "success",
           title: "Turma tranferida com sucesso!",
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            history("/turma");
+          }
+        });
+      },
+    }
+  );
+
+    const requestReuseClassroomMutation = useMutation(
+    (data: ReuseClassroom) => requestReuseClassroom(data),
+    {
+      onError: (error: any) => {
+        Swal.fire({
+          icon: 'error',
+          title: error.response.data.message,
+          confirmButtonColor: styles.colors.colorsBaseProductNormal,
+        })
+       },
+      onSuccess: (data) => {
+        Swal.fire({
+          icon: "success",
+          title: "Turma reaproveitada com sucesso!",
           confirmButtonColor: styles.colors.colorsBaseProductNormal,
         }).then((result) => {
           if (result.isConfirmed) {
@@ -116,5 +141,6 @@ export const ControllerClassroom = () => {
     requestChangeClassroomMutation,
     requestUpdateClassroomMutation,
     requestDeleteClassroomMutation,
+    requestReuseClassroomMutation,
   };
 };

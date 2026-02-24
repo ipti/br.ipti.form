@@ -18,6 +18,7 @@ export interface ClassroomTypes {
   project: number | undefined;
   setProject: Dispatch<SetStateAction<number | undefined>>;
   ChangeClassroom: (body: ChangeClassroom) => void
+  ReuseClassroom: (body: ReuseClassroom) => void
 }
 
 export interface CreateClassroom {
@@ -29,6 +30,11 @@ export interface ChangeClassroom {
   idClassroom: string;
 }
 
+export interface ReuseClassroom {
+  idProject: string;
+  idClassroom: string;
+  name: string;
+}
 export type Events = Event[];
 
 export interface Event {

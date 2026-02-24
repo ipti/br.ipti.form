@@ -61,7 +61,7 @@ const RegistrationListPage = () => {
             return (
               <div className="col-12 md:col-6 lg:col-4" key={index}>
                 <CardRegistration
-                  title={item.registration.id.toString()}
+                  title={item.registration.thp_id}
                   subtitle={item.registration.name}
                   idRegistration={item.id}
                   status={item.status}

@@ -29,12 +29,15 @@ import { Column, Padding, Row } from "../../../Styles/styles";
 import { PropsAplicationContext } from "../../../Types/types";
 import CardItensClassrooom from "./CardItensClassroom";
 import ModalChange from "./ModalChangeClaassroom";
+import ModalReuseClassroom from "./ModalReuseClassroom";
 import color from "../../../Styles/colors";
 
 import { requestChartFrequency } from "../../../Services/Chart/request";
 import { StateCard } from "../../../Types/states-cards";
 import { requestClassroomZipArchives, requestCountStates } from "../../../Services/Classroom/request";
 import CardQuant from "../../../Components/Chart/CardQuant";
+import { Popover } from "react-tiny-popover";
+import Icon from "../../../Components/Icon";
 
 const ClassroomOne = () => {
   return (
@@ -52,9 +55,10 @@ const ClassroomOnePage = () => {
   const { data: foulsRequest } = useFetchRequestFoulsClassroomOne(parseInt(id!));
   const [edit, setEdit] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [visibleReuse, setVisibleReuse] = useState(false);
   const [cards, setCards] = useState<StateCard[]>([]);
+  const [actionsPopoverOpen, setActionsPopoverOpen] = useState(false);
   const [loadingEvi, setLoadingEvi] = useState(false);
-
   var fouls = foulsRequest as MediafrequencyType;
 
 
@@ -63,7 +67,7 @@ const ClassroomOnePage = () => {
   // Calcula a média das médias
   const mediaDasMedias = totalMedia / (fouls?.length || 1);
 
-  const [chartData, setChartData] = useState({});
+  const [chartData, setChartData] = useState<any>({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -117,6 +121,8 @@ const ClassroomOnePage = () => {
     cardsData();
   }, [classroom?.id]);
 
+
+  console.log("fouls", chartData);
   const propsAplication = useContext(
     AplicationContext
   ) as PropsAplicationContext;
@@ -225,39 +231,89 @@ const ClassroomOnePage = () => {
       ) : (
         <Column>
           <Row id="end">
-            <Row>
-              <Padding />
-              {(propsAplication.user?.role === ROLE.ADMIN ||
-                propsAplication.user?.role === ROLE.COORDINATORS) && (
-                  <Button
-                    text
-                    label="Baixar evidências"
-                    icon="pi pi-download"
-                    onClick={handleDownload}
-                    loading={loadingEvi}
-                  />
-                )}
-            </Row>
-            <Row>
-              <Padding />
-              {(propsAplication.user?.role === ROLE.ADMIN ||
-                propsAplication.user?.role === ROLE.COORDINATORS) && (
-                  <Button
-                    text
-                    label="Editar"
-                    icon="pi pi-pencil"
-                    onClick={() => setEdit(true)}
-                  />
-                )}
-            </Row>
             {(propsAplication.user?.role === ROLE.ADMIN ||
               propsAplication.user?.role === ROLE.COORDINATORS) && (
-                <Button
-                  text
-                  label="Tranferir turma"
-                  icon="pi pi-sync"
-                  onClick={() => setVisible(true)}
-                />
+                <Popover
+                  isOpen={actionsPopoverOpen}
+                  positions={["bottom", "left", "right", "top"]}
+                  onClickOutside={() => setActionsPopoverOpen(false)}
+                  content={
+                    <div
+                      style={{
+                        backgroundColor: "white",
+                        padding: "8px",
+                        minWidth: "180px",
+                        boxShadow:
+                          "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
+                      }}
+                    >
+                      <Row
+                        onClick={() => {
+                          if (!loadingEvi) {
+                            handleDownload();
+                            setActionsPopoverOpen(false);
+                          }
+                        }}
+                        id="space-between"
+                        style={{ cursor: loadingEvi ? "not-allowed" : "pointer", padding: "8px", gap: "8px", opacity: loadingEvi ? 0.6 : 1 }}
+                      >
+                        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                          {loadingEvi
+                            ? <i className="pi pi-spin pi-spinner" style={{ fontSize: "16px" }} />
+                            : <Icon icon="pi pi-download" size="16px" />
+                          }
+                        </div>
+                        <p>{loadingEvi ? "Baixando..." : "Baixar evidências"}</p>
+                      </Row>
+                      <Row
+                        onClick={() => {
+                          setEdit(true);
+                          setActionsPopoverOpen(false);
+                        }}
+                        id="space-between"
+                        style={{ cursor: "pointer", padding: "8px", gap: "8px" }}
+                      >
+                        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                          <Icon icon="pi pi-pencil" size="16px" />
+                        </div>
+                        <p>Editar</p>
+                      </Row>
+                      <Row
+                        onClick={() => {
+                          setVisible(true);
+                          setActionsPopoverOpen(false);
+                        }}
+                        id="space-between"
+                        style={{ cursor: "pointer", padding: "8px", gap: "8px" }}
+                      >
+                        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                          <Icon icon="pi pi-sync" size="16px" />
+                        </div>
+                        <p>Transferir turma</p>
+                      </Row>
+                      <Row
+                        onClick={() => {
+                          setVisibleReuse(true);
+                          setActionsPopoverOpen(false);
+                        }}
+                        id="space-between"
+                        style={{ cursor: "pointer", padding: "8px", gap: "8px" }}
+                      >
+                        <div style={{ display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                          <Icon icon="pi pi-copy" size="16px" />
+                        </div>
+                        <p>Reaproveitar turma</p>
+                      </Row>
+                    </div>
+                  }
+                >
+                  <div
+                    style={{ cursor: "pointer" }}
+                    onClick={() => setActionsPopoverOpen(!actionsPopoverOpen)}
+                  >
+                    <Icon icon="pi pi-ellipsis-v" />
+                  </div>
+                </Popover>
               )}
           </Row>
         </Column>
@@ -289,7 +345,6 @@ const ClassroomOnePage = () => {
         {/* <div className="col-12 md:col-6" onClick={() => history(`/turma/${id}/relatorio`)}>
                     <CardItensClassrooom title="Tabela" description="Relatório entre Alunos e Encontros" icon="pi pi-table" />
                 </div> */}
-        <ModalChange visible={visible} onHide={() => setVisible(false)} />
       </div>
       <div className="grid">
         <div
@@ -308,7 +363,7 @@ const ClassroomOnePage = () => {
         {cards.map((item) => (
           <div className="col-12 md:col-4 lg:col-2">
             <CardQuant
-              title={'Matriculas '+item.status}
+              title={'Matriculas ' + item.status}
               quant={item.number}
               color={
                 item.status === "Aprovados"
@@ -326,13 +381,13 @@ const ClassroomOnePage = () => {
             title={'Média de presença da turma'}
             quant={mediaDasMedias?.toFixed(2) + '%'}
             color={
-                  "navy_blue"
+              "navy_blue"
             }
           />}
         </div>
       </div>
 
-      <div
+      {(chartData && chartData?.labels?.length > 0) && <div
         className="card col-12 md:col-12 lg:col-12"
         style={{ padding: "20px" }}
       >
@@ -353,7 +408,28 @@ const ClassroomOnePage = () => {
             width="100%"
           />
         </div>
-      </div>
+      </div>}
+      {loadingEvi && (
+        <div style={{
+          position: "fixed",
+          bottom: "24px",
+          right: "24px",
+          backgroundColor: "#1e1e2f",
+          color: "white",
+          padding: "12px 20px",
+          borderRadius: "8px",
+          display: "flex",
+          alignItems: "center",
+          gap: "10px",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+          zIndex: 9999,
+        }}>
+          <i className="pi pi-spin pi-spinner" style={{ fontSize: "18px" }} />
+          <span>Gerando evidências, aguarde...</span>
+        </div>
+      )}
+      <ModalChange visible={visible} onHide={() => setVisible(false)} />
+      <ModalReuseClassroom visible={visibleReuse} onHide={() => setVisibleReuse(false)} classroom={classroom} />
     </ContentPage>
   );
 };

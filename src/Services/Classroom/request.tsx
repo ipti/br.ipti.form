@@ -1,4 +1,4 @@
-import { ChangeClassroom, CreateClassroom } from "../../Context/Classroom/type";
+import { ChangeClassroom, CreateClassroom, ReuseClassroom } from "../../Context/Classroom/type";
 import http from "../axios";
 import { getYear, logout } from "../localstorage";
 
@@ -104,6 +104,22 @@ export const requestChangeClassroom = (data: ChangeClassroom) => {
     data.idProject;
   return http
     .put(path)
+    .then((response) => response.data)
+    .catch((err) => {
+      if (err.response.status === 401) {
+        logout();
+        window.location.reload();
+      }
+      throw err;
+    });
+};
+
+export const requestReuseClassroom = (data: ReuseClassroom) => {
+  let path =
+    "/classroom-bff/reuse"
+    ;
+  return http
+    .post(path, data)
     .then((response) => response.data)
     .catch((err) => {
       if (err.response.status === 401) {

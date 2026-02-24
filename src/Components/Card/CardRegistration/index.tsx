@@ -110,7 +110,7 @@ const CardRegistration = ({
             <Padding />
 
             <div className={"boxDescriptionSchedule"}>
-              {"Matricula - " + title}
+              {"Id THP - " + title}
             </div>
           </Column>
         </Row>

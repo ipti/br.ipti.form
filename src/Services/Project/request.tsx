@@ -107,6 +107,22 @@ export const requestTsList = async (id: number | undefined) => {
   }
 };
 
+export const requestTsListYear = async (id: number | undefined, year: number) => {
+  if (GetIdTs()) {
+    return await http
+      .get("/social-technology-bff/one", { params: { stId: id ?? GetIdTs(), year: year } })
+      .then((response) => response.data)
+      .catch((err) => {
+        if (err.response.status === 401) {
+          logout();
+          window.location.reload();
+        }
+
+        throw err;
+      });
+  }
+};
+
 export const requestProjectOne = async (id: number) => {
   return await http
     .get("/project-bff/one", {

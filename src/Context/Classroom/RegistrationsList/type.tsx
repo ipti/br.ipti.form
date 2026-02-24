@@ -21,6 +21,7 @@ export interface RegistrationType {
 }
 
 export interface Registration {
+  thp_id: string
   id: number
   name: string
   birthday: string
