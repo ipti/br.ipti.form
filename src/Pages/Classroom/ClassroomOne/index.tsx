@@ -20,6 +20,7 @@ import ClassroomProvider, {
 } from "../../../Context/Classroom/context";
 import { ClassroomTypes, MediafrequencyType } from "../../../Context/Classroom/type";
 import {
+  formatarData,
   getStatusClassroomList,
   ROLE,
 } from "../../../Controller/controllerGlobal";
@@ -78,10 +79,11 @@ const ClassroomOnePage = () => {
           name: string;
           frequency: number;
           beneficiarios: number;
+          meeting_date: string;
         }[] = response.data;
 
         const updatedChartData = {
-          labels: data.map((item) => item.name),
+          labels: data.map((item) => formatarData(item.meeting_date)),
           datasets: [
             {
               label: "Numero de Beneficiários",
@@ -347,8 +349,8 @@ const ClassroomOnePage = () => {
           <ChartPrime
             type="line"
             data={chartData}
-            style={{ height: "400px", flexGrow: 1 }}
-            width="55%"
+            style={{ maxHeight: "500px", flexGrow: 1, display: "flex", justifyContent: "center", alignItems: "center" }}
+            width="100%"
           />
         </div>
       </div>

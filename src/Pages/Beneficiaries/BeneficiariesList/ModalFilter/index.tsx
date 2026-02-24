@@ -1,14 +1,12 @@
+import { Form, Formik } from "formik";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
-import MaskInput from "../../../../Components/InputMask";
-import TextInput from "../../../../Components/TextInput";
-import { Column, Padding, Row } from "../../../../Styles/styles";
-import { Form, Formik } from "formik";
 import { useContext } from "react";
-import { BeneficiariesListContext } from "../../../../Context/Beneficiaries/BeneficiariesList/context";
-import { BeneficiariesListType } from "../../../../Context/Beneficiaries/BeneficiariesList/type";
 import DropdownComponent from "../../../../Components/Dropdown";
 import { AplicationContext } from "../../../../Context/Aplication/context";
+import { BeneficiariesListContext } from "../../../../Context/Beneficiaries/BeneficiariesList/context";
+import { BeneficiariesListType } from "../../../../Context/Beneficiaries/BeneficiariesList/type";
+import { Column, Padding, Row } from "../../../../Styles/styles";
 import { PropsAplicationContext } from "../../../../Types/types";
 
 const ModalFilter = ({
