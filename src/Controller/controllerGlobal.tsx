@@ -95,8 +95,7 @@ export const getStatus = (id: string) => {
 export const getStatusList = () => {
   const status = [
     { id: Status.APPROVED, name: "Aprovado" },
-    { id: Status.PENDING, name: "Pendente de análise" },
-    { id: Status.PENDING_TERM, name: "Aguardando assinatura" },
+    { id: Status.PENDING, name: "Pendente de análise" }
   ];
   return status;
 };

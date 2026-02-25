@@ -38,6 +38,7 @@ import { requestClassroomZipArchives, requestCountStates } from "../../../Servic
 import CardQuant from "../../../Components/Chart/CardQuant";
 import { Popover } from "react-tiny-popover";
 import Icon from "../../../Components/Icon";
+import { minutesToTimeStr } from "../../../Components/TimeInput/index";
 
 const ClassroomOne = () => {
   return (
@@ -122,7 +123,6 @@ const ClassroomOnePage = () => {
   }, [classroom?.id]);
 
 
-  console.log("fouls", chartData);
   const propsAplication = useContext(
     AplicationContext
   ) as PropsAplicationContext;
@@ -385,6 +385,13 @@ const ClassroomOnePage = () => {
             }
           />}
         </div>
+        {<div className="col-12 md:col-4 lg:col-2">
+          {<CardQuant
+            title={'Carga horária dos encontros'}
+            quant={minutesToTimeStr(classroom?.total_workload ?? 0) + 'h'}
+            color={"navy_blue"}
+          />}
+        </div>}
       </div>
 
       {(chartData && chartData?.labels?.length > 0) && <div

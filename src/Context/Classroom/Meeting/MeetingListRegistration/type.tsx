@@ -11,6 +11,7 @@ export interface MeetingListRegisterTypes {
 }
 
 export interface Meeting {
+  workload: number
   id: number
   name: string
   meeting_date: string

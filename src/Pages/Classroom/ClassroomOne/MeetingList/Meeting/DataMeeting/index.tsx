@@ -1,6 +1,9 @@
 import { Form, Formik } from "formik";
 import { Button } from "primereact/button";
+import { Chip } from "primereact/chip";
+import { MultiSelect } from "primereact/multiselect";
 import { useContext, useState } from "react";
+import CalendarComponent from "../../../../../../Components/Calendar";
 import DropdownComponent from "../../../../../../Components/Dropdown";
 import TextAreaComponent from "../../../../../../Components/TextArea";
 import TextInput from "../../../../../../Components/TextInput";
@@ -8,12 +11,10 @@ import { AplicationContext } from "../../../../../../Context/Aplication/context"
 import { MeetingListRegistrationContext } from "../../../../../../Context/Classroom/Meeting/MeetingListRegistration/context";
 import { MeetingListRegisterTypes } from "../../../../../../Context/Classroom/Meeting/MeetingListRegistration/type";
 import { ROLE, Status } from "../../../../../../Controller/controllerGlobal";
+import { useFetchRequestUsers } from "../../../../../../Services/Users/query";
 import { Column, Padding, Row } from "../../../../../../Styles/styles";
 import { PropsAplicationContext } from "../../../../../../Types/types";
-import CalendarComponent from "../../../../../../Components/Calendar";
-import { Chip } from "primereact/chip";
-import { useFetchRequestUsers } from "../../../../../../Services/Users/query";
-import { MultiSelect } from "primereact/multiselect";
+import TimeInput from "../../../../../../Components/TimeInput";
 
 const DataMeeting = () => {
 
@@ -41,6 +42,10 @@ const DataMeeting = () => {
 
   const date = new Date(new Date(props.meeting?.meeting_date!).setDate(new Date(props.meeting?.meeting_date!).getDate() + 1))
 
+  if(!props.meeting) {
+    return <div>Carregando...</div>
+  }
+
   return (
     <Formik
       initialValues={{
@@ -51,6 +56,7 @@ const DataMeeting = () => {
         status: getStatus(props.meeting?.status!),
         meeting_date: date,
         users: props.meeting?.meeting_user.map((item) => item.users) ?? [],
+        workload: props.meeting?.workload ?? 0,
       }}
       onSubmit={(values) => {
         props.UpdateMeetingUser({ id: props.meeting?.id!, users: values.users.map((item) => item.id) });
@@ -64,7 +70,8 @@ const DataMeeting = () => {
         setEdit(!edit);
       }}
     >
-      {({ values, errors, handleChange, touched }) => {
+      {({ values, errors, handleChange, touched, setFieldValue }) => {
+
         return (
           <Form>
             <Row id="space-between">
@@ -116,6 +123,17 @@ const DataMeeting = () => {
                   value={values.theme}
                   disabled={!edit}
                   onChange={handleChange}
+                />
+              </div>
+              <div className="col-12 md:col-4">
+                <label>Carga Horária (horas)</label>
+                <Padding />
+                <TimeInput
+                  placeholder="Carga Horária"
+                  value={values.workload}
+                  name="workload"
+                  onChange={(e: any) => setFieldValue("workload", e.target.value)}
+                  disabled={!edit}
                 />
               </div>
               <div className="col-12 md:col-6">
@@ -182,6 +200,7 @@ const DataMeeting = () => {
                 />
               </div>
             </div>
+              
             {!edit ? <div className="col-12 md:col-6">
               <label>Responsáveis pelo encontro</label>
               <Padding />
