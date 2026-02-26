@@ -12,7 +12,7 @@ export const BeneficiariesCreateState = () => {
   const [classrooms, setClassrooms] = useState<any>();
   const props = ControllerPreRegistration()
 
-  
+
 
   useEffect(() => {
     if (classroomsFetch) {
@@ -30,7 +30,7 @@ export const BeneficiariesCreateState = () => {
   const CreateRegister = (values: any) => {
     const data = new Date(values?.birthday);
     const dataFormatada = data?.toISOString()?.split('T')[0];
-    props.requestRegistrationMutation.mutate({ ...values, cpf: values.cpf.replace(/[^a-zA-Z0-9]/g, ''),kinship: values.kinship === "" ? "NAO_DEFINIDO" : values.kinship, responsable_telephone: values.responsable_telephone.replace(/[^a-zA-Z0-9]/g, ''), birthday: dataFormatada, responsable_cpf: values?.responsable_cpf?.replace(/[^a-zA-Z0-9]/g, '') })
+    props.requestRegistrationMutation.mutate({ ...values, cpf: values.cpf.replace(/[^a-zA-Z0-9]/g, ''), kinship: values.kinship === "" ? "NAO_DEFINIDO" : values.kinship, responsable_telephone: values.responsable_telephone.replace(/[^a-zA-Z0-9]/g, ''), responsable_phone: values.responsable_phone?.replace(/[^a-zA-Z0-9]/g, ''), birthday: dataFormatada, responsable_cpf: values?.responsable_cpf?.replace(/[^a-zA-Z0-9]/g, '') })
   }
 
 
@@ -43,13 +43,16 @@ export const BeneficiariesCreateState = () => {
     deficiency: "",
     responsable_name: "",
     responsable_cpf: "",
+    responsable_phone: "",
     responsable_telephone: "",
+    responsable_email: "",
+    is_legal_responsible: false,
     zone: undefined,
     project: undefined,
     status: "",
     classroom: undefined,
     deficiency_description: "",
-    kinship: "", 
+    kinship: "",
     address: "",
     cep: "",
     neighborhood: "",
@@ -60,7 +63,7 @@ export const BeneficiariesCreateState = () => {
     date_registration: new Date(Date.now())
   };
 
-  
+
   return {
     initialValue,
     tsOne,

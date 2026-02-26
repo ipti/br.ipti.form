@@ -11,10 +11,13 @@ export interface BeneficiariesCreateType {
     deficiency: string;
     responsable_name: string;
     responsable_cpf: string;
+    responsable_phone: string;
     responsable_telephone: string;
+    responsable_email: string;
+    is_legal_responsible: boolean;
     status: string;
     classroom: number | undefined;
-    zone: number | undefined, 
+    zone: number | undefined,
     project: number | undefined,
     deficiency_description: string | undefined
     kinship: string
