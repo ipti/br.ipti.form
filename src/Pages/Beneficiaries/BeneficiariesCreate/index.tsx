@@ -3,6 +3,7 @@ import { Button } from "primereact/button";
 import { useContext, useState } from "react";
 import * as Yup from "yup";
 import CalendarComponent from "../../../Components/Calendar";
+import CheckboxComponent from "../../../Components/Checkbox";
 import ContentPage from "../../../Components/ContentPage";
 import DropdownComponent from "../../../Components/Dropdown";
 import MaskInput from "../../../Components/InputMask";
@@ -42,6 +43,19 @@ const RegistrationPage = () => {
 
   const { data: registrationCpf } = useFetchRequestRegistrationOneCPF(cpf);
 
+  const isUnder18 = (birthday: string): boolean => {
+    if (!birthday) return false;
+    const birthDate = new Date(birthday);
+    if (isNaN(birthDate.getTime())) return false;
+    const today = new Date();
+    const age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      return age - 1 < 18;
+    }
+    return age < 18;
+  };
+
   var registraionFind: RegistrationCPF = registrationCpf;
 
 
@@ -64,6 +78,26 @@ const RegistrationPage = () => {
       return true;
     }),
     responsable_telephone: Yup.string().required("Telefone é obrigatório"),
+    responsable_phone: Yup.string().when("birthday", {
+      is: (birthday: string) => isUnder18(birthday),
+      then: (s) => s.required("Telefone do responsável é obrigatório para menores de 18 anos"),
+      otherwise: (s) => s.optional(),
+    }),
+    responsable_email: Yup.string()
+      .email("E-mail do responsável inválido")
+      .when("birthday", {
+        is: (birthday: string) => isUnder18(birthday),
+        then: (s) => s.required("E-mail do responsável é obrigatório para menores de 18 anos"),
+        otherwise: (s) => s.optional(),
+      }),
+    is_legal_responsible: Yup.boolean().when("birthday", {
+      is: (birthday: string) => isUnder18(birthday),
+      then: (s) =>
+        s
+          .oneOf([true], "É necessário confirmar que é o responsável legal do menor")
+          .required("É necessário confirmar que é o responsável legal do menor"),
+      otherwise: (s) => s.optional(),
+    }),
     birthday: Yup.string()
       .nullable()
       .required("Data de nascimento é obrigatória"),
@@ -147,13 +181,13 @@ const RegistrationPage = () => {
                     {registraionFind && (
                       <div>
                         <p>Existe um cadastro com esse cpf</p>
-                       
-                            <p className="mt-3">
-                              {registraionFind?.name}{" "}
-                              <a href={"/beneficiarios/" + registraionFind.id}>
-                                clique aqui para visualizar
-                              </a>
-                            </p>
+
+                        <p className="mt-3">
+                          {registraionFind?.name}{" "}
+                          <a href={"/beneficiarios/" + registraionFind.id}>
+                            clique aqui para visualizar
+                          </a>
+                        </p>
                       </div>
                     )}
                   </div>
@@ -263,7 +297,7 @@ const RegistrationPage = () => {
                       placeholder="Telefone para contato"
                     />
                     {errors.responsable_telephone &&
-                    touched.responsable_telephone ? (
+                      touched.responsable_telephone ? (
                       <div style={{ color: "red", marginTop: "8px" }}>
                         {errors.responsable_telephone}
                       </div>
@@ -347,6 +381,42 @@ const RegistrationPage = () => {
                     ) : null}
                   </div>
                   <div className="col-12 md:col-6">
+                    <label>
+                      Telefone do Responsável{isUnder18(values.birthday) ? " *" : ""}
+                    </label>
+                    <Padding />
+                    <MaskInput
+                      value={values.responsable_phone}
+                      mask="(99) 9 9999-9999"
+                      name="responsable_phone"
+                      onChange={handleChange}
+                      placeholder="Telefone do Responsável"
+                    />
+                    {errors.responsable_phone &&
+                      touched.responsable_phone ? (
+                      <div style={{ color: "red", marginTop: "8px" }}>
+                        {errors.responsable_phone}
+                      </div>
+                    ) : null}
+                  </div>
+                  <div className="col-12 md:col-6">
+                    <label>
+                      E-mail do Responsável{isUnder18(values.birthday) ? " *" : ""}
+                    </label>
+                    <Padding />
+                    <TextInput
+                      value={values.responsable_email}
+                      name="responsable_email"
+                      onChange={handleChange}
+                      placeholder="E-mail do Responsável"
+                    />
+                    {errors.responsable_email && touched.responsable_email ? (
+                      <div style={{ color: "red", marginTop: "8px" }}>
+                        {errors.responsable_email}
+                      </div>
+                    ) : null}
+                  </div>
+                  <div className="col-12 md:col-6">
                     <label>Parentesco</label>
                     <Padding />
                     <DropdownComponent
@@ -365,6 +435,26 @@ const RegistrationPage = () => {
                       </div>
                     ) : null}
                   </div>
+                  {isUnder18(values.birthday) && (
+                    <div className="col-12">
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "8px" }}>
+                        <CheckboxComponent
+                          checked={values.is_legal_responsible}
+                          onChange={(e) =>
+                            setFieldValue("is_legal_responsible", e.checked)
+                          }
+                        />
+                        <label style={{ cursor: "pointer", fontWeight: 500 }}>
+                          Confirmo que sou o responsável legal deste menor de idade *
+                        </label>
+                      </div>
+                      {errors.is_legal_responsible && touched.is_legal_responsible ? (
+                        <div style={{ color: "red", marginTop: "8px" }}>
+                          {errors.is_legal_responsible}
+                        </div>
+                      ) : null}
+                    </div>
+                  )}
                 </div>{" "}
                 <Padding padding="8px" />
                 <h3>Matricula *</h3>
