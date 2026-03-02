@@ -37,7 +37,6 @@ const ModalReuseClassroom = ({
     name: Yup.string().required("Nome da turma é obrigatório"),
   });
 
-  console.log("props.classrooms", props.classrooms)
 
   return (
     <Dialog
