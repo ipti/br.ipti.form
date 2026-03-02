@@ -1,29 +1,19 @@
 import { Form, Formik } from "formik";
 import { Button } from "primereact/button";
 import { Chart as ChartPrime } from "primereact/chart";
-
 import { useContext, useState, useEffect } from "react";
-
 import { useNavigate, useParams } from "react-router-dom";
 import pessoas from "../../../Assets/images/pessoasgray.svg";
-
 import report from "../../../Assets/images/report-svgrepo-com.svg";
 import meeting from "../../../Assets/images/school_teacher.svg";
 import TextInput from "../../../Components/TextInput";
-
 import ContentPage from "../../../Components/ContentPage";
 import DropdownComponent from "../../../Components/Dropdown";
 import Loading from "../../../Components/Loading";
 import { AplicationContext } from "../../../Context/Aplication/context";
-import ClassroomProvider, {
-  ClassroomContext,
-} from "../../../Context/Classroom/context";
+import ClassroomProvider, { ClassroomContext } from "../../../Context/Classroom/context";
 import { ClassroomTypes, MediafrequencyType } from "../../../Context/Classroom/type";
-import {
-  formatarData,
-  getStatusClassroomList,
-  ROLE,
-} from "../../../Controller/controllerGlobal";
+import { formatarData, getStatusClassroomList, ROLE } from "../../../Controller/controllerGlobal";
 import { useFetchRequestClassroomOne, useFetchRequestFoulsClassroomOne } from "../../../Services/Classroom/query";
 import { Column, Padding, Row } from "../../../Styles/styles";
 import { PropsAplicationContext } from "../../../Types/types";
@@ -31,7 +21,6 @@ import CardItensClassrooom from "./CardItensClassroom";
 import ModalChange from "./ModalChangeClaassroom";
 import ModalReuseClassroom from "./ModalReuseClassroom";
 import color from "../../../Styles/colors";
-
 import { requestChartFrequency } from "../../../Services/Chart/request";
 import { StateCard } from "../../../Types/states-cards";
 import { requestClassroomZipArchives, requestCountStates } from "../../../Services/Classroom/request";
@@ -39,6 +28,7 @@ import CardQuant from "../../../Components/Chart/CardQuant";
 import { Popover } from "react-tiny-popover";
 import Icon from "../../../Components/Icon";
 import { minutesToTimeStr } from "../../../Components/TimeInput/index";
+import { useFetchRequestState, useFetchRequestCity } from "../../../Services/Address/query";
 
 const ClassroomOne = () => {
   return (
@@ -62,32 +52,33 @@ const ClassroomOnePage = () => {
   const [loadingEvi, setLoadingEvi] = useState(false);
   var fouls = foulsRequest as MediafrequencyType;
 
-
   const totalMedia = fouls?.reduce((sum, item) => sum + item.media, 0);
-
-  // Calcula a média das médias
   const mediaDasMedias = totalMedia / (fouls?.length || 1);
 
   const [chartData, setChartData] = useState<any>({});
+  const [selectedState, setSelectedState] = useState<number | undefined>(
+    classroom?.state_fk ?? undefined
+  );
+
+  const { data: states } = useFetchRequestState();
+  const { data: cities } = useFetchRequestCity(selectedState);
+
+  useEffect(() => {
+    if (classroom?.state_fk) {
+      setSelectedState(classroom.state_fk);
+    }
+  }, [classroom?.state_fk]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await requestChartFrequency(classroom?.id);
-
         if (!response?.data || response.data.length === 0) {
           console.warn("Nenhum dado válido retornado da API.");
           return;
         }
-
-        const data: {
-          name: string;
-          frequency: number;
-          beneficiarios: number;
-          meeting_date: string;
-        }[] = response.data;
-
-        const updatedChartData = {
+        const data: { name: string; frequency: number; beneficiarios: number; meeting_date: string; }[] = response.data;
+        setChartData({
           labels: data.map((item) => formatarData(item.meeting_date)),
           datasets: [
             {
@@ -105,9 +96,7 @@ const ClassroomOnePage = () => {
               fill: true,
             },
           ],
-        };
-
-        setChartData(updatedChartData);
+        });
       } catch (error) {
         console.error("Erro ao buscar dados do gráfico:", error);
       }
@@ -122,10 +111,7 @@ const ClassroomOnePage = () => {
     cardsData();
   }, [classroom?.id]);
 
-
-  const propsAplication = useContext(
-    AplicationContext
-  ) as PropsAplicationContext;
+  const propsAplication = useContext(AplicationContext) as PropsAplicationContext;
 
   if (props.isLoading) return <Loading />;
 
@@ -133,27 +119,19 @@ const ClassroomOnePage = () => {
     try {
       setLoadingEvi(true);
       const response = await requestClassroomZipArchives(classroom?.id!);
-      // gera URL do blob
       const url = window.URL.createObjectURL(new Blob([response.data]));
-
-      // tenta extrair nome do arquivo do header (se o backend mandar)
       const contentDisposition = response.headers['content-disposition'];
-
       let fileName = `turma-${classroom?.name}.zip`;
       if (contentDisposition) {
         const match = contentDisposition.match(/filename="(.+)"/);
-        if (match?.[1]) {
-          fileName = match[1];
-        }
+        if (match?.[1]) fileName = match[1];
       }
-
       const a = document.createElement('a');
       a.href = url;
       a.download = fileName;
       document.body.appendChild(a);
       a.click();
       a.remove();
-
       window.URL.revokeObjectURL(url);
       setLoadingEvi(false);
     } catch (err) {
@@ -171,60 +149,94 @@ const ClassroomOnePage = () => {
             <Formik
               initialValues={{
                 name: classroom?.name,
-                status: getStatusClassroomList().find(
-                  (props) => props.id === classroom?.status
-                ),
+                status: getStatusClassroomList().find((p) => p.id === classroom?.status),
+                state_fk: classroom?.state_fk ?? undefined,
+                city_fk: classroom?.city_fk ?? undefined,
+                neighborhood: classroom?.neighborhood ?? "",
               }}
               onSubmit={(values) => {
                 props.UpdateClassroom(
-                  { name: values.name, status: values.status?.id! },
+                  {
+                    name: values.name,
+                    status: values.status?.id!,
+                    state_fk: values.state_fk,
+                    city_fk: values.city_fk,
+                    neighborhood: values.neighborhood,
+                  },
                   parseInt(id!)
                 );
                 setEdit(false);
               }}
             >
-              {({ values, handleChange }) => {
-                return (
-                  <Form>
-                    <Column>
-                      <div className="grid">
-                        <div className="col-12 md:col-6">
-                          <label>Nome da turma</label>
-                          <Padding />
-                          <TextInput
-                            name="name"
-                            placeholder="Nome da turma"
-                            onChange={handleChange}
-                            value={values.name}
-                          />
-                        </div>
-                        <div className="col-12 md:col-6">
-                          <label>Status da turma</label>
-                          <Padding />
-                          <DropdownComponent
-                            options={getStatusClassroomList()}
-                            name="status"
-                            value={values.status}
-                            placerholder="Status da turma"
-                            onChange={handleChange}
-                          />
-                        </div>
-                      </div>
-                      <Padding />
-                      <Row>
-                        <Button label="Salvar" icon={"pi pi-save"} />
+              {({ values, handleChange, setFieldValue }) => (
+                <Form>
+                  <Column>
+                    <div className="grid">
+                      <div className="col-12 md:col-6">
+                        <label>Nome da turma</label>
                         <Padding />
-                        <Button
-                          label="Cancelar"
-                          severity="secondary"
-                          type="button"
-                          onClick={() => setEdit(false)}
+                        <TextInput name="name" placeholder="Nome da turma" onChange={handleChange} value={values.name} />
+                      </div>
+                      <div className="col-12 md:col-6">
+                        <label>Status da turma</label>
+                        <Padding />
+                        <DropdownComponent
+                          options={getStatusClassroomList()}
+                          name="status"
+                          value={values.status}
+                          placerholder="Status da turma"
+                          onChange={handleChange}
                         />
-                      </Row>
-                    </Column>
-                  </Form>
-                );
-              }}
+                      </div>
+                    </div>
+                    <div className="grid">
+                      <div className="col-12 md:col-6">
+                        <label>Estado</label>
+                        <Padding />
+                        <DropdownComponent
+                          value={values.state_fk}
+                          name="state_fk"
+                          placerholder="Selecione o estado"
+                          options={states ?? []}
+                          optionsLabel="name"
+                          optionsValue="id"
+                          onChange={(e) => {
+                            handleChange(e);
+                            setSelectedState(e.target.value);
+                            setFieldValue("city_fk", undefined);
+                          }}
+                        />
+                      </div>
+                      <div className="col-12 md:col-6">
+                        <label>Cidade</label>
+                        <Padding />
+                        <DropdownComponent
+                          value={values.city_fk}
+                          name="city_fk"
+                          placerholder="Selecione a cidade"
+                          options={cities ?? []}
+                          optionsLabel="name"
+                          optionsValue="id"
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="grid">
+                      <div className="col-12 md:col-6">
+                        <label>Bairro/Povoado</label>
+                        <Padding />
+                        <TextInput name="neighborhood" placeholder="Bairro/Povoado" onChange={handleChange} value={values.neighborhood} />
+                      </div>
+                    </div>
+                    <Padding />
+                    <Row>
+                      <Button label="Salvar" icon={"pi pi-save"} />
+                      <Padding />
+                      <Button label="Cancelar" severity="secondary" type="button" onClick={() => setEdit(false)} />
+                    </Row>
+                  </Column>
+                </Form>
+              )}
             </Formik>
           ) : null}
         </>
@@ -243,17 +255,11 @@ const ClassroomOnePage = () => {
                         backgroundColor: "white",
                         padding: "8px",
                         minWidth: "180px",
-                        boxShadow:
-                          "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
+                        boxShadow: "rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px",
                       }}
                     >
                       <Row
-                        onClick={() => {
-                          if (!loadingEvi) {
-                            handleDownload();
-                            setActionsPopoverOpen(false);
-                          }
-                        }}
+                        onClick={() => { if (!loadingEvi) { handleDownload(); setActionsPopoverOpen(false); } }}
                         id="space-between"
                         style={{ cursor: loadingEvi ? "not-allowed" : "pointer", padding: "8px", gap: "8px", opacity: loadingEvi ? 0.6 : 1 }}
                       >
@@ -266,10 +272,7 @@ const ClassroomOnePage = () => {
                         <p>{loadingEvi ? "Baixando..." : "Baixar evidências"}</p>
                       </Row>
                       <Row
-                        onClick={() => {
-                          setEdit(true);
-                          setActionsPopoverOpen(false);
-                        }}
+                        onClick={() => { setEdit(true); setActionsPopoverOpen(false); }}
                         id="space-between"
                         style={{ cursor: "pointer", padding: "8px", gap: "8px" }}
                       >
@@ -279,10 +282,7 @@ const ClassroomOnePage = () => {
                         <p>Editar</p>
                       </Row>
                       <Row
-                        onClick={() => {
-                          setVisible(true);
-                          setActionsPopoverOpen(false);
-                        }}
+                        onClick={() => { setVisible(true); setActionsPopoverOpen(false); }}
                         id="space-between"
                         style={{ cursor: "pointer", padding: "8px", gap: "8px" }}
                       >
@@ -292,10 +292,7 @@ const ClassroomOnePage = () => {
                         <p>Transferir turma</p>
                       </Row>
                       <Row
-                        onClick={() => {
-                          setVisibleReuse(true);
-                          setActionsPopoverOpen(false);
-                        }}
+                        onClick={() => { setVisibleReuse(true); setActionsPopoverOpen(false); }}
                         id="space-between"
                         style={{ cursor: "pointer", padding: "8px", gap: "8px" }}
                       >
@@ -307,115 +304,109 @@ const ClassroomOnePage = () => {
                     </div>
                   }
                 >
-                  <div
-                    style={{ cursor: "pointer" }}
-                    onClick={() => setActionsPopoverOpen(!actionsPopoverOpen)}
-                  >
+                  <div style={{ cursor: "pointer" }} onClick={() => setActionsPopoverOpen(!actionsPopoverOpen)}>
                     <Icon icon="pi pi-ellipsis-v" />
                   </div>
                 </Popover>
               )}
           </Row>
+          <Padding padding="8px" />
+          <div className="grid">
+            <div className="col-12 md:col-3">
+              <label style={{ fontWeight: "bold", color: "#6b7280", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Status</label>
+              <Padding />
+              {(() => {
+                const status = getStatusClassroomList().find((s) => s.id === classroom?.status);
+                const statusColors: Record<string, { bg: string; text: string }> = {
+                  "Ativa": { bg: "#dcfce7", text: "#16a34a" },
+                  "Inativa": { bg: "#fee2e2", text: "#dc2626" },
+                  "Concluída": { bg: "#dbeafe", text: "#2563eb" },
+                };
+                const style = statusColors[status?.name ?? ""] ?? { bg: "#f3f4f6", text: "#374151" };
+                return (
+                  <span style={{
+                    backgroundColor: style.bg,
+                    color: style.text,
+                    padding: "4px 12px",
+                    borderRadius: "999px",
+                    fontSize: "13px",
+                    fontWeight: 600,
+                  }}>
+                    {status?.name ?? "-"}
+                  </span>
+                );
+              })()}
+            </div>
+          </div>
+          <Padding padding="16px" />
+          <div style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            color: "#6b7280",
+            fontSize: "14px",
+            flexWrap: "wrap",
+          }}>
+            <i className="pi pi-map-marker" style={{ fontSize: "14px" }} />
+            <span>{states?.find((s: any) => s.id === classroom?.state_fk)?.name ?? "-"}</span>
+            <span style={{ color: "#d1d5db" }}>•</span>
+            <span>{cities?.find((c: any) => c.id === classroom?.city_fk)?.name ?? "-"}</span>
+            {classroom?.neighborhood && (
+              <>
+                <span style={{ color: "#d1d5db" }}>•</span>
+                <span>{classroom.neighborhood}</span>
+              </>
+            )}
+          </div>
         </Column>
       )}
       <Padding padding="16px" />
       <div className="grid">
-        <div
-          className="col-12 md:col-6"
-          onClick={() => history(`/turma/${id}/alunos`)}
-        >
-          <CardItensClassrooom
-            title="Matriculas"
-            description="Acesse para gerenciar seus alunos"
-            icon={pessoas}
-            count={classroom?.register_classroom?.length}
-          />
+        <div className="col-12 md:col-6" onClick={() => history(`/turma/${id}/alunos`)}>
+          <CardItensClassrooom title="Matriculas" description="Acesse para gerenciar seus alunos" icon={pessoas} count={classroom?.register_classroom?.length} />
         </div>
-        <div
-          className="col-12 md:col-6"
-          onClick={() => history(`/turma/${id}/encontros`)}
-        >
-          <CardItensClassrooom
-            title="Encontros"
-            description="Acesse para Gerenciar seus encontros"
-            icon={meeting}
-            count={classroom?.meeting?.length}
-          />
+        <div className="col-12 md:col-6" onClick={() => history(`/turma/${id}/encontros`)}>
+          <CardItensClassrooom title="Encontros" description="Acesse para Gerenciar seus encontros" icon={meeting} count={classroom?.meeting?.length} />
         </div>
-        {/* <div className="col-12 md:col-6" onClick={() => history(`/turma/${id}/relatorio`)}>
-                    <CardItensClassrooom title="Tabela" description="Relatório entre Alunos e Encontros" icon="pi pi-table" />
-                </div> */}
       </div>
       <div className="grid">
-        <div
-          className="col-12 md:col-6"
-          onClick={() => history(`/turma/${id}/relatorio`)}
-        >
-          <CardItensClassrooom
-            title="Relatório"
-            description="Acesse o relatório da turma"
-            icon={report}
-          />
+        <div className="col-12 md:col-6" onClick={() => history(`/turma/${id}/relatorio`)}>
+          <CardItensClassrooom title="Relatório" description="Acesse o relatório da turma" icon={report} />
         </div>
       </div>
-
       <div className="grid">
         {cards.map((item) => (
           <div className="col-12 md:col-4 lg:col-2">
             <CardQuant
               title={'Matriculas ' + item.status}
               quant={item.number}
-              color={
-                item.status === "Aprovados"
-                  ? "orange"
-                  : item.status === "Pendentes"
-                    ? "blue"
-                    : "navy_blue"
-              }
+              color={item.status === "Aprovados" ? "orange" : item.status === "Pendentes" ? "blue" : "navy_blue"}
             />
-
           </div>
         ))}
+        {fouls?.length > 0 && (
+          <div className="col-12 md:col-4 lg:col-2">
+            <CardQuant title={'Média de presença da turma'} quant={mediaDasMedias?.toFixed(2) + '%'} color={"navy_blue"} />
+          </div>
+        )}
         <div className="col-12 md:col-4 lg:col-2">
-          {fouls?.length > 0 && <CardQuant
-            title={'Média de presença da turma'}
-            quant={mediaDasMedias?.toFixed(2) + '%'}
-            color={
-              "navy_blue"
-            }
-          />}
+          <CardQuant title={'Carga horária dos encontros'} quant={minutesToTimeStr(classroom?.total_workload ?? 0) + 'h'} color={"navy_blue"} />
         </div>
-        {<div className="col-12 md:col-4 lg:col-2">
-          {<CardQuant
-            title={'Carga horária dos encontros'}
-            quant={minutesToTimeStr(classroom?.total_workload ?? 0) + 'h'}
-            color={"navy_blue"}
-          />}
-        </div>}
       </div>
-
-      {(chartData && chartData?.labels?.length > 0) && <div
-        className="card col-12 md:col-12 lg:col-12"
-        style={{ padding: "20px" }}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "column",
-          }}
-        >
-          <h2>Gráfico Faltas em Encontros</h2>
-          <Padding padding="8px" />
-          <ChartPrime
-            type="line"
-            data={chartData}
-            style={{ maxHeight: "500px", flexGrow: 1, display: "flex", justifyContent: "center", alignItems: "center" }}
-            width="100%"
-          />
+      {(chartData && chartData?.labels?.length > 0) && (
+        <div className="card col-12 md:col-12 lg:col-12" style={{ padding: "20px" }}>
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
+            <h2>Gráfico Faltas em Encontros</h2>
+            <Padding padding="8px" />
+            <ChartPrime
+              type="line"
+              data={chartData}
+              style={{ maxHeight: "500px", flexGrow: 1, display: "flex", justifyContent: "center", alignItems: "center" }}
+              width="100%"
+            />
+          </div>
         </div>
-      </div>}
+      )}
       {loadingEvi && (
         <div style={{
           position: "fixed",
