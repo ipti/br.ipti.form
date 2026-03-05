@@ -30,9 +30,9 @@ export const UsersState = () => {
       project: GetId(data.project),
       sex: data.sex,
       color_race: data.color_race,
-      birthday: converterData(data.birthday),
+      birthday: data.birthday ? converterData(data.birthday.toString()) : undefined,
       email: data.email,
-      initial_date: converterData(data.initial_date),
+      initial_date: data.initial_date ? converterData(data.initial_date.toString()) : undefined,
       phone: data.phone,
     };
     props.requestUserMutation.mutate(body);
@@ -46,9 +46,9 @@ export const UsersState = () => {
       project: GetId(data.project),
       sex: data.sex,
       color_race: data.color_race,
-      birthday: converterData(data.birthday),
+      birthday: converterData(data.birthday?.toString()!),
       email: data.email,
-      initial_date: converterData(data.initial_date),
+      initial_date: converterData(data.initial_date?.toString()!),
       phone: data.phone,
     };
     props.requestUpdateUserMutation.mutate({ data: body, id: id });

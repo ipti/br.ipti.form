@@ -58,6 +58,10 @@ const ListUsersPage = () => {
     return <p>{rowData.active ? "Ativo" : "Desativado"}</p>;
   };
 
+   const PerfilCompleteUserBody = (rowData: any) => {
+    return <p>{rowData.isProfileComplete ? "Sim" : "Não"}</p>;
+  };
+
   const ActionsUserBody = (rowData: any) => {
     return (
       <Row>
@@ -121,6 +125,7 @@ const ListUsersPage = () => {
           <Column field="name" header="Nome"></Column>
           <Column field="username" header="Usuário"></Column>
           <Column field="role" body={typeUserBody} header="Tipo"></Column>
+          <Column field="isProfileComplete" body={PerfilCompleteUserBody} header="Perfil completo?"></Column>
           <Column field="active" body={ActiveUserBody} header="Ativo"></Column>
           <Column field="actions" body={ActionsUserBody} header="Ações"></Column>
 
