@@ -15,6 +15,20 @@ export const gerarIdAleatorio = (tamanho: number) => {
   return id;
 };
 
+
+export enum AreaOfActivity {
+  NO_SPECIFICATION = "NO_SPECIFICATION",
+  ENTREPRENEURSHIP = "ENTREPRENEURSHIP",
+  HEALTH = "HEALTH",
+  EDUCATION = "EDUCATION",
+}
+export const areaOptions = [
+    { name: "Sem especificação", id: AreaOfActivity.NO_SPECIFICATION },
+    { name: "Empreendedorismo", id: AreaOfActivity.ENTREPRENEURSHIP },
+    { name: "Saúde", id: AreaOfActivity.HEALTH },
+    { name: "Educação", id: AreaOfActivity.EDUCATION },
+  ];
+
 export const getErrorsAsArray = (errors: FormikErrors<any>): string[] => {
   const flattenErrors = (obj: any): string[] => {
     let messages: string[] = [];

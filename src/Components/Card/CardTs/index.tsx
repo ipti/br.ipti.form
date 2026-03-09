@@ -4,11 +4,19 @@ import Icon from "../../Icon";
 import IconClassroom from "./../../../Assets/images/ts_card.svg";
 import { Container } from "./style";
 
+const areaOfActivityLabels: Record<string, string> = {
+  NO_SPECIFICATION: "Sem especificação",
+  ENTREPRENEURSHIP: "Empreendedorismo",
+  HEALTH: "Saúde",
+  EDUCATION: "Educação",
+};
+
 const CardTs = ({
   title,
   id,
   onEdit,
   isAdmin,
+  area_of_activity,
 }: {
   title: string;
   meetingCount?: number;
@@ -16,6 +24,7 @@ const CardTs = ({
   id: number;
   onEdit?: (id: number, title: string) => void;
   isAdmin?: boolean;
+  area_of_activity?: string;
 }) => {
   return (
     <Container className="card" onClick={() => {}}>
@@ -27,6 +36,11 @@ const CardTs = ({
           <Padding padding="4px" />
           <Column id="center">
             <h3>{title}</h3>
+            {area_of_activity && (
+              <p style={{ fontSize: "0.85rem", color: styles.colors.colorGrayElephant }}>
+                {areaOfActivityLabels[area_of_activity] ?? area_of_activity}
+              </p>
+            )}
           </Column>
         </Row>
         {isAdmin && (

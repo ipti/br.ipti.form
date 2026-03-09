@@ -3,7 +3,7 @@ import Swal from "sweetalert2";
 import http from "../../../Services/axios";
 import styles from "../../../Styles";
 
-const requestEditSocialTechnology = async ({ stId, body }: { stId: number; body: { name: string } }) => {
+const requestEditSocialTechnology = async ({ stId, body }: { stId: number; body: { name: string; area_of_activity?: string } }) => {
   const { data } = await http.patch(`/social-technology-bff?stId=${stId}`, body);
   return data;
 };
@@ -12,7 +12,7 @@ export const EditTsState = () => {
   const queryClient = useQueryClient();
 
   const { mutate: EditTechnology, isLoading: loading } = useMutation(
-    ({ stId, body }: { stId: number; body: { name: string } }) =>
+    ({ stId, body }: { stId: number; body: { name: string; area_of_activity?: string } }) =>
       requestEditSocialTechnology({ stId, body }),
     {
       onError: (error: any) => {

@@ -1,18 +1,21 @@
 import { Form, Formik } from "formik";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
+import { Dropdown } from "primereact/dropdown";
 import { useContext } from "react";
 import * as Yup from "yup";
+import TextInput from "../../../../Components/TextInput";
 import EditTsProvider, { EditTsContext } from "../../../../Context/TecnologySocial/EditTecnologySocial/context";
 import { EditTsTypes } from "../../../../Context/TecnologySocial/EditTecnologySocial/type";
+import { areaOptions } from "../../../../Controller/controllerGlobal";
 import { Padding, Row } from "../../../../Styles/styles";
-import TextInput from "../../../../Components/TextInput";
 
 type EditTsDialogProps = {
   visible: boolean;
   onHide: () => void;
   id: number;
   title: string;
+  area_of_activity?: string;
 };
 
 const EditTsDialog = (props: EditTsDialogProps) => {
@@ -23,12 +26,16 @@ const EditTsDialog = (props: EditTsDialogProps) => {
   );
 };
 
-const EditTsDialogContent = ({ visible, onHide, id, title }: EditTsDialogProps) => {
+const EditTsDialogContent = ({ visible, onHide, id, title, area_of_activity }: EditTsDialogProps) => {
   const editProps = useContext(EditTsContext) as EditTsTypes;
+
+
 
   const EditSchema = Yup.object().shape({
     name: Yup.string().required("Campo Obrigatório"),
   });
+
+  console.log("area_of_activity", area_of_activity);
 
   return (
     <Dialog
@@ -38,15 +45,21 @@ const EditTsDialogContent = ({ visible, onHide, id, title }: EditTsDialogProps) 
       style={{ width: "400px" }}
     >
       <Formik
-        initialValues={{ name: title }}
+        initialValues={{ name: title, area_of_activity: area_of_activity || "" }}
         validationSchema={EditSchema}
         enableReinitialize
         onSubmit={(values) => {
-          editProps.EditTechnology({ stId: id, body: { name: values.name } });
+          editProps.EditTechnology({
+            stId: id,
+            body: {
+              name: values.name,
+              area_of_activity: values.area_of_activity || undefined,
+            },
+          });
           onHide();
         }}
       >
-        {({ values, errors, handleChange, touched }) => (
+        {({ values, errors, handleChange, setFieldValue, touched }) => (
           <Form>
             <label>Nome*</label>
             <Padding />
@@ -59,6 +72,19 @@ const EditTsDialogContent = ({ visible, onHide, id, title }: EditTsDialogProps) 
             {errors.name && touched.name && (
               <div style={{ color: "red", marginTop: "8px" }}>{errors.name}</div>
             )}
+            <Padding padding="16px" />
+            <label>Área de Atuação</label>
+            <Padding />
+             <Dropdown
+                  name="area_of_activity"
+                  value={values.area_of_activity}
+                  options={areaOptions}
+                  optionLabel="name"
+                  optionValue="id"
+                  onChange={handleChange}
+                  placeholder="Selecione a área de atuação"
+                  style={{ width: "100%" }}
+                />
             <Padding padding="16px" />
             <Row id="end">
               <Button

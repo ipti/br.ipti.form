@@ -17,7 +17,7 @@ const TecnologySocial = () => {
     AplicationContext
   ) as PropsAplicationContext;
   const [editVisible, setEditVisible] = useState(false);
-  const [selectedTs, setSelectedTs] = useState<{ id: number; title: string } | null>(null);
+  const [selectedTs, setSelectedTs] = useState<{ id: number; title: string; area_of_activity?: string } | null>(null);
 
   if (!propsAplication.project) return <Loading />;
   return (
@@ -36,8 +36,9 @@ const TecnologySocial = () => {
                 title={item.name}
                 id={item.id}
                 isAdmin={propsAplication.user?.role === ROLE.ADMIN}
+                area_of_activity={item.area_of_activity}
                 onEdit={(id, title) => {
-                  setSelectedTs({ id, title });
+                  setSelectedTs({ id, title, area_of_activity: item.area_of_activity || undefined });
                   setEditVisible(true);
                 }}
               />
@@ -54,6 +55,7 @@ const TecnologySocial = () => {
           onHide={() => setEditVisible(false)}
           id={selectedTs.id}
           title={selectedTs.title}
+          area_of_activity={selectedTs.area_of_activity || undefined}
         />
       )}
     </ContentPage>
