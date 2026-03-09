@@ -10,7 +10,11 @@ export interface ProjectOneTypes {
 
 export interface ApiProject {
   project: Project
-  register_count: number
+  approved_register_count: number
+  total_register_count: number
+  students_with_presence_count: number
+  irregular_term_count: number
+  students_approved_by_frequency_count: number
 }
 
 export interface Project {
