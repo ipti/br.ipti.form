@@ -14,14 +14,26 @@ export default function Upload() {
     const meetingList = useContext(MeetingListRegistrationContext) as MeetingListRegisterTypes;
 
     const headerTemplate = (options: FileUploadHeaderTemplateOptions) => {
-        const { className, chooseButton, cancelButton, props} = options;
+        const { className, chooseButton, cancelButton, props } = options;
 
         return (
-            <div className={className} style={{ backgroundColor: 'transparent', display: 'flex', alignItems: 'center' }}>
+            <div className={className} style={{ backgroundColor: 'transparent', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 {chooseButton}
-                <Button rounded outlined icon="pi pi-save" disabled={file.length === 0} onClick={() => {meetingList.ArchivesMeeting(file[0], parseInt(idMeeting!)); props.onClear!()}} />
+                <Button
+                    rounded
+                    outlined
+                    icon="pi pi-upload"
+                    label="Enviar arquivo"
+                    tooltip="Clique para enviar o arquivo selecionado"
+                    tooltipOptions={{ position: 'bottom' }}
+                    className="p-button-success p-button-rounded p-button-outlined"
+                    disabled={file.length === 0}
+                    onClick={() => {
+                        meetingList.ArchivesMeeting(file[0], parseInt(idMeeting!));
+                        props.onClear!();
+                    }}
+                />
                 {cancelButton}
-
             </div>
         );
     };
@@ -31,9 +43,22 @@ export default function Upload() {
         setFile(files)
     };
 
-    const chooseOptions = { icon: 'pi pi-fw pi-plus ', iconOnly: true, className: 'custom-choose-btn p-button-rounded p-button-outlined', };
-    const uploadOptions = { icon: 'pi pi-fw pi-cloud-upload', iconOnly: true, className: 'custom-upload-btn p-button-success p-button-rounded p-button-outlined', Upload: (e: any) => { console.log(e) } };
-    const cancelOptions = { icon: 'pi pi-fw pi-times', iconOnly: true, className: 'custom-cancel-btn p-button-danger p-button-rounded p-button-outlined' };
+    const chooseOptions = {
+        icon: 'pi pi-fw pi-plus',
+        label: 'Selecionar arquivo',
+        className: 'custom-choose-btn p-button-rounded p-button-outlined',
+    };
+    const uploadOptions = {
+        icon: 'pi pi-fw pi-cloud-upload',
+        iconOnly: true,
+        className: 'custom-upload-btn p-button-success p-button-rounded p-button-outlined',
+        style: { display: 'none' }, // oculta o botão padrão de upload do PrimeReact
+    };
+    const cancelOptions = {
+        icon: 'pi pi-fw pi-times',
+        label: 'Limpar',
+        className: 'custom-cancel-btn p-button-danger p-button-rounded p-button-outlined',
+    };
 
     const onTemplateRemove = (files: File, callback: Function) => {
         setFile(file.filter(props => props.name !== files.name))
