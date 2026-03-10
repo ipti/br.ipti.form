@@ -49,6 +49,7 @@ const ClassroomOnePage = () => {
   const [visibleReuse, setVisibleReuse] = useState(false);
   const [cards, setCards] = useState<StateCard[]>([]);
   const [actionsPopoverOpen, setActionsPopoverOpen] = useState(false);
+  const [chartInfoOpen, setChartInfoOpen] = useState(false);
   const [loadingEvi, setLoadingEvi] = useState(false);
   var fouls = foulsRequest as MediafrequencyType;
 
@@ -396,7 +397,53 @@ const ClassroomOnePage = () => {
       {(chartData && chartData?.labels?.length > 0) && (
         <div className="card col-12 md:col-12 lg:col-12" style={{ padding: "20px" }}>
           <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-            <h2>Gráfico Faltas em Encontros</h2>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <h2>Gráfico Faltas em Encontros</h2>
+              <Popover
+                isOpen={chartInfoOpen}
+                positions={["top", "bottom", "right"]}
+                onClickOutside={() => setChartInfoOpen(false)}
+                content={
+                  <div style={{
+                    backgroundColor: "white",
+                    padding: "12px 16px",
+                    maxWidth: "280px",
+                    boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+                    borderRadius: "8px",
+                    fontSize: "13px",
+                    color: "#374151",
+                    lineHeight: "1.6",
+                  }}>
+                    <strong>Como ler este gráfico:</strong>
+                    <ul style={{ marginTop: "8px", paddingLeft: "16px" }}>
+                      <li><span style={{ color: color.red }}>Linha vermelha</span>: número de faltas registradas por encontro.</li>
+                      <li><span style={{ color: color.gray }}>Linha cinza</span>: total de beneficiários.</li>
+                    </ul>
+                    <p style={{ marginTop: "8px" }}>O eixo X representa as datas dos encontros realizados.</p>
+                  </div>
+                }
+              >
+                <span
+                  onClick={() => setChartInfoOpen(!chartInfoOpen)}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    width: "20px",
+                    height: "20px",
+                    borderRadius: "50%",
+                    backgroundColor: "#e5e7eb",
+                    color: "#6b7280",
+                    fontSize: "12px",
+                    fontWeight: "bold",
+                    cursor: "pointer",
+                    userSelect: "none",
+                  }}
+                >
+                  ?
+                </span>
+              </Popover>
+            </div>
             <Padding padding="8px" />
             <ChartPrime
               type="line"
