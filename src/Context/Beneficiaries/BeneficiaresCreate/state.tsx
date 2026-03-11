@@ -30,7 +30,7 @@ export const BeneficiariesCreateState = () => {
   const CreateRegister = (values: any) => {
     const data = new Date(values?.birthday);
     const dataFormatada = data?.toISOString()?.split('T')[0];
-    props.requestRegistrationMutation.mutate({ ...values, cpf: values.cpf.replace(/[^a-zA-Z0-9]/g, ''), kinship: values.kinship === "" ? "NAO_DEFINIDO" : values.kinship, responsable_telephone: values.responsable_telephone.replace(/[^a-zA-Z0-9]/g, ''), responsable_phone: values.responsable_phone?.replace(/[^a-zA-Z0-9]/g, ''), birthday: dataFormatada, responsable_cpf: values?.responsable_cpf?.replace(/[^a-zA-Z0-9]/g, '') })
+    props.requestRegistrationMutation.mutate({ ...values, cpf: values.cpf?.replace(/[^a-zA-Z0-9]/g, ''), kinship: values.kinship === "" ? "NAO_DEFINIDO" : values.kinship, responsable_telephone: values.responsable_telephone?.replace(/[^a-zA-Z0-9]/g, ''), telephone: values.telephone?.replace(/[^a-zA-Z0-9]/g, ''), birthday: dataFormatada, responsable_cpf: values?.responsable_cpf?.replace(/[^a-zA-Z0-9]/g, '') })
   }
 
 
@@ -60,7 +60,8 @@ export const BeneficiariesCreateState = () => {
     complement: "",
     state: undefined,
     city: undefined,
-    date_registration: new Date(Date.now())
+    date_registration: new Date(Date.now()),
+    telephone: ""
   };
 
 
@@ -70,6 +71,7 @@ export const BeneficiariesCreateState = () => {
     project,
     setProject,
     classrooms,
-    CreateRegister
+    CreateRegister,
+    isLoadingCreate: props.requestRegistrationMutation.isLoading,
   };
 };

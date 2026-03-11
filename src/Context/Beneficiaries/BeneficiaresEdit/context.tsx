@@ -25,7 +25,8 @@ const BeneficiariesEditProvider = ({
     setFile,
     CreateRegisterTerm,
     DeleteRegisterTerm,
-    UpdateRegisterTerm
+    UpdateRegisterTerm,
+    isLoadingUpdate
 
   } = BeneficiariesEditState();
 
@@ -46,7 +47,8 @@ const BeneficiariesEditProvider = ({
         setProject,
         CreateRegisterTerm,
         DeleteRegisterTerm,
-        UpdateRegisterTerm
+        UpdateRegisterTerm,
+        isLoadingUpdate
       }}
     >
       {children}

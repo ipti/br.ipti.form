@@ -22,12 +22,14 @@ export interface BeneficiariesCreateType {
     deficiency_description: string | undefined
     kinship: string
     date_registration: string | undefined | any
+    telephone: string | undefined | any
   };
   tsOne: Tsone | undefined;
   project: any | undefined;
   setProject: Dispatch<SetStateAction<number | undefined>>;
   classrooms: any;
   CreateRegister: (values: any) => void
+  isLoadingCreate: boolean
 }
 
 

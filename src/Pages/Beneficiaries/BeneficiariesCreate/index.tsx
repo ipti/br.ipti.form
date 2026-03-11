@@ -2,7 +2,6 @@ import { Form, Formik } from "formik";
 import { Button } from "primereact/button";
 import { useContext, useState } from "react";
 import * as Yup from "yup";
-import CalendarComponent from "../../../Components/Calendar";
 import CheckboxComponent from "../../../Components/Checkbox";
 import ContentPage from "../../../Components/ContentPage";
 import DropdownComponent from "../../../Components/Dropdown";
@@ -25,6 +24,7 @@ import { Column, Padding, Row } from "../../../Styles/styles";
 import InputAddress from "../../../Components/InputsAddress";
 import { useFetchRequestRegistrationOneCPF } from "../../../Services/PreRegistration/query";
 import { RegistrationCPF } from "../../../Services/PreRegistration/types";
+import CalendarComponent from "../../../Components/Calendar";
 
 const BeneficiariesCreate = () => {
   return (
@@ -34,12 +34,49 @@ const BeneficiariesCreate = () => {
   );
 };
 
-const RegistrationPage = () => {
-  const props = useContext(
-    BeneficiariesCreateContext
-  ) as BeneficiariesCreateType;
+const ErrorSummary = ({ errors }: { errors: string[] }) => {
+  if (errors.length === 0) return null;
+  return (
+    <div
+      style={{
+        background: "#fff5f5",
+        border: "1px solid #fc8181",
+        borderRadius: "8px",
+        padding: "16px 20px",
+        marginBottom: "16px",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
+        <i className="pi pi-exclamation-circle" style={{ color: "#e53e3e", fontSize: "18px" }} />
+        <strong style={{ color: "#c53030", fontSize: "15px" }}>
+          Corrija os seguintes erros antes de continuar:
+        </strong>
+      </div>
+      <ul style={{ margin: 0, paddingLeft: "20px" }}>
+        {errors.map((error, index) => (
+          <li key={index} style={{ color: "#c53030", marginBottom: "4px", fontSize: "14px" }}>
+            {error}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
 
+const FieldError = ({ message }: { message?: string }) => {
+  if (!message) return null;
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: "4px", color: "#e53e3e", marginTop: "6px", fontSize: "13px" }}>
+      <i className="pi pi-times-circle" style={{ fontSize: "13px" }} />
+      <span>{message}</span>
+    </div>
+  );
+};
+
+const RegistrationPage = () => {
+  const props = useContext(BeneficiariesCreateContext) as BeneficiariesCreateType;
   const [cpf, setCpf] = useState<string | undefined>();
+  const [submitted, setSubmitted] = useState(false);
 
   const { data: registrationCpf } = useFetchRequestRegistrationOneCPF(cpf);
 
@@ -58,36 +95,48 @@ const RegistrationPage = () => {
 
   var registraionFind: RegistrationCPF = registrationCpf;
 
-
   const schema = Yup.object().shape({
     name: Yup.string().required("Nome é obrigatório"),
     color_race: Yup.string().required("Raça/cor é obrigatório"),
     deficiency: Yup.boolean().required("Deficiência é obrigatória"),
     cpf: Yup.string()
       .test("cpf-valid", "CPF inválido", (value) => {
-        if (value && value.trim() !== "") {
-          return validaCPF(value);
-        }
+        if (value && value.trim() !== "") return validaCPF(value);
         return true;
       })
       .required("CPF é obrigatório"),
     responsable_cpf: Yup.string().test("cpf-valid", "CPF inválido", (value) => {
-      if (value && value.trim() !== "") {
-        return validaCPF(value);
-      }
+      if (value && value.trim() !== "") return validaCPF(value);
       return true;
+    }).when("birthday", {
+      is: (birthday: string) => isUnder18(birthday),
+      then: (s) => s.required("CPF do responsável é obrigatório"),
+      otherwise: (s) => s.optional(),
     }),
-    responsable_telephone: Yup.string().required("Telefone é obrigatório"),
-    responsable_phone: Yup.string().when("birthday", {
+    responsable_name: Yup.string().when("birthday", {
+      is: (birthday: string) => isUnder18(birthday),
+      then: (s) => s.required("Nome do responsável é obrigatório para menores de 18 anos"),
+      otherwise: (s) => s.optional(),
+    }),
+    // Telefone de contato: obrigatório apenas para maiores de 18
+    telephone: Yup.string().when("birthday", {
+      is: (birthday: string) => !isUnder18(birthday),
+      then: (s) => s.required("Telefone para contato é obrigatório"),
+      otherwise: (s) => s.optional(),
+    }),
+    // Telefone do responsável: obrigatório apenas para menores de 18
+    responsable_telephone: Yup.string().when("birthday", {
       is: (birthday: string) => isUnder18(birthday),
       then: (s) => s.required("Telefone do responsável é obrigatório para menores de 18 anos"),
       otherwise: (s) => s.optional(),
     }),
     responsable_email: Yup.string()
-      .email("E-mail do responsável inválido")
+      .email("E-mail do responsável inválido"),
+    kinship: Yup.string()
+      .nullable()
       .when("birthday", {
         is: (birthday: string) => isUnder18(birthday),
-        then: (s) => s.required("E-mail do responsável é obrigatório para menores de 18 anos"),
+        then: (s) => s.required("Parentesco é obrigatório para menores de 18 anos"),
         otherwise: (s) => s.optional(),
       }),
     is_legal_responsible: Yup.boolean().when("birthday", {
@@ -98,17 +147,11 @@ const RegistrationPage = () => {
           .required("É necessário confirmar que é o responsável legal do menor"),
       otherwise: (s) => s.optional(),
     }),
-    birthday: Yup.string()
-      .nullable()
-      .required("Data de nascimento é obrigatória"),
+    birthday: Yup.string().nullable().required("Data de nascimento é obrigatória"),
     zone: Yup.string().nullable().required("Zona é obrigatório"),
-    project: Yup.string()
-      .nullable()
-      .required("Plano de Trabalho é obrigatório"),
-    classroom: Yup.string().nullable().required("Turma é obrigatório"),
-    neighborhood: Yup.string()
-      .nullable()
-      .required("Bairro/Povoado é obrigatória"),
+    project: Yup.string().nullable(),
+    classroom: Yup.string().nullable(),
+    neighborhood: Yup.string().nullable().required("Bairro/Povoado é obrigatória"),
     address: Yup.string().nullable().required("Endereço é obrigatória"),
     state: Yup.string().nullable().required("Estado é obrigatório"),
     city: Yup.string().nullable().required("Cidade é obrigatório"),
@@ -118,10 +161,7 @@ const RegistrationPage = () => {
   if (false) return <Loading />;
 
   return (
-    <ContentPage
-      title="Criar Beneficiario"
-      description="Criar novo beneficiário."
-    >
+    <ContentPage title="Criar Beneficiario" description="Criar novo beneficiário.">
       <Padding padding="16px" />
       {true ? (
         <Formik
@@ -129,31 +169,40 @@ const RegistrationPage = () => {
           validationSchema={schema}
           onSubmit={(values) => {
             delete values.project;
-            props.CreateRegister({ ...values });
+
+            // Remove campos com valor string vazia
+            const cleaned = Object.fromEntries(
+              Object.entries(values).filter(([_, v]) => v !== "" && v !== null && v !== undefined)
+            );
+
+            props.CreateRegister(cleaned as typeof values);
           }}
         >
-          {({ values, handleChange, errors, touched, setFieldValue }) => {
-            const errorArray = getErrorsAsArray(errors);
+          {({ values, handleChange, errors, touched, setFieldValue, validateForm }) => {
+            const errorArray = submitted ? getErrorsAsArray(errors) : [];
+            const fieldError = (field: string) =>
+              submitted ? (errors as any)[field] : undefined;
+
+            const handleBirthdayChange = (e: any) => {
+              handleChange(e);
+              setTimeout(() => validateForm(), 0);
+            };
 
             return (
               <Form>
                 <Column>
                   <Row id="end">
-                    <Button label="Criar" type="submit" icon={"pi pi-plus"} />
+                    <Button
+                      label="Criar"
+                      type="submit"
+                      icon={"pi pi-plus"}
+                      loading={props.isLoadingCreate}
+                      onClick={() => setSubmitted(true)}
+                    />
                   </Row>
                 </Column>
                 <Padding padding="8px" />
-                {errorArray.length > 0 && (
-                  <div>
-                    <h3>Erros encontrados no formulários</h3>
-                    <Padding />
-                    {errorArray.map((error, index) => (
-                      <div key={index} style={{ color: "red" }}>
-                        {error}
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <ErrorSummary errors={errorArray} />
                 <Padding padding="8px" />
                 <h3>Verificar Cadastro</h3>
                 <Padding padding="8px" />
@@ -171,17 +220,12 @@ const RegistrationPage = () => {
                       }}
                       name="cpf"
                     />
-                    {errors.cpf && touched.cpf ? (
-                      <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.cpf}
-                      </div>
-                    ) : null}
+                    <FieldError message={fieldError("cpf")} />
                   </div>
                   <div className="col-12 md:col-6">
                     {registraionFind && (
                       <div>
                         <p>Existe um cadastro com esse cpf</p>
-
                         <p className="mt-3">
                           {registraionFind?.name}{" "}
                           <a href={"/beneficiarios/" + registraionFind.id}>
@@ -191,7 +235,7 @@ const RegistrationPage = () => {
                       </div>
                     )}
                   </div>
-                </div>{" "}
+                </div>
                 <Padding padding="8px" />
                 <h3>Dados basicos</h3>
                 <Padding />
@@ -205,11 +249,7 @@ const RegistrationPage = () => {
                       onChange={handleChange}
                       name="name"
                     />
-                    {errors.name && touched.name ? (
-                      <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.name}
-                      </div>
-                    ) : null}
+                    <FieldError message={fieldError("name")} />
                   </div>
                   <div className="col-12 md:col-6">
                     <label>Sexo *</label>
@@ -223,13 +263,9 @@ const RegistrationPage = () => {
                       name="sex"
                       onChange={handleChange}
                     />
-                    {errors.sex && touched.sex ? (
-                      <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.sex}
-                      </div>
-                    ) : null}
+                    <FieldError message={fieldError("sex")} />
                   </div>
-                </div>{" "}
+                </div>
                 <div className="grid">
                   <div className="col-12 md:col-6">
                     <label>Data de Nascimento *</label>
@@ -239,13 +275,9 @@ const RegistrationPage = () => {
                       dateFormat="dd/mm/yy"
                       placeholder="Data de Nascimento"
                       name="birthday"
-                      onChange={handleChange}
+                      onChange={handleBirthdayChange}
                     />
-                    {errors.birthday && touched.birthday ? (
-                      <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.birthday}
-                      </div>
-                    ) : null}
+                    <FieldError message={fieldError("birthday")} />
                   </div>
                   <div className="col-12 md:col-6">
                     <label>Cor de raça *</label>
@@ -257,14 +289,10 @@ const RegistrationPage = () => {
                       name="color_race"
                       optionsValue="id"
                       onChange={handleChange}
-                    />{" "}
-                    {errors.color_race && touched.color_race ? (
-                      <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.color_race}
-                      </div>
-                    ) : null}
+                    />
+                    <FieldError message={fieldError("color_race")} />
                   </div>
-                </div>{" "}
+                </div>
                 <div className="grid">
                   <div className="col-12 md:col-6">
                     <label>Deficiente *</label>
@@ -280,28 +308,21 @@ const RegistrationPage = () => {
                         { id: false, name: "Não" },
                       ]}
                     />
-                    {errors.deficiency && touched.deficiency ? (
-                      <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.deficiency}
-                      </div>
-                    ) : null}
+                    <FieldError message={fieldError("deficiency")} />
                   </div>
                   <div className="col-12 md:col-6">
-                    <label>Telefone para contato *</label>
+                    <label>
+                      Telefone para contato{!isUnder18(values.birthday) ? " *" : ""}
+                    </label>
                     <Padding />
                     <MaskInput
-                      value={values.responsable_telephone}
+                      value={values.telephone}
                       mask="(99) 9 9999-9999"
-                      name="responsable_telephone"
+                      name="telephone"
                       onChange={handleChange}
                       placeholder="Telefone para contato"
                     />
-                    {errors.responsable_telephone &&
-                      touched.responsable_telephone ? (
-                      <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.responsable_telephone}
-                      </div>
-                    ) : null}
+                    <FieldError message={fieldError("telephone")} />
                   </div>
                   {values.deficiency && (
                     <div className="col-12 md:col-6">
@@ -315,7 +336,7 @@ const RegistrationPage = () => {
                       />
                     </div>
                   )}
-                </div>{" "}
+                </div>
                 <div className="grid">
                   <div className="col-12 md:col-6">
                     <label>Zona *</label>
@@ -338,15 +359,11 @@ const RegistrationPage = () => {
                         />
                       </Row>
                     </Column>
-                    {errors.zone && touched.zone ? (
-                      <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.zone}
-                      </div>
-                    ) : null}
+                    <FieldError message={fieldError("zone")} />
                   </div>
                 </div>
                 <Padding padding="8px" />
-                <h3>Dados Responsavel</h3>
+                <h3>Dados Responsavel (Se for menor de 18 anos)</h3>
                 <Padding />
                 <div className="grid">
                   <div className="col-12 md:col-6">
@@ -358,11 +375,7 @@ const RegistrationPage = () => {
                       onChange={handleChange}
                       placeholder="Nome do Resposável"
                     />
-                    {errors.responsable_name && touched.responsable_name ? (
-                      <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.responsable_name}
-                      </div>
-                    ) : null}
+                    <FieldError message={fieldError("responsable_name")} />
                   </div>
                   <div className="col-12 md:col-6">
                     <label>CPF Responsavel</label>
@@ -374,11 +387,7 @@ const RegistrationPage = () => {
                       placeholder="CPF do Responsável"
                       onChange={handleChange}
                     />
-                    {errors.responsable_cpf && touched.responsable_cpf ? (
-                      <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.responsable_cpf}
-                      </div>
-                    ) : null}
+                    <FieldError message={fieldError("responsable_cpf")} />
                   </div>
                   <div className="col-12 md:col-6">
                     <label>
@@ -386,22 +395,17 @@ const RegistrationPage = () => {
                     </label>
                     <Padding />
                     <MaskInput
-                      value={values.responsable_phone}
+                      value={values.responsable_telephone}
                       mask="(99) 9 9999-9999"
-                      name="responsable_phone"
+                      name="responsable_telephone"
                       onChange={handleChange}
                       placeholder="Telefone do Responsável"
                     />
-                    {errors.responsable_phone &&
-                      touched.responsable_phone ? (
-                      <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.responsable_phone}
-                      </div>
-                    ) : null}
+                    <FieldError message={fieldError("responsable_telephone")} />
                   </div>
                   <div className="col-12 md:col-6">
                     <label>
-                      E-mail do Responsável{isUnder18(values.birthday) ? " *" : ""}
+                      E-mail do Responsável
                     </label>
                     <Padding />
                     <TextInput
@@ -410,11 +414,7 @@ const RegistrationPage = () => {
                       onChange={handleChange}
                       placeholder="E-mail do Responsável"
                     />
-                    {errors.responsable_email && touched.responsable_email ? (
-                      <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.responsable_email}
-                      </div>
-                    ) : null}
+                    <FieldError message={fieldError("responsable_email")} />
                   </div>
                   <div className="col-12 md:col-6">
                     <label>Parentesco</label>
@@ -428,40 +428,29 @@ const RegistrationPage = () => {
                       optionsLabel="name"
                       value={values.kinship}
                     />
-
-                    {errors.kinship && touched.kinship ? (
-                      <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.kinship}
-                      </div>
-                    ) : null}
+                    <FieldError message={fieldError("kinship")} />
                   </div>
                   {isUnder18(values.birthday) && (
                     <div className="col-12">
                       <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "8px" }}>
                         <CheckboxComponent
                           checked={values.is_legal_responsible}
-                          onChange={(e) =>
-                            setFieldValue("is_legal_responsible", e.checked)
-                          }
+                          onChange={(e) => setFieldValue("is_legal_responsible", e.checked)}
                         />
                         <label style={{ cursor: "pointer", fontWeight: 500 }}>
                           Confirmo que sou o responsável legal deste menor de idade *
                         </label>
                       </div>
-                      {errors.is_legal_responsible && touched.is_legal_responsible ? (
-                        <div style={{ color: "red", marginTop: "8px" }}>
-                          {errors.is_legal_responsible}
-                        </div>
-                      ) : null}
+                      <FieldError message={fieldError("is_legal_responsible")} />
                     </div>
                   )}
-                </div>{" "}
+                </div>
                 <Padding padding="8px" />
-                <h3>Matricula *</h3>
+                <h3>Matricula</h3>
                 <Padding padding="8px" />
                 <div className="grid">
                   <div className="col-12 md:col-6">
-                    <label>Matricula</label>
+                    <label>Plano de trabalho</label>
                     <Padding />
                     <DropdownComponent
                       value={props.project}
@@ -475,11 +464,7 @@ const RegistrationPage = () => {
                       optionsLabel="name"
                       optionsValue="id"
                     />
-                    {errors.project && touched.project ? (
-                      <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.project}
-                      </div>
-                    ) : null}
+                    <FieldError message={fieldError("project")} />
                   </div>
                   {props.classrooms ? (
                     <div className="col-12 md:col-6">
@@ -493,11 +478,7 @@ const RegistrationPage = () => {
                         onChange={handleChange}
                         options={props.classrooms}
                       />
-                      {errors.classroom && touched.classroom ? (
-                        <div style={{ color: "red", marginTop: "8px" }}>
-                          {errors.classroom}
-                        </div>
-                      ) : null}
+                      <FieldError message={fieldError("classroom")} />
                     </div>
                   ) : null}
                   {values.project && (
@@ -510,66 +491,20 @@ const RegistrationPage = () => {
                         dateFormat="dd/mm/yy"
                         onChange={handleChange}
                       />
-                      {errors.date_registration && touched.date_registration ? (
-                        <div style={{ color: "red", marginTop: "8px" }}>
-                          {String(errors.date_registration)}
-                        </div>
-                      ) : null}
+                      <FieldError message={fieldError("date_registration")} />
                     </div>
                   )}
-                </div>{" "}
+                </div>
                 <Padding />
                 <h3>Endereço</h3>
                 <Padding padding="8px" />
                 <InputAddress
-                  errors={errors}
+                  errors={submitted ? errors : {}}
                   handleChange={handleChange}
                   setFieldValue={setFieldValue}
                   touched={touched}
                   values={values}
                 />
-                {/* <h3>Endereço</h3>
-                <Padding />
-                <div className="grid">
-                  <div className="col-12 md:col-6">
-                    <label>CEP</label>
-                    <Padding />
-                    <TextInput
-                      value={values.responsable_name}
-                      placeholder="name"
-                    />
-                  </div>
-                  <div className="col-12 md:col-6">
-                    <label>Endereço</label>
-                    <Padding />
-                    <TextInput value={values.responsable_cpf} />
-                  </div>
-                </div>{" "}
-                <div className="grid">
-                  <div className="col-12 md:col-6">
-                    <label>Complemento</label>
-                    <Padding />
-                    <TextInput value={values.responsable_cpf} />
-                  </div>
-                </div>{" "}
-                <div className="grid">
-                  <div className="col-12 md:col-6">
-                    <label>Estado </label>
-                    <Padding />
-                    <TextInput
-                      value={values.responsable_telephone}
-                      placeholder="name"
-                    />
-                  </div>
-                  <div className="col-12 md:col-6">
-                    <label>Cidade </label>
-                    <Padding />
-                    <TextInput
-                      value={values.responsable_telephone}
-                      placeholder="name"
-                    />
-                  </div>
-                </div>{" "} */}
               </Form>
             );
           }}

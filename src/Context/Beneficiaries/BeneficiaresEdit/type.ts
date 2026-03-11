@@ -19,10 +19,14 @@ export interface BeneficiariesEditType {
   file: any | undefined
   setFile: Dispatch<SetStateAction<any | undefined>>
   CreateRegisterTerm: (data: FormData) => void
+  isLoadingUpdate: boolean
 }
 
 export interface Registration {
   thp_id: string
+  telephone: string | undefined
+  responsable_email: string | undefined
+  is_legal_responsible: boolean | undefined
   id: number
   avatar_url: any
   name: string

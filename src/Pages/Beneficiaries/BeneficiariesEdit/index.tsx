@@ -37,6 +37,8 @@ import { Container, Padding, Row } from "../../../Styles/styles";
 import { Popover } from "react-tiny-popover";
 import ModalAddTerm from "./ModalAddTerm";
 import ModalCreateRegisterClassroom from "./ModalCreateRegisterClassroom";
+import CheckboxComponent from "../../../Components/Checkbox";
+import RadioButtonComponent from "../../../Components/RadioButton";
 
 const BeneficiariesEdit = () => {
   return (
@@ -59,11 +61,75 @@ export const Avatar = styled.div`
   }
 `;
 
+const ErrorSummary = ({ errors }: { errors: string[] }) => {
+  if (errors.length === 0) return null;
+  return (
+    <div
+      style={{
+        background: "#fff5f5",
+        border: "1px solid #fc8181",
+        borderRadius: "8px",
+        padding: "16px 20px",
+        marginBottom: "16px",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
+        <i className="pi pi-exclamation-circle" style={{ color: "#e53e3e", fontSize: "18px" }} />
+        <strong style={{ color: "#c53030", fontSize: "15px" }}>
+          Corrija os seguintes erros antes de continuar:
+        </strong>
+      </div>
+      <ul style={{ margin: 0, paddingLeft: "20px" }}>
+        {errors.map((error, index) => (
+          <li key={index} style={{ color: "#c53030", marginBottom: "4px", fontSize: "14px" }}>
+            {error}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+const FieldError = ({ message }: { message?: string }) => {
+  if (!message) return null;
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: "4px", color: "#e53e3e", marginTop: "6px", fontSize: "13px" }}>
+      <i className="pi pi-times-circle" style={{ fontSize: "13px" }} />
+      <span>{message}</span>
+    </div>
+  );
+};
+
 const BeneficiariesEditPage = () => {
   const props = useContext(BeneficiariesEditContext) as BeneficiariesEditType;
   const [visible, setVisible] = useState<any>();
   const [visibleTerm, setVisibleTerm] = useState<any>();
   const [visibleDeleteTerm, setVisibleDeleteTerm] = useState<any>();
+  const [submitted, setSubmitted] = useState(false);
+
+  const isUnder18 = (birthday: string): boolean => {
+    if (!birthday) return false;
+
+    let birthDate: Date;
+
+    // Suporta formato DD/MM/YYYY (vindo do MaskInput)
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(birthday)) {
+      const [day, month, year] = birthday.split("/");
+      birthDate = new Date(`${year}-${month}-${day}`);
+    } else {
+      birthDate = new Date(birthday);
+    }
+
+    if (isNaN(birthDate.getTime())) return false;
+
+    const today = new Date();
+    const age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      return age - 1 < 18;
+    }
+    return age < 18;
+  };
 
   const schema = Yup.object().shape({
     name: Yup.string().required("Nome é obrigatório"),
@@ -77,16 +143,65 @@ const BeneficiariesEditPage = () => {
         return true;
       })
       .required("CPF é obrigatório"),
-    responsable_cpf: Yup.string().test("cpf-valid", "CPF inválido", (value) => {
-      if (value && value.trim() !== "") {
-        return validaCPF(value);
-      }
-      return true;
-    }),
-    responsable_telephone: Yup.string().required("Telefone é obrigatório"),
-    birthday: Yup.string()
+    responsable_cpf: Yup.string()
       .nullable()
-      .required("Data de nascimento é obrigatória"),
+      .transform((value) => (value === "" || value === null ? undefined : value))
+      .test("cpf-valid", "CPF inválido", (value) => {
+        if (value && value.trim() !== "") {
+          return validaCPF(value);
+        }
+        return true;
+      })
+      .when("birthday", {
+        is: (birthday: string) => isUnder18(birthday),
+        then: (s) => s.required("CPF do responsável é obrigatório para menores de 18 anos"),
+        otherwise: (s) => s.optional(),
+      }),
+    responsable_name: Yup.string()
+      .nullable()
+      .transform((value) => (value === "" || value === null ? undefined : value))
+      .when("birthday", {
+        is: (birthday: string) => isUnder18(birthday),
+        then: (s) => s.required("Nome do responsável é obrigatório para menores de 18 anos"),
+        otherwise: (s) => s.optional(),
+      }),
+    responsable_telephone: Yup.string()
+      .nullable()
+      .transform((value) => (value === "" || value === null ? undefined : value))
+      .when("birthday", {
+        is: (birthday: string) => isUnder18(birthday),
+        then: (s) => s.required("Telefone do responsável é obrigatório para menores de 18 anos"),
+        otherwise: (s) => s.optional(),
+      }),
+    responsable_email: Yup.string()
+      .nullable()
+      .transform((value) => (value === "" || value === null ? undefined : value))
+      .email("E-mail do responsável inválido"),
+    kinship: Yup.string()
+      .nullable()
+      .transform((value) => (value === "" || value === null || value === "NAO_DEFINIDO" ? undefined : value))
+      .when("birthday", {
+        is: (birthday: string) => isUnder18(birthday),
+        then: (s) => s.required("Parentesco é obrigatório para menores de 18 anos"),
+        otherwise: (s) => s.optional(),
+      }),
+    telephone: Yup.string().when("birthday", {
+      is: (birthday: string) => !isUnder18(birthday),
+      then: (s) => s.required("Telefone para contato é obrigatório"),
+      otherwise: (s) => s.optional(),
+    }),
+    is_legal_responsible: Yup.boolean().when("birthday", {
+      is: (birthday: string) => isUnder18(birthday),
+      then: (s) =>
+        s
+          .oneOf([true], "É necessário confirmar que é o responsável legal do menor")
+          .required("É necessário confirmar que é o responsável legal do menor"),
+      otherwise: (s) => s.optional(),
+    }),
+    birthday: Yup.string().nullable().required("Data de nascimento é obrigatória"),
+    zone: Yup.string().nullable().required("Zona é obrigatório"),
+    neighborhood: Yup.string().nullable().required("Bairro/Povoado é obrigatória"),
+    address: Yup.string().nullable().required("Endereço é obrigatória"),
     state: Yup.string().nullable().required("Estado é obrigatório"),
     city: Yup.string().nullable().required("Cidade é obrigatório"),
     sex: Yup.object().nullable().required("Sexo é obrigatória"),
@@ -150,6 +265,8 @@ const BeneficiariesEditPage = () => {
     );
   };
 
+  
+
   return (
     <Container>
       <h1>Editar Beneficiario</h1>
@@ -165,27 +282,32 @@ const BeneficiariesEditPage = () => {
             );
           }}
         >
-          {({ values, handleChange, errors, touched, setFieldValue }) => {
-            const errorArray = getErrorsAsArray(errors);
+          {({ values, handleChange, errors, touched, setFieldValue, validateForm }) => {
+            const errorArray = submitted ? getErrorsAsArray(errors) : [];
+            const fieldError = (field: string) =>
+              submitted ? (errors as any)[field] : undefined;
+
+            const handleBirthdayChange = (e: any) => {
+              handleChange(e);
+              // Re-valida após mudança de birthday para atualizar campos condicionais
+              setTimeout(() => validateForm(), 0);
+            };
+            console.log(values)
             return (
               <Form>
                 <div>
                   <Row id="end">
-                    <Button label="Salvar" type="submit" />
+                    <Button
+                      label="Salvar"
+                      type="submit"
+                      loading={props.isLoadingUpdate}
+                      onClick={() => setSubmitted(true)}
+                      icon="pi pi-save"
+                    />
                   </Row>
                 </div>
                 <Padding padding="8px" />
-                {errorArray.length > 0 && (
-                  <div>
-                    <h3>Erros encontrados no formulários</h3>
-                    <Padding />
-                    {errorArray.map((error, index) => (
-                      <div key={index} style={{ color: "red" }}>
-                        {error}
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <ErrorSummary errors={errorArray} />
 
                 <Padding padding="8px" />
                 <Avatar>
@@ -239,9 +361,7 @@ const BeneficiariesEditPage = () => {
                       disabled
                     />
                     {errors.status && touched.status ? (
-                      <div style={{ color: "red", marginTop: "8px" }}>
-                        {String(errors.status)}
-                      </div>
+                      <FieldError message={fieldError("status")} />
                     ) : null}
                   </div>
                 </div>
@@ -257,9 +377,7 @@ const BeneficiariesEditPage = () => {
                     />
 
                     {errors.name && touched.name ? (
-                      <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.name}
-                      </div>
+                      <FieldError message={fieldError("name")} />
                     ) : null}
                   </div>
                   <div className="col-12 md:col-6">
@@ -274,9 +392,7 @@ const BeneficiariesEditPage = () => {
                     />
 
                     {errors.sex && touched.sex ? (
-                      <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.sex}
-                      </div>
+                      <FieldError message={fieldError("sex")} />
                     ) : null}
                   </div>
                 </div>{" "}
@@ -289,13 +405,11 @@ const BeneficiariesEditPage = () => {
                       mask="99/99/9999"
                       placeholder="Data de Nascimento"
                       name="birthday"
-                      onChange={handleChange}
+                      onChange={handleBirthdayChange}
                     />
 
                     {errors.birthday && touched.birthday ? (
-                      <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.birthday}
-                      </div>
+                      <FieldError message={fieldError("birthday")} />
                     ) : null}
                   </div>
                   <div className="col-12 md:col-6">
@@ -308,9 +422,7 @@ const BeneficiariesEditPage = () => {
                       onChange={handleChange}
                     />{" "}
                     {errors.color_race && touched.color_race ? (
-                      <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.color_race}
-                      </div>
+                      <FieldError message={fieldError("color_race")} />
                     ) : null}
                   </div>
                 </div>{" "}
@@ -326,26 +438,7 @@ const BeneficiariesEditPage = () => {
                       name="cpf"
                     />
                     {errors.cpf && touched.cpf ? (
-                      <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.cpf}
-                      </div>
-                    ) : null}
-                  </div>
-                  <div className="col-12 md:col-6">
-                    <label>Telefone para contato </label>
-                    <Padding />
-                    <MaskInput
-                      value={values.responsable_telephone}
-                      mask="(99) 9 9999-9999"
-                      name="responsable_telephone"
-                      onChange={handleChange}
-                      placeholder="name"
-                    />
-                    {errors.responsable_telephone &&
-                      touched.responsable_telephone ? (
-                      <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.responsable_telephone}
-                      </div>
+                      <FieldError message={fieldError("cpf")} />
                     ) : null}
                   </div>
                   <div className="col-12 md:col-6">
@@ -358,15 +451,26 @@ const BeneficiariesEditPage = () => {
                       onChange={handleChange}
                     />
                     {errors.date_registration && touched.date_registration ? (
-                      <div style={{ color: "red", marginTop: "8px" }}>
-                        {String(errors.date_registration)}
-                      </div>
+                      <FieldError message={fieldError("date_registration")} />
                     ) : null}
                   </div>
-
-                </div>{" "}
-                <div className="grid">
                   <div className="col-12 md:col-6">
+                    <label>
+                      Telefone para contato{!isUnder18(values.birthday?.toString() ?? "") ? " *" : ""}
+                    </label>
+                    <Padding />
+                    <MaskInput
+                      value={values.telephone}
+                      mask="(99) 9 9999-9999"
+                      name="telephone"
+                      onChange={handleChange}
+                      placeholder="Telefone para contato"
+                    />
+                    {errors.telephone && touched.telephone ? (
+                      <FieldError message={fieldError("telephone")} />
+                    ) : null}
+                  </div>
+                    <div className="col-12 md:col-6">
                     <label>Deficiente</label>
                     <Padding />
                     <DropdownComponent
@@ -380,12 +484,10 @@ const BeneficiariesEditPage = () => {
                       ]}
                     />
                     {errors.deficiency && touched.deficiency ? (
-                      <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.deficiency.toString()}
-                      </div>
+                      <FieldError message={fieldError("deficiency")} />
                     ) : null}
                   </div>
-                  {values.deficiency && (
+                  {values.deficiency.id && (
                     <div className="col-12 md:col-6">
                       <label>Qual deficiência?</label>
                       <Padding />
@@ -398,8 +500,33 @@ const BeneficiariesEditPage = () => {
                     </div>
                   )}
                 </div>{" "}
+                <div className="grid">
+                  <div className="col-12 md:col-6">
+                    <label>Zona *</label>
+                    <Padding />
+                    <Row className="gap-2">
+                      <RadioButtonComponent
+                        value={1}
+                        checked={values.zone === 1}
+                        onChange={handleChange}
+                        name="zone"
+                        label="Rural"
+                      />
+                      <RadioButtonComponent
+                        value={2}
+                        checked={values.zone === 2}
+                        onChange={handleChange}
+                        name="zone"
+                        label="Urbana"
+                      />
+                    </Row>
+                    {errors.zone && touched.zone ? (
+                      <FieldError message={fieldError("zone")} />
+                    ) : null}
+                  </div>
+                </div>
                 <Padding padding="8px" />
-                <h3>Dados Responsavel</h3>
+                <h3>Dados Responsavel (Se for menor de 18 anos)</h3>
                 <Padding />
                 <div className="grid">
                   <div className="col-12 md:col-6">
@@ -412,9 +539,7 @@ const BeneficiariesEditPage = () => {
                       placeholder="Nome do Resposável"
                     />
                     {errors.responsable_name && touched.responsable_name ? (
-                      <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.responsable_name.toString()}
-                      </div>
+                      <FieldError message={fieldError("responsable_name")} />
                     ) : null}
                   </div>
                   <div className="col-12 md:col-6">
@@ -428,11 +553,11 @@ const BeneficiariesEditPage = () => {
                       onChange={handleChange}
                     />
                     {errors.responsable_cpf && touched.responsable_cpf ? (
-                      <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.responsable_cpf.toString()}
-                      </div>
+                      <FieldError message={fieldError("responsable_cpf")} />
                     ) : null}
                   </div>
+                </div>{" "}
+                <div className="grid">
                   <div className="col-12 md:col-6">
                     <label>Parentesco</label>
                     <Padding />
@@ -446,11 +571,56 @@ const BeneficiariesEditPage = () => {
                       value={values.kinship}
                     />
                     {errors.kinship && touched.kinship ? (
-                      <div style={{ color: "red", marginTop: "8px" }}>
-                        {errors.kinship.toString()}
-                      </div>
+                      <FieldError message={fieldError("kinship")} />
                     ) : null}
                   </div>
+                  <div className="col-12 md:col-6">
+                    <label>
+                      Telefone do Responsável{isUnder18(values.birthday?.toString() ?? "") ? " *" : ""}
+                    </label>
+                    <Padding />
+                    <MaskInput
+                      value={values.responsable_telephone}
+                      mask="(99) 9 9999-9999"
+                      name="responsable_telephone"
+                      onChange={handleChange}
+                      placeholder="Telefone do Responsável"
+                    />
+                    {errors.responsable_telephone && touched.responsable_telephone ? (
+                      <FieldError message={fieldError("responsable_telephone")} />
+                    ) : null}
+                  </div>
+                  <div className="col-12 md:col-6">
+                    <label>
+                      E-mail do Responsável
+                    </label>
+                    <Padding />
+                    <TextInput
+                      value={values.responsable_email}
+                      name="responsable_email"
+                      onChange={handleChange}
+                      placeholder="E-mail do Responsável"
+                    />
+                    {errors.responsable_email && touched.responsable_email ? (
+                      <FieldError message={fieldError("responsable_email")} />
+                    ) : null}
+                  </div>
+                  {isUnder18(values.birthday?.toString() ?? "") && (
+                    <div className="col-12">
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginTop: "8px" }}>
+                        <CheckboxComponent
+                          checked={values.is_legal_responsible}
+                          onChange={(e) => setFieldValue("is_legal_responsible", e.checked)}
+                        />
+                        <label style={{ cursor: "pointer", fontWeight: 500 }}>
+                          Confirmo que sou o responsável legal deste menor de idade *
+                        </label>
+                      </div>
+                      {errors.is_legal_responsible && touched.is_legal_responsible ? (
+                        <FieldError message={fieldError("is_legal_responsible")} />
+                      ) : null}
+                    </div>
+                  )}
                 </div>{" "}
                 <Padding />
                 <h3>Endereço</h3>

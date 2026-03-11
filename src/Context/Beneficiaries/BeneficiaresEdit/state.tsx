@@ -82,6 +82,10 @@ export const BeneficiariesEditState = () => {
     date_registration: registrations?.date_registration
       ? new Date(registrations?.date_registration)
       : null,
+      telephone: registrations?.telephone ?? undefined,
+      responsable_email: registrations?.responsable_email,
+      is_legal_responsible: registrations?.is_legal_responsible,
+      zone: registrations?.zone
   };
 
   const CreateRegisterClassroom = (data: CreateRegistrationClassroomType) => {
@@ -130,6 +134,7 @@ export const BeneficiariesEditState = () => {
     registrations,
     initialValue,
     isLoading,
+    isLoadingUpdate: requestPreRegistrationMutation.isLoading,
     handleUpdateRegistration,
     DeleteRegistration,
     DeleteRegisterTerm,
