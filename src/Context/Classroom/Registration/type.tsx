@@ -26,11 +26,15 @@ export interface UpdateRegister
     responsable_name: string | undefined;
     responsable_cpf: string | undefined;
     responsable_telephone: string | undefined;
+    responsable_email: string | undefined;
+    is_legal_responsible: boolean | undefined;
+    zone: number | undefined;
     status: {id: string, name: string} | undefined;
     registration_classroom_id?: number
     deficiency_description: any
     kinship: string | undefined | null
     date_registration?: any | undefined
+    telephone: string | undefined | any
 }
 export interface RegistrationType {
   avatar_url: string
@@ -45,6 +49,9 @@ export interface RegistrationType {
 
 export interface Registration {
   thp_id: string
+  telephone: string | undefined
+  responsable_email: string | undefined
+  is_legal_responsible: boolean | undefined
   id: number
   avatar_url: any
   name: string
