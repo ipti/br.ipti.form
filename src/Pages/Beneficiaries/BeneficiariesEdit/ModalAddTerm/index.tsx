@@ -1,16 +1,16 @@
 import { Form, Formik } from "formik";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
+import { Dropdown } from "primereact/dropdown";
+import { useContext } from "react";
 import * as Yup from "yup";
 import CalendarComponent from "../../../../Components/Calendar";
 import TextInput from "../../../../Components/TextInput";
-import { ControllerUpdateRegistration } from "../../../../Services/PreRegistration/controller";
-import { Column, Padding, Row } from "../../../../Styles/styles";
 import { BeneficiariesEditContext } from "../../../../Context/Beneficiaries/BeneficiaresEdit/context";
 import { BeneficiariesEditType } from "../../../../Context/Beneficiaries/BeneficiaresEdit/type";
-import { useContext } from "react";
-import { Dropdown } from "primereact/dropdown";
 import { StatusTermEnum, TypeTermEnum } from "../../../../Controller/controllerGlobal";
+import { ControllerUpdateRegistration } from "../../../../Services/PreRegistration/controller";
+import { Column, Padding, Row } from "../../../../Styles/styles";
 
 const ModalAddTerm = ({
   onHide,
@@ -34,6 +34,8 @@ const ModalAddTerm = ({
     dateTerm: Yup.string().required("Data de assinatura é obrigatório"),
     dateValid: Yup.string().required("Data de validade é obrigatório"),
     file: Yup.string().required("Arquivo com termo é obrigatório"),
+    status: Yup.string().required("Status é obrigatório"),
+    type: Yup.string().required("Tipo é obrigatório"),
   });
 
   const schemaEdit = Yup.object().shape({
@@ -89,7 +91,7 @@ const ModalAddTerm = ({
             <Form>
               <div className="grid">
                 <div className="col-12 md:col-6">
-                  <label>Data de assinatura</label>
+                  <label>Data de assinatura *</label>
                   <Padding />
                   <CalendarComponent
                     value={values.dateTerm}
@@ -105,7 +107,7 @@ const ModalAddTerm = ({
                   ) : null}
                 </div>
                 <div className="col-12 md:col-6">
-                  <label>Data de validade</label>
+                  <label>Data de validade *</label>
                   <Padding />
                   <CalendarComponent
                     value={values.dateValid}
@@ -121,7 +123,7 @@ const ModalAddTerm = ({
                   ) : null}
                 </div>
                 {!visible?.dateTerm && <div className="col-12 md:col-6">
-                  <label>Termo </label>
+                  <label>Termo *</label>
                   <Padding />
                   <TextInput
                     // value={file}
@@ -137,7 +139,7 @@ const ModalAddTerm = ({
                   ) : null}
                 </div>}
                  { <div className="col-12 md:col-6">
-                  <label>Status </label>
+                  <label>Status *</label>
                   <Padding />
                   <Dropdown
                       value={values.status}
@@ -156,7 +158,7 @@ const ModalAddTerm = ({
                   ) : null}
                 </div>}
                    { <div className="col-12 md:col-6">
-                  <label>Tipo </label>
+                  <label>Tipo *</label>
                   <Padding />
                   <Dropdown
                       value={values.type}
@@ -183,11 +185,6 @@ const ModalAddTerm = ({
                     onChange={handleChange}
                     name="observation"
                   />
-                  {errors.file && touched.file ? (
-                    <div style={{ color: "red", marginTop: "8px" }}>
-                      {String(errors.file)}
-                    </div>
-                  ) : null}
                 </div>
               </div>{" "}
               <Padding padding="16px" />
