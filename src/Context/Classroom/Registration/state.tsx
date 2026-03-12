@@ -24,7 +24,7 @@ export const RegistrationClassroomState = () => {
 
   const handleUpdateRegistration = (data: UpdateRegister, id: number) => {
     const payload = {
-      // registration_classroom_id: registration?.id,
+      registration_classroom_id: registration?.id,
       status: data.status.id,
     };
 
