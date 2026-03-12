@@ -8,33 +8,33 @@ export interface RegistrationDetailsTypes {
 
 export interface UpdateRegister 
   {
-    name: string | undefined;
-    sex: {
+    name?: string | undefined;
+    sex?: {
         id: number;
         type: string;
-    } | undefined;
-    cpf: string | undefined;
-    color_race: {
+    } | undefined | any;
+    cpf?: string | undefined;
+    color_race?: {
         id: number;
         name: string;
-    } | undefined;
-    birthday: string | undefined | Date;
-    deficiency: {
+    } | undefined | any;
+    birthday?: string | undefined | Date;
+    deficiency?: {
       name: string;
       id: boolean;
-    };
-    responsable_name: string | undefined;
-    responsable_cpf: string | undefined;
-    responsable_telephone: string | undefined;
-    responsable_email: string | undefined;
-    is_legal_responsible: boolean | undefined;
-    zone: number | undefined;
-    status: {id: string, name: string} | undefined;
+    } | undefined | any;
+    responsable_name?: string | undefined;
+    responsable_cpf?: string | undefined;
+    responsable_telephone?: string | undefined;
+    responsable_email?: string | undefined;
+    is_legal_responsible?: boolean | undefined;
+    zone?: number | undefined;
+    status?: {id: string, name: string} | undefined | any;
     registration_classroom_id?: number
-    deficiency_description: any
-    kinship: string | undefined | null
+    deficiency_description?: any
+    kinship?: string | undefined | null
     date_registration?: any | undefined
-    telephone: string | undefined | any
+    telephone?: string | undefined | any
 }
 export interface RegistrationType {
   avatar_url: string

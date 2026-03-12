@@ -487,7 +487,7 @@ const BeneficiariesEditPage = () => {
                       <FieldError message={fieldError("deficiency")} />
                     ) : null}
                   </div>
-                  {values.deficiency.id && (
+                  {values.deficiency?.id && (
                     <div className="col-12 md:col-6">
                       <label>Qual deficiência?</label>
                       <Padding />
