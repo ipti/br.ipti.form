@@ -123,9 +123,13 @@ export const BeneficiariesEditState = () => {
           /[^a-zA-Z0-9]/g,
           ""
         ),
+        telephone: data?.telephone?.replace(/[^a-zA-Z0-9]/g, ""),
         kinship: data.kinship === "" ? "NAO_DEFINIDO" : data.kinship,
         responsable_cpf: data?.responsable_cpf?.replace(/[^a-zA-Z0-9]/g, ""),
         cpf: data?.cpf?.replace(/[^a-zA-Z0-9]/g, ""),
+        color_race: data?.color_race?.id,
+        sex: data?.sex?.id,
+        deficiency: data?.deficiency?.id,
       },
       id: id,
     });
