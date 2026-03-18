@@ -4,6 +4,7 @@ export interface CreateMeeting {
   meeting_date?: Date;
   users?: Array<number>;
   classroom?: number;
+  workload?: string;
 }
 
 export interface EditMeeting {

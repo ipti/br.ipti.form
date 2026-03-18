@@ -187,25 +187,53 @@ const ProjectOnePage = () => {
       )}
       <Padding padding="16px" />
       <div className="grid">
-        <div className="col-12 md:col-6">
+        <div className="col-12 md:col-3">
           <CardQuant
             quant={props.project?.project.approval_percentage + "%"}
             title="Parâmetro para aprovação do plano de trabalho"
             color="navy_blue"
           />
         </div>
-        <div className="col-12 md:col-6">
+        <div className="col-12 md:col-3">
           <CardQuant
             quant={props.project?.project.classrooms.length!}
             title="Total de Turmas"
             color="blue"
           />
         </div>
-        <div className="col-12 md:col-6">
+        <div className="col-12 md:col-3">
           <CardQuant
-            quant={props.project?.register_count!}
+            quant={props.project?.total_register_count!}
             title="Total de Matriculas"
             color="orange"
+          />
+        </div>
+        <div className="col-12 md:col-3">
+          <CardQuant
+            quant={props.project?.approved_register_count!}
+            title="Total de Matriculas aprovadas"
+            color="navy_blue"
+          />
+        </div>
+        <div className="col-12 md:col-3">
+          <CardQuant
+            quant={props.project?.irregular_term_count!}
+            title="Total de Termos Irregulares"
+            color="orange"
+          />
+        </div>
+        <div className="col-12 md:col-3">
+          <CardQuant
+            quant={props.project?.students_approved_by_frequency_count!}
+            title="Alunos Aprovados por Frequência"
+            color="blue"
+          />
+        </div>
+        <div className="col-12 md:col-3">
+          <CardQuant
+            quant={props.project?.students_with_presence_count!}
+            title="Alunos com Presença"
+            color="navy_blue"
           />
         </div>
       </div>

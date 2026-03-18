@@ -205,6 +205,7 @@ export interface CardFormTypes {
 export interface Projects {
     id: number,
     name: string,
+    area_of_activity?: string
   }
 
   export interface LogoFileContent {

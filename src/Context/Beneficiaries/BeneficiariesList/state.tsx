@@ -40,7 +40,6 @@ export const BeneficiariesListState = () => {
     navigate(`${location.pathname}?${queryParams.toString()}`);
   };
 
-  console.log("🚀 ~ file: state.tsx:24 ~ BeneficiariesListState ~ filter:", filter)
 
    const navigate = useNavigate();
   const location = useLocation();

@@ -63,6 +63,18 @@ const EditUserPage = () => {
 
   const { data: project } = useFetchRequestUsersOne(parseInt(id!));
 
+  const profile =
+    project?.role === ROLE.REAPPLICATORS
+      ? project?.reapplicators?.[0]
+      : project?.role === ROLE.COORDINATORS
+      ? project?.coordinators?.[0]
+      : null;
+
+  const isSocialRole =
+    project?.role === ROLE.REAPPLICATORS || project?.role === ROLE.COORDINATORS;
+
+  const isAdminRole = project?.role === ROLE.ADMIN;
+
   const CreateUserSchema = Yup.object().shape({
     name: Yup.string()
       .required("Campo Obrigatório")
@@ -70,21 +82,30 @@ const EditUserPage = () => {
     username: Yup.string()
       .required("Campo Obrigatório")
       .min(8, "Nome do usuário deve ter pelo menos 8 caracteres"),
-    // password: Yup.string()
-    //   .required("Campo Obrigatório")
-    //   .min(8, "Senha deve ter pelo menos 8 caracteres"),
     role: Yup.string().required("Campo Obrigatório"),
-    project: Yup.array().required("Campo Obrigatório"),
-    initial_date: Yup.string().required("Campo Obrigatório"),
-    birthday: Yup.string().required("Campo Obrigatório"),
-    phone: Yup.string().required("Campo Obrigatório"),
-    email: Yup.string().required("Campo Obrigatório").email("Email inválido"),
-    sex: Yup.string().required("Campo Obrigatório"),
-    color_race: Yup.string().required("Campo Obrigatório"),
     // confirmPassword: Yup.string()
     //   .label("Confirmar senha")
     //   .required("Campo Obrigatório")
     //   .oneOf([Yup.ref("password")], "Senhas difirentes"),
+    project: isAdminRole
+      ? Yup.array()
+      : Yup.array()
+          .min(1, "Selecione pelo menos uma tecnologia")
+          .required("Campo Obrigatório"),
+    initial_date: isSocialRole
+      ? Yup.string().required("Campo Obrigatório")
+      : Yup.string(),
+    birthday: isSocialRole
+      ? Yup.string().required("Campo Obrigatório")
+      : Yup.string(),
+    phone: Yup.string().required("Campo Obrigatório"),
+    email: Yup.string().required("Campo Obrigatório"),
+    sex: isSocialRole
+      ? Yup.string().required("Campo Obrigatório")
+      : Yup.string(),
+    color_race: isSocialRole
+      ? Yup.string().required("Campo Obrigatório")
+      : Yup.string(),
   });
 
   const selectTs = (data: any) => {
@@ -105,15 +126,15 @@ const EditUserPage = () => {
             username: project?.username ?? "",
             role: project?.role ?? "",
             project: selectTs(project.user_social_technology),
-            initial_date: project?.reapplicators[0]?.initial_date
-              ? formatarData(project?.reapplicators[0]?.initial_date)
+            initial_date: profile?.initial_date
+              ? formatarData(profile.initial_date)
               : "",
-            phone: project?.reapplicators[0]?.phone ?? "",
-            email: project?.reapplicators[0]?.email ?? "",
-            color_race: project?.reapplicators[0]?.color_race ?? "",
-            sex: project?.reapplicators[0]?.sex ?? "",
-            birthday: project?.reapplicators[0]?.birthday
-              ? formatarData(project?.reapplicators[0]?.birthday)
+            phone: profile?.phone ?? "",
+            email: profile?.email ?? "",
+            color_race: profile?.color_race ?? "",
+            sex: profile?.sex ?? "",
+            birthday: profile?.birthday
+              ? formatarData(profile.birthday)
               : "",
           }}
           onSubmit={(values) => {
@@ -138,7 +159,6 @@ const EditUserPage = () => {
                       </Link>
                     </LinkSenha>
                   )}
-
                   <Button label="Salvar" />
                 </Row>
                 <Padding padding="16px" />
@@ -147,6 +167,7 @@ const EditUserPage = () => {
                   handleChange={handleChange}
                   touched={touched}
                   values={values}
+                  basicOnly={!isSocialRole}
                 />
               </Form>
             );

@@ -12,6 +12,7 @@ import CreateMeetingProvider, {
 import { CreateMeetingType } from "../../../../../Context/Classroom/Meeting/Create/type";
 import { useFetchRequestUsers } from "../../../../../Services/Users/query";
 import { Padding, Row } from "../../../../../Styles/styles";
+import TimeInput from "../../../../../Components/TimeInput";
 
 const CreateMeeting = () => {
   return (
@@ -33,7 +34,7 @@ const CreateMeetingPage = () => {
     <ContentPage title="Criar Encontro" description="Crie um novo encontro.">
       <Padding padding="16px" />
       <Formik
-        initialValues={{ name: "", users: [], meeting_date: undefined, theme: "" }}
+        initialValues={{ name: "", users: [], meeting_date: undefined, theme: "", workload: "" }}
         onSubmit={(values) => {
           props.CreateMeeting({ ...values, classroom: parseInt(id!) });
         }}
@@ -64,7 +65,7 @@ const CreateMeetingPage = () => {
                   </div>
                 </div>
                 <div className="grid">
-                  <div className="col-12 md:col-6">
+                  <div className="col-12 md:col-4">
                     <label>Data do encontro</label>
                     <Padding />
                     <CalendarComponent
@@ -75,7 +76,17 @@ const CreateMeetingPage = () => {
                       onChange={handleChange}
                     />
                   </div>
-                  <div className="col-12 md:col-6">
+                  <div className="col-12 md:col-4">
+                    <label>Carga Horária (horas)</label>
+                    <Padding />
+                    <TimeInput
+                      placeholder="Carga Horária"
+                      value={values.workload}
+                      name="workload"
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="col-12 md:col-4">
                     <label>Responsavel</label>
                     <Padding />
                     <MultiSelect

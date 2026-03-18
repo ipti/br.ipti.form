@@ -100,7 +100,7 @@ export const ControllerClassroom = () => {
       onSuccess: (data) => {
         Swal.fire({
           icon: "success",
-          title: "Turma criada com sucesso!",
+          title: "Turma editada com sucesso!",
           confirmButtonColor: styles.colors.colorsBaseProductNormal,
         }).then((result) => {
           if (result.isConfirmed) {

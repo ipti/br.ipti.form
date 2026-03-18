@@ -19,3 +19,17 @@ code {
   border-radius: 10px;
   margin-bottom: 1rem;
 }
+
+.p-inputtext,
+.p-dropdown,
+.p-multiselect,
+.p-password input {
+  height: 44px;
+  box-sizing: border-box;
+}
+
+.p-dropdown,
+.p-multiselect {
+  display: flex;
+  align-items: center;
+}

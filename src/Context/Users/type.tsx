@@ -21,10 +21,10 @@ export interface CreateUser {
   role?:string,
   email?: string,
   phone?: string,
-  sex: number,
-  color_race: number,
-  initial_date: string,
-  birthday: string
+  sex?: number,
+  color_race?: number,
+  initial_date?: string,
+  birthday?: string
 }
 
 export interface User {

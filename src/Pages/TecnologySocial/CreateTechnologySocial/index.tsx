@@ -1,5 +1,6 @@
 import { Form, Formik } from "formik";
 import { Button } from "primereact/button";
+import { Dropdown } from "primereact/dropdown";
 import { useContext } from "react";
 import * as Yup from "yup";
 import ContentPage from "../../../Components/ContentPage";
@@ -8,8 +9,8 @@ import CreateTsProvider, {
   CreateTsContext,
 } from "../../../Context/TecnologySocial/CreateTecnologySocial/context";
 import { CreateTsTypes } from "../../../Context/TecnologySocial/CreateTecnologySocial/type";
+import { areaOptions } from "../../../Controller/controllerGlobal";
 import { Padding, Row } from "../../../Styles/styles";
-
 
 const CreateTechnologySocial = () => {
   return (
@@ -24,11 +25,13 @@ const CreateTechnologySocialPage = () => {
 
   const initialValues = {
     name: "",
+    area_of_activity: "",
   };
+
+ 
 
   const CreateTsSchema = Yup.object().shape({
     name: Yup.string().required("Campo Obrigatório"),
-   
   });
 
   return (
@@ -38,10 +41,15 @@ const CreateTechnologySocialPage = () => {
         initialValues={initialValues}
         validationSchema={CreateTsSchema}
         onSubmit={(values) => {
-          props.CreateTechnology({ name: values.name });
+          console.log(values);
+          props.CreateTechnology({
+            name: values.name,
+            area_of_activity: values.area_of_activity || undefined,
+            // area_of_activity: values.area_of_activity || undefined,
+          });
         }}
       >
-        {({ values, errors, handleChange, touched }) => {
+        {({ values, errors, handleChange, setFieldValue, touched }) => {
           return (
             <Form>
               <Row id="end">
@@ -56,13 +64,23 @@ const CreateTechnologySocialPage = () => {
                   placeholder="Nome*"
                   value={values.name}
                 />
+                {errors.name && touched.name && (
+                  <div style={{ color: "red", marginTop: "8px" }}>{errors.name}</div>
+                )}
+                <Padding padding="16px" />
+                <label>Área de Atuação</label>
+                <Padding />
+                <Dropdown
+                  name="area_of_activity"
+                  value={values.area_of_activity}
+                  options={areaOptions}
+                  optionLabel="name"
+                  optionValue="id"
+                  onChange={handleChange}
+                  placeholder="Selecione a área de atuação"
+                  style={{ width: "100%" }}
+                />
               </div>
-              <Padding />
-              {errors.name && touched.name ? (
-                <div style={{ color: "red", marginTop: "8px" }}>
-                  {errors.name}
-                </div>
-              ) : null}
               <Padding padding="16px" />
             </Form>
           );

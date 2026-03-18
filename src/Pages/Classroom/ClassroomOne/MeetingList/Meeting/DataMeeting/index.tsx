@@ -1,6 +1,10 @@
 import { Form, Formik } from "formik";
 import { Button } from "primereact/button";
+import { Chip } from "primereact/chip";
+import { MultiSelect } from "primereact/multiselect";
 import { useContext, useState } from "react";
+import { Popover } from "react-tiny-popover";
+import CalendarComponent from "../../../../../../Components/Calendar";
 import DropdownComponent from "../../../../../../Components/Dropdown";
 import TextAreaComponent from "../../../../../../Components/TextArea";
 import TextInput from "../../../../../../Components/TextInput";
@@ -8,18 +12,18 @@ import { AplicationContext } from "../../../../../../Context/Aplication/context"
 import { MeetingListRegistrationContext } from "../../../../../../Context/Classroom/Meeting/MeetingListRegistration/context";
 import { MeetingListRegisterTypes } from "../../../../../../Context/Classroom/Meeting/MeetingListRegistration/type";
 import { ROLE, Status } from "../../../../../../Controller/controllerGlobal";
+import { useFetchRequestUsers } from "../../../../../../Services/Users/query";
 import { Column, Padding, Row } from "../../../../../../Styles/styles";
 import { PropsAplicationContext } from "../../../../../../Types/types";
-import CalendarComponent from "../../../../../../Components/Calendar";
-import { Chip } from "primereact/chip";
-import { useFetchRequestUsers } from "../../../../../../Services/Users/query";
-import { MultiSelect } from "primereact/multiselect";
+import TimeInput from "../../../../../../Components/TimeInput";
 
 const DataMeeting = () => {
 
   const { data: userRequest } = useFetchRequestUsers(undefined);
 
   const [edit, setEdit] = useState(false);
+  const [statusInfoOpen, setStatusInfoOpen] = useState(false);
+  const [obsInfoOpen, setObsInfoOpen] = useState(false);
 
   const props = useContext(
     MeetingListRegistrationContext
@@ -41,6 +45,37 @@ const DataMeeting = () => {
 
   const date = new Date(new Date(props.meeting?.meeting_date!).setDate(new Date(props.meeting?.meeting_date!).getDate() + 1))
 
+  if(!props.meeting) {
+    return <div>Carregando...</div>
+  }
+
+  const tooltipStyle: React.CSSProperties = {
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "18px",
+    height: "18px",
+    borderRadius: "50%",
+    backgroundColor: "#e5e7eb",
+    color: "#6b7280",
+    fontSize: "11px",
+    fontWeight: "bold",
+    cursor: "pointer",
+    userSelect: "none",
+    marginLeft: "6px",
+  };
+
+  const popoverBoxStyle: React.CSSProperties = {
+    backgroundColor: "white",
+    padding: "12px 16px",
+    maxWidth: "280px",
+    boxShadow: "rgba(0, 0, 0, 0.1) 0px 4px 12px",
+    borderRadius: "8px",
+    fontSize: "13px",
+    color: "#374151",
+    lineHeight: "1.6",
+  };
+
   return (
     <Formik
       initialValues={{
@@ -51,6 +86,7 @@ const DataMeeting = () => {
         status: getStatus(props.meeting?.status!),
         meeting_date: date,
         users: props.meeting?.meeting_user.map((item) => item.users) ?? [],
+        workload: props.meeting?.workload ?? 0,
       }}
       onSubmit={(values) => {
         props.UpdateMeetingUser({ id: props.meeting?.id!, users: values.users.map((item) => item.id) });
@@ -64,7 +100,8 @@ const DataMeeting = () => {
         setEdit(!edit);
       }}
     >
-      {({ values, errors, handleChange, touched }) => {
+      {({ values, errors, handleChange, touched, setFieldValue }) => {
+
         return (
           <Form>
             <Row id="space-between">
@@ -118,6 +155,17 @@ const DataMeeting = () => {
                   onChange={handleChange}
                 />
               </div>
+              <div className="col-12 md:col-4">
+                <label>Carga Horária (horas)</label>
+                <Padding />
+                <TimeInput
+                  placeholder="Carga Horária"
+                  value={values.workload}
+                  name="workload"
+                  onChange={(e: any) => setFieldValue("workload", e.target.value)}
+                  disabled={!edit}
+                />
+              </div>
               <div className="col-12 md:col-6">
                 <label>Data do encontro</label>
                 <Padding />
@@ -141,7 +189,26 @@ const DataMeeting = () => {
                 <>
                   <div className="grid">
                     <div className="col-12 md:col-6">
-                      <label>Status</label>
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <label>Status</label>
+                        <Popover
+                          isOpen={statusInfoOpen}
+                          positions={["top", "right", "bottom"]}
+                          onClickOutside={() => setStatusInfoOpen(false)}
+                          content={
+                            <div style={popoverBoxStyle}>
+                              <strong>Como aplicar cada status:</strong>
+                              <ul style={{ marginTop: "8px", paddingLeft: "16px" }}>
+                                <li><strong>Pendente de Análise:</strong> o encontro ainda aguarda revisão inicial.</li>
+                                <li><strong>Pendente de Revisão:</strong> o encontro foi analisado mas precisa de correções.</li>
+                                <li><strong>Aprovado:</strong> disponível somente quando há arquivos anexados; indica que o encontro está validado.</li>
+                              </ul>
+                            </div>
+                          }
+                        >
+                          <span style={tooltipStyle} onClick={() => setStatusInfoOpen(!statusInfoOpen)}>?</span>
+                        </Popover>
+                      </div>
                       <Padding />
                       <DropdownComponent
                         disabled={!edit}
@@ -170,7 +237,27 @@ const DataMeeting = () => {
               )}{" "}
             <div className="grid">
               <div className="col-12 md:col-6">
-                <label>Observações</label>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <label>Observações</label>
+                  <Popover
+                    isOpen={obsInfoOpen}
+                    positions={["top", "right", "bottom"]}
+                    onClickOutside={() => setObsInfoOpen(false)}
+                    content={
+                      <div style={popoverBoxStyle}>
+                        <strong>O que colocar nas observações:</strong>
+                        <ul style={{ marginTop: "8px", paddingLeft: "16px" }}>
+                          <li>Informações relevantes sobre a dinâmica do encontro.</li>
+                          <li>Dificuldades ou imprevistos ocorridos.</li>
+                          <li>Comentários sobre a participação dos beneficiários.</li>
+                          <li>Qualquer observação que complemente o registro do encontro.</li>
+                        </ul>
+                      </div>
+                    }
+                  >
+                    <span style={tooltipStyle} onClick={() => setObsInfoOpen(!obsInfoOpen)}>?</span>
+                  </Popover>
+                </div>
                 <Padding />
                 <TextAreaComponent
                   disabled={!edit}
@@ -182,6 +269,7 @@ const DataMeeting = () => {
                 />
               </div>
             </div>
+              
             {!edit ? <div className="col-12 md:col-6">
               <label>Responsáveis pelo encontro</label>
               <Padding />

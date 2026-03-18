@@ -3,7 +3,7 @@ import { DataTable } from "primereact/datatable";
 import { useState } from "react";
 import ContentPage from "../../Components/ContentPage";
 import Loading from "../../Components/Loading";
-import { formatarData } from "../../Controller/controllerGlobal";
+import { formatarData, typeLog } from "../../Controller/controllerGlobal";
 import { UserLogScope, useFetchUserLogs } from "../../Services/UserLog/query";
 import { Padding } from "../../Styles/styles";
 
@@ -46,7 +46,7 @@ const UserLogs = ({ scope, title, description, id }: UserLogsProps) => {
       >
         <Column field="users.name" header="Usuário" />
         <Column field="action" header="Ação" />
-        <Column field="type" header="Tipo" />
+        <Column body={(row) => typeLog[row?.type]} header="Tipo" />
         <Column field="createdAt" header="Data" body={(row) => formatarData(row?.createdAt)} />
       </DataTable>
     </ContentPage>

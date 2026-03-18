@@ -54,10 +54,20 @@ const InitialPage = () => {
 
   const downloadCSV = async () => {
     try {
-      const response = await http.get("/user-bff/chart-csv?year=" + getYear());
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      let url = "/user-bff/chart-csv?year=" + getYear();
+
+      if (dates && dates[0] && dates[1]) {
+        url += `&startDate=${formatDate(dates[0])}&endDate=${formatDate(dates[1])}`;
+      }
+
+      if (ts && ts.length > 0) {
+        url += `&socialTechnologyIds=${ts.join(",")}`;
+      }
+
+      const response = await http.get(url);
+      const urlBlob = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
-      link.href = url;
+      link.href = urlBlob;
       link.setAttribute("download", "meuben.csv");
       document.body.appendChild(link);
       link.click();

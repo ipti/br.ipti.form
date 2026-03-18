@@ -54,7 +54,6 @@ export const ChartMatriculatedState = ({
           ? getMonthNumber(0, 11)
           : availableMonths.map((m) => month[m]);
 
-          console.log(labels)
 
         const datasets = [
           {
