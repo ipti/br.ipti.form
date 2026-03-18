@@ -149,6 +149,12 @@ export const typeLog: any = {
   SOCIAL_TECHNOLOGY: "Tecnologia social"
 };
 
+export const typeLogArray = Object.entries(typeLog).map(([id, name]) => ({
+  id,
+  name
+}));
+
+
 export const StatusTermEnum: any = {
   TERM_ANALYSIS: "Em análise",
   ACTIVE_TERM: "Termo ativo",
