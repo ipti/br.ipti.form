@@ -38,6 +38,9 @@ import ajuda_hover from "../../Assets/images/iconsMenu/question_mark_active.svg"
 
 import user from "../../Assets/images/iconsMenu/person.svg";
 import user_hover from "../../Assets/images/iconsMenu/person_active.svg";
+
+import log from "../../Assets/images/iconsMenu/log.svg";
+import logHover from "../../Assets/images/iconsMenu/log_active.svg";
 import { controllerYears } from "../../Controller/controllerYears";
 
 const Menu = ({ viewdMenu }: { viewdMenu: boolean }) => {
@@ -50,7 +53,7 @@ const Menu = ({ viewdMenu }: { viewdMenu: boolean }) => {
   useEffect(() => {
     setActive(parseInt(getMenuItem()!))
   }, [itemMenu])
-  
+
 
   return (
     <Container active={viewdMenu}>
@@ -155,8 +158,9 @@ const Menu = ({ viewdMenu }: { viewdMenu: boolean }) => {
             icon={active === 8 ? turmasHover : turmas}
           /> */}
 
+
           {props.user?.role === ROLE.ADMIN ||
-          props.user?.role === ROLE.COORDINATORS ? (
+            props.user?.role === ROLE.COORDINATORS ? (
             <>
               <Padding />
               <Item
@@ -171,9 +175,21 @@ const Menu = ({ viewdMenu }: { viewdMenu: boolean }) => {
               />
             </>
           ) : null}
-
+          {props.user?.role === ROLE.ADMIN &&
+            <>
+              <Padding />
+              <Item
+                text="Logs"
+                funcActiv={() => {
+                  setActive(8);
+                  menuItem("8");
+                }}
+                active={active === 8 ? true : false}
+                path={"/logs"}
+                icon={active === 8 ? logHover : log}
+              />
+            </>}
           <Padding />
-
           <Item
             text={"Ajuda"}
             funcActiv={() => {

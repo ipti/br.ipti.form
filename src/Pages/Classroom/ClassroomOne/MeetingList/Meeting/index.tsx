@@ -15,6 +15,7 @@ import Beneficiarios from "./Beneficiarios";
 import DataMeeting from "./DataMeeting";
 import ModalFiles from "./ModalFiles";
 import ListArchivesAttendanceList from "./UploadArchivesAttendanceList";
+import UserLogs from "../../../../../Components/UserLogs";
 
 const Meeting = () => {
   return (
@@ -114,6 +115,7 @@ const MeetingPage = () => {
           <ModalFiles item={props.meeting?.meeting_archives} visible={visible} index={indexImage} onHide={() => setVisible(!visible)} />
           <Padding padding="16px" />
           <Beneficiarios />
+          <UserLogs scope="meeting" title="Log do Encontro"  description="Acesse os logs de atividades do encontro" id={props.meeting.id} />
         </>
       ) : null}
     </Container>

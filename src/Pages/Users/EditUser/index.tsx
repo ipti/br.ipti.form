@@ -83,6 +83,10 @@ const EditUserPage = () => {
       .required("Campo Obrigatório")
       .min(8, "Nome do usuário deve ter pelo menos 8 caracteres"),
     role: Yup.string().required("Campo Obrigatório"),
+    // confirmPassword: Yup.string()
+    //   .label("Confirmar senha")
+    //   .required("Campo Obrigatório")
+    //   .oneOf([Yup.ref("password")], "Senhas difirentes"),
     project: isAdminRole
       ? Yup.array()
       : Yup.array()

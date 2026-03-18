@@ -27,6 +27,7 @@ import { requestClassroomZipArchives, requestCountStates } from "../../../Servic
 import CardQuant from "../../../Components/Chart/CardQuant";
 import { Popover } from "react-tiny-popover";
 import Icon from "../../../Components/Icon";
+import UserLogs from "../../../Components/UserLogs";
 import { minutesToTimeStr } from "../../../Components/TimeInput/index";
 import { useFetchRequestState, useFetchRequestCity } from "../../../Services/Address/query";
 
@@ -473,6 +474,7 @@ const ClassroomOnePage = () => {
           <span>Gerando evidências, aguarde...</span>
         </div>
       )}
+      <UserLogs scope="classroom" title="Logs da Turma" description="Acesse os logs de atividades da turma" id={classroom?.id} />
       <ModalChange visible={visible} onHide={() => setVisible(false)} />
       <ModalReuseClassroom visible={visibleReuse} onHide={() => setVisibleReuse(false)} classroom={classroom} />
     </ContentPage>
