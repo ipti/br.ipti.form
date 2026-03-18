@@ -10,7 +10,7 @@ on:
       - main
 
 env:
-  REACT_APP_API_PATH: https://br-ipti-beneficiarios.azurewebsites.net
+  REACT_APP_API_PATH: https://br-thp-meuben.azurewebsites.net/
 
 jobs:
   build_and_deploy_job:
