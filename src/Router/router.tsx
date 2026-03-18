@@ -34,6 +34,7 @@ import InitialPage from "../Pages/InitialPage";
 import ReapplicatorsList from "../Pages/Reapplicators/ReapplicatorsList";
 import ChangePassword from "../Pages/Users/ChangePassword";
 import PageAtt from "../Pages/Att/page";
+import UserLogs from "../Pages/UserLogs";
 
 const RoutesApp = () => {
   return (
@@ -125,6 +126,10 @@ const RoutesApp = () => {
         <Route
           element={<PrivateRoute Component={<BeneficiariesEdit />} />}
           path="/beneficiarios/:id"
+        />
+        <Route
+          element={<PrivateRoute Component={<UserLogs />} />}
+          path="/logs"
         />
         <Route
           element={<PrivateRoute Component={<ListUsers />} />}

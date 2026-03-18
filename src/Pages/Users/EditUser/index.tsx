@@ -77,8 +77,8 @@ const EditUserPage = () => {
     project: Yup.array().required("Campo Obrigatório"),
     initial_date: Yup.string().required("Campo Obrigatório"),
     birthday: Yup.string().required("Campo Obrigatório"),
-    phone: Yup.string(),
-    email: Yup.string(),
+    phone: Yup.string().required("Campo Obrigatório"),
+    email: Yup.string().required("Campo Obrigatório").email("Email inválido"),
     sex: Yup.string().required("Campo Obrigatório"),
     color_race: Yup.string().required("Campo Obrigatório"),
     // confirmPassword: Yup.string()

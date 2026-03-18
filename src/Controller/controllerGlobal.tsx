@@ -140,6 +140,15 @@ export const StatusEnum: any = {
   PENDING_TERM: "Aguar. assinatura",
 };
 
+export const typeLog: any = {
+  USER: "Usuário",
+  CLASSROOM: "Turma",
+  REGISTRATION: "Beneficiário",
+  MEETING: "Encontro",
+  PROJECT: "Plano de trabalho",
+  SOCIAL_TECHNOLOGY: "Tecnologia social"
+};
+
 export const StatusTermEnum: any = {
   TERM_ANALYSIS: "Em análise",
   ACTIVE_TERM: "Termo ativo",

@@ -38,6 +38,7 @@ import { requestClassroomZipArchives, requestCountStates } from "../../../Servic
 import CardQuant from "../../../Components/Chart/CardQuant";
 import { Popover } from "react-tiny-popover";
 import Icon from "../../../Components/Icon";
+import UserLogs from "../../../Components/UserLogs";
 
 const ClassroomOne = () => {
   return (
@@ -409,6 +410,7 @@ const ClassroomOnePage = () => {
           />
         </div>
       </div>}
+      <UserLogs scope="classroom" title="Logs da Turma" description="Acesse os logs de atividades da turma" id={classroom?.id} />
       {loadingEvi && (
         <div style={{
           position: "fixed",
