@@ -1,6 +1,7 @@
 import { Form, Formik } from "formik";
 import { Button } from "primereact/button";
 import { Chip } from "primereact/chip";
+import { Editor } from "primereact/editor";
 import { MultiSelect } from "primereact/multiselect";
 import { useContext, useState } from "react";
 import { Popover } from "react-tiny-popover";
@@ -16,6 +17,66 @@ import { useFetchRequestUsers } from "../../../../../../Services/Users/query";
 import { Column, Padding, Row } from "../../../../../../Styles/styles";
 import { PropsAplicationContext } from "../../../../../../Types/types";
 import TimeInput from "../../../../../../Components/TimeInput";
+
+const sanitizeMeetingDescription = (content: string | null | undefined) => {
+  if (!content) {
+    return "";
+  }
+
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(`<div>${content}</div>`, "text/html");
+  const container = doc.body.firstElementChild;
+
+  if (!container) {
+    return "";
+  }
+
+  container
+    .querySelectorAll("script, style, iframe, object, embed, link, meta")
+    .forEach((node) => node.remove());
+
+  container.querySelectorAll("*").forEach((element) => {
+    Array.from(element.attributes).forEach((attribute) => {
+      const attributeName = attribute.name.toLowerCase();
+      const attributeValue = attribute.value.toLowerCase();
+
+      if (attributeName.startsWith("on")) {
+        element.removeAttribute(attribute.name);
+      }
+
+      if (
+        (attributeName === "href" || attributeName === "src") &&
+        /^\s*javascript\s*:/i.test(attributeValue)
+      ) {
+        element.removeAttribute(attribute.name);
+      }
+    });
+  });
+
+  return container.innerHTML;
+};
+
+const normalizeMeetingDescriptionForEditor = (
+  content: string | null | undefined
+) => {
+  if (!content) {
+    return "";
+  }
+
+  const normalized = String(content);
+  const hasHtmlTag = /<\/?[a-z][\s\S]*>/i.test(normalized);
+
+  if (hasHtmlTag) {
+    return normalized;
+  }
+
+  const escaped = normalized
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  return `<p>${escaped.replace(/\n/g, "<br/>")}</p>`;
+};
 
 const DataMeeting = () => {
 
@@ -45,7 +106,7 @@ const DataMeeting = () => {
 
   const date = new Date(new Date(props.meeting?.meeting_date!).setDate(new Date(props.meeting?.meeting_date!).getDate() + 1))
 
-  if(!props.meeting) {
+  if (!props.meeting) {
     return <div>Carregando...</div>
   }
 
@@ -76,11 +137,27 @@ const DataMeeting = () => {
     lineHeight: "1.6",
   };
 
+  const editorHeader = (
+    <span className="ql-formats">
+      <button className="ql-bold" aria-label="Negrito" />
+      <button className="ql-italic" aria-label="Itálico" />
+      <button className="ql-underline" aria-label="Sublinhado" />
+      <button className="ql-strike" aria-label="Tachado" />
+      <button className="ql-list" value="ordered" aria-label="Lista ordenada" />
+      <button className="ql-list" value="bullet" aria-label="Lista não ordenada" />
+      <button className="ql-link" aria-label="Link" />
+      <button className="ql-clean" aria-label="Limpar formatação" />
+    </span>
+  );
+
   return (
     <Formik
+      enableReinitialize
       initialValues={{
         name: props.meeting?.name,
-        description: props.meeting?.description,
+        description: normalizeMeetingDescriptionForEditor(
+          props.meeting?.description
+        ),
         justification: props.meeting?.justification,
         theme: props.meeting?.theme,
         status: getStatus(props.meeting?.status!),
@@ -92,9 +169,10 @@ const DataMeeting = () => {
         props.UpdateMeetingUser({ id: props.meeting?.id!, users: values.users.map((item) => item.id) });
         var body: any = values
         delete body.users
-        props.UpdateMeeting({...body, 
+        props.UpdateMeeting({
+          ...body,
           meeting_date: (props.meeting?.meeting_date && values.meeting_date && date.getTime() === values.meeting_date.getTime())
-            ? new Date(new Date(values?.meeting_date!).setDate(new Date(values?.meeting_date!).getDate() - 1)) 
+            ? new Date(new Date(values?.meeting_date!).setDate(new Date(values?.meeting_date!).getDate() - 1))
             : values.meeting_date
         }, props.meeting?.id!);
         setEdit(!edit);
@@ -259,17 +337,34 @@ const DataMeeting = () => {
                   </Popover>
                 </div>
                 <Padding />
-                <TextAreaComponent
-                  disabled={!edit}
-                  maxLength={1000}
-                  onChange={handleChange}
-                  value={values.description}
-                  name="description"
-                  placeholder="Observações sobre o encontro"
-                />
+                {edit ? (
+                  <Editor
+                    value={values.description || ""}
+                    onTextChange={(event) =>
+                      setFieldValue("description", event.htmlValue || "")
+                    }
+                    headerTemplate={editorHeader}
+                    style={{ height: "240px" }}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      border: "1px solid #d1d5db",
+                      borderRadius: "8px",
+                      padding: "12px",
+                      minHeight: "120px",
+                      backgroundColor: "#f9fafb",
+                    }}
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        sanitizeMeetingDescription(values.description) ||
+                        "<p>Sem observações.</p>",
+                    }}
+                  />
+                )}
               </div>
             </div>
-              
+
             {!edit ? <div className="col-12 md:col-6">
               <label>Responsáveis pelo encontro</label>
               <Padding />

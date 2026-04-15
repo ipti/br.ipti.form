@@ -35,6 +35,7 @@ import ReapplicatorsList from "../Pages/Reapplicators/ReapplicatorsList";
 import ChangePassword from "../Pages/Users/ChangePassword";
 import PageAtt from "../Pages/Att/page";
 import UserLogs from "../Pages/UserLogs";
+import MeubenPrivacyPolicy from "../Pages/Public/MeubenPrivacyPolicy";
 
 const RoutesApp = () => {
   return (
@@ -175,6 +176,14 @@ const RoutesApp = () => {
         <Route element={<SignUp />} path="/register" />
         <Route element={<Login />} path="/login" />
         <Route element={<Register />} path="/matricula" />
+        <Route
+          element={<MeubenPrivacyPolicy />}
+          path="/politica-privacidade/meuben"
+        />
+        <Route
+          element={<MeubenPrivacyPolicy />}
+          path="/privacy-policy/meuben"
+        />
         {/* <Route path="/*" element={<NotFoundPage />} /> */}
       </Routes>}
     </BrowserRouter>
