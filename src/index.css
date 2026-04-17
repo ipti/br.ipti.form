@@ -33,3 +33,22 @@ code {
   display: flex;
   align-items: center;
 }
+
+.meeting-description-view-html ul,
+.meeting-description-view-html ol {
+  margin: 0.5rem 0;
+  padding-left: 1.5rem;
+  list-style-position: outside;
+}
+
+.meeting-description-view-html ul {
+  list-style-type: disc;
+}
+
+.meeting-description-view-html ol {
+  list-style-type: decimal;
+}
+
+.meeting-description-view-html li {
+  margin: 0.25rem 0;
+}

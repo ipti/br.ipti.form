@@ -1,7 +1,6 @@
 import { Form, Formik } from "formik";
 import { Button } from "primereact/button";
 import { Chip } from "primereact/chip";
-import { Editor } from "primereact/editor";
 import { MultiSelect } from "primereact/multiselect";
 import { useContext, useState } from "react";
 import { Popover } from "react-tiny-popover";
@@ -17,8 +16,76 @@ import { useFetchRequestUsers } from "../../../../../../Services/Users/query";
 import { Column, Padding, Row } from "../../../../../../Styles/styles";
 import { PropsAplicationContext } from "../../../../../../Types/types";
 import TimeInput from "../../../../../../Components/TimeInput";
+import QuillEditor from "../../../../../../Components/QuillEditor";
 
-const sanitizeMeetingDescription = (content: string | null | undefined) => {
+const getMeetingDescriptionAsString = (content: unknown) => {
+  if (!content) {
+    return "";
+  }
+
+  if (typeof content === "string") {
+    return content;
+  }
+
+  if (typeof content === "object") {
+    const asRecord = content as Record<string, unknown>;
+    const directCandidates = [
+      asRecord.description,
+      asRecord.html,
+      asRecord.content,
+      asRecord.value,
+    ];
+
+    for (const candidate of directCandidates) {
+      if (typeof candidate === "string" && candidate.trim()) {
+        return candidate;
+      }
+    }
+
+    if (Array.isArray(asRecord.ops)) {
+      return asRecord.ops
+        .map((op) => {
+          if (
+            op &&
+            typeof op === "object" &&
+            "insert" in op &&
+            typeof (op as { insert?: unknown }).insert === "string"
+          ) {
+            return (op as { insert: string }).insert;
+          }
+
+          return "";
+        })
+        .join("");
+    }
+  }
+
+  return String(content);
+};
+
+const normalizeMeetingDescriptionForEditor = (
+  content: string | null | undefined
+) => {
+  if (!content) {
+    return "";
+  }
+
+  const normalized = String(content);
+  const hasHtmlTag = /<\/?[a-z][\s\S]*>/i.test(normalized);
+
+  if (hasHtmlTag) {
+    return normalized;
+  }
+
+  const escaped = normalized
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  return `<p>${escaped.replace(/\n/g, "<br/>")}</p>`;
+};
+
+const sanitizeMeetingDescriptionForView = (content: string | null | undefined) => {
   if (!content) {
     return "";
   }
@@ -53,29 +120,32 @@ const sanitizeMeetingDescription = (content: string | null | undefined) => {
     });
   });
 
-  return container.innerHTML;
-};
+  container.querySelectorAll("p, div").forEach((element) => {
+    const hasMedia = element.querySelector("img, video, iframe, object, embed");
+    const textContent = (element.textContent || "").replace(/\u00a0/g, " ").trim();
+    const hasOnlyBreak = /^(\s|<br\s*\/?>)*$/i.test(element.innerHTML);
 
-const normalizeMeetingDescriptionForEditor = (
-  content: string | null | undefined
-) => {
-  if (!content) {
+    if (!hasMedia && (textContent.length === 0 || hasOnlyBreak)) {
+      element.remove();
+    }
+  });
+
+  container.querySelectorAll("ul, ol").forEach((list) => {
+    if (!list.querySelector("li")) {
+      list.remove();
+    }
+  });
+
+  const sanitized = container.innerHTML.trim();
+  const plainText = container.textContent?.replace(/\u00a0/g, " ").trim() || "";
+  const hasMedia = Boolean(container.querySelector("img, video, iframe, object, embed"));
+  const hasListItems = Boolean(container.querySelector("ul li, ol li"));
+
+  if (!sanitized || (!plainText && !hasMedia && !hasListItems)) {
     return "";
   }
 
-  const normalized = String(content);
-  const hasHtmlTag = /<\/?[a-z][\s\S]*>/i.test(normalized);
-
-  if (hasHtmlTag) {
-    return normalized;
-  }
-
-  const escaped = normalized
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-
-  return `<p>${escaped.replace(/\n/g, "<br/>")}</p>`;
+  return sanitized;
 };
 
 const DataMeeting = () => {
@@ -137,26 +207,13 @@ const DataMeeting = () => {
     lineHeight: "1.6",
   };
 
-  const editorHeader = (
-    <span className="ql-formats">
-      <button className="ql-bold" aria-label="Negrito" />
-      <button className="ql-italic" aria-label="Itálico" />
-      <button className="ql-underline" aria-label="Sublinhado" />
-      <button className="ql-strike" aria-label="Tachado" />
-      <button className="ql-list" value="ordered" aria-label="Lista ordenada" />
-      <button className="ql-list" value="bullet" aria-label="Lista não ordenada" />
-      <button className="ql-link" aria-label="Link" />
-      <button className="ql-clean" aria-label="Limpar formatação" />
-    </span>
-  );
-
   return (
     <Formik
       enableReinitialize
       initialValues={{
         name: props.meeting?.name,
         description: normalizeMeetingDescriptionForEditor(
-          props.meeting?.description
+          getMeetingDescriptionAsString(props.meeting?.description)
         ),
         justification: props.meeting?.justification,
         theme: props.meeting?.theme,
@@ -179,6 +236,9 @@ const DataMeeting = () => {
       }}
     >
       {({ values, errors, handleChange, touched, setFieldValue }) => {
+        const safeDescriptionHtml = sanitizeMeetingDescriptionForView(
+          values.description
+        );
 
         return (
           <Form>
@@ -338,29 +398,34 @@ const DataMeeting = () => {
                 </div>
                 <Padding />
                 {edit ? (
-                  <Editor
+                  <QuillEditor
                     value={values.description || ""}
-                    onTextChange={(event) =>
-                      setFieldValue("description", event.htmlValue || "")
+                    onChange={(event) =>
+                      setFieldValue("description", event || "")
                     }
-                    headerTemplate={editorHeader}
-                    style={{ height: "240px" }}
+                    height={240}
                   />
                 ) : (
-                  <div
-                    style={{
-                      border: "1px solid #d1d5db",
-                      borderRadius: "8px",
-                      padding: "12px",
-                      minHeight: "120px",
-                      backgroundColor: "#f9fafb",
-                    }}
-                    dangerouslySetInnerHTML={{
-                      __html:
-                        sanitizeMeetingDescription(values.description) ||
-                        "<p>Sem observações.</p>",
-                    }}
-                  />
+                  <div style={{
+                    border: "1px solid #d1d5db",
+                    borderRadius: "8px",
+                    padding: "12px",
+                    minHeight: "240px",
+                    maxHeight: "400px",
+                    overflowY: "auto",
+                    backgroundColor: "#f9fafb",
+                  }}>
+
+                    <div
+                      className="meeting-description-view-html"
+                      style={{ lineHeight: 1.6 }}
+                      dangerouslySetInnerHTML={{
+                        __html:
+                          safeDescriptionHtml ||
+                          "<p style='margin:0'>Sem observações.</p>",
+                      }}
+                    />
+                  </div>
                 )}
               </div>
             </div>
