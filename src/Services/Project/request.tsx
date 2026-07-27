@@ -126,7 +126,7 @@ export const requestTsListYear = async (id: number | undefined, year: number) =>
 export const requestProjectOne = async (id: number) => {
   return await http
     .get("/project-bff/one", {
-      params: { idProject: id ?? GetIdTs(), year: getYear() },
+      params: { idProject: id ?? GetIdTs() },
     })
     .then((response) => response.data)
     .catch((err) => {

@@ -23,7 +23,6 @@ export const requestClassroom = (idProject: number) => {
       .get(path, {
         params: {
           idProject: idProject,
-          year: getYear(),
         },
       })
       .then((response) => response.data)
