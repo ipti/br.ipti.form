@@ -2,11 +2,14 @@ import { User } from '../Context/Users/type';
 
 type PermissionRule = (user: User | undefined) => boolean;
 
-const isAdmin        = (u: User | undefined) => u?.role === 'ADMIN';
-const isCoordinator  = (u: User | undefined) => u?.profileType === 'COORDINATOR' || u?.profileType === 'COORDINATION_SUPPORT';
-const isReapplicator = (u: User | undefined) => u?.profileType === 'REAPPLICATOR' || u?.profileType === 'OTHER';
-const adminOrCoord   = (u: User | undefined) => isAdmin(u) || isCoordinator(u);
+const isAdmin         = (u: User | undefined) => u?.role === 'ADMIN';
+const isCoordinator   = (u: User | undefined) => u?.profileType === 'COORDINATOR' || u?.profileType === 'COORDINATION_SUPPORT';
+const isReapplicator  = (u: User | undefined) => u?.profileType === 'REAPPLICATOR' || u?.profileType === 'OTHER';
+const adminOrCoord    = (u: User | undefined) => isAdmin(u) || isCoordinator(u);
 const isCommunication = (u: User | undefined) => u?.profileType === 'COMMUNICATION';
+const isAccountability = (u: User | undefined) => u?.profileType === 'ACCOUNTABILITY';
+const hasLimitedBeneficiaryView = (u: User | undefined) =>
+  isReapplicator(u) || isCommunication(u) || isAccountability(u);
 
 // Para alterar quem pode fazer o quê: editar apenas este arquivo.
 export const PermissionsConfig: Record<string, PermissionRule> = {
@@ -46,13 +49,14 @@ export const PermissionsConfig: Record<string, PermissionRule> = {
   'project.delete': adminOrCoord,
 
   // ── Beneficiários ────────────────────────────────────────────────────────────
-  'beneficiary.view':   (u) => adminOrCoord(u) || isReapplicator(u),
-  'beneficiary.create': adminOrCoord,
-  'beneficiary.edit':   adminOrCoord,
-  'beneficiary.delete': adminOrCoord,
+  'beneficiary.view':     (u) => adminOrCoord(u) || hasLimitedBeneficiaryView(u),
+  'beneficiary.viewFull': adminOrCoord,
+  'beneficiary.create':   adminOrCoord,
+  'beneficiary.edit':     adminOrCoord,
+  'beneficiary.delete':   adminOrCoord,
 
   // ── Matrículas ────────────────────────────────────────────────────────────
-  'registration.view':   (u) => adminOrCoord(u) || isReapplicator(u),
+  'registration.view':   (u) => adminOrCoord(u) || hasLimitedBeneficiaryView(u),
   'registration.delete': adminOrCoord,
 
   // ── Tecnologias Sociais ───────────────────────────────────────────────────

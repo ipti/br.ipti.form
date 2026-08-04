@@ -133,6 +133,17 @@ const STEPS_EDIT: StepItem[] = [
   { key: "termos", label: "Termos & Matrículas", description: "Histórico de termos e matrículas." },
 ];
 
+const STEPS_EDIT_LIMITED: StepItem[] = [
+  { key: "dados_basicos", label: "Dados", description: "Nome e CPF do beneficiário." },
+  { key: "termos", label: "Termos & Matrículas", description: "Histórico de termos e matrículas." },
+];
+
+const maskCpf = (cpf: string) => {
+  const digits = (cpf || '').replace(/\D/g, '');
+  if (digits.length !== 11) return cpf;
+  return `${digits.slice(0, 3)}.***.***-${digits.slice(9)}`;
+};
+
 const BeneficiariesEdit = () => {
   return (
     <BeneficiariesEditProvider>
@@ -242,7 +253,8 @@ const StatusTermHeader = () => {
 const BeneficiariesEditPage = () => {
   const props = useContext(BeneficiariesEditContext) as BeneficiariesEditType;
   const { can } = usePermissions();
-  const canEdit = can("beneficiary.edit");
+  const canEdit     = can("beneficiary.edit");
+  const canViewFull = can("beneficiary.viewFull");
   const [visible, setVisible] = useState<any>();
   const [visibleTerm, setVisibleTerm] = useState<any>();
   const [visibleDeleteTerm, setVisibleDeleteTerm] = useState<any>();
@@ -253,6 +265,8 @@ const BeneficiariesEditPage = () => {
   const objectUrlRef = useRef<string>("");
   const [submitted, setSubmitted] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
+  // Maps limited-view step index (0 or 1) to full step content index (0 or 3)
+  const actualStep = canViewFull ? currentStep : ([0, 3][currentStep] ?? 0);
 
   const closePdfViewer = () => {
     setVisiblePdfViewer(false);
@@ -419,43 +433,45 @@ const BeneficiariesEditPage = () => {
                 <ErrorSummary errors={errorArray} />
                 <Padding padding="8px" />
                 <StepsNavigator
-                  steps={STEPS_EDIT}
+                  steps={canViewFull ? STEPS_EDIT : STEPS_EDIT_LIMITED}
                   currentStep={currentStep}
                   onStepChange={setCurrentStep}
                   showActions={false}
                 />
 
                 <Padding padding="8px" />
-                {currentStep === 0 && (<>
-                  <Avatar>
-                    <img
-                      alt=""
-                      src={
-                        props.file
-                          ? URL.createObjectURL(props.file![0]) ?? undefined
-                          : props.registrations?.avatar_url
-                            ? props.registrations?.avatar_url
-                            : avatar
-                      }
-                    />
-                  </Avatar>
-                  <Padding padding="8px" />
-                  <div className="grid">
-                    <div className="col-12 md:col-6">
-                      <label>Avatar </label>
-                      <Padding />
-                      <TextInput
-                        // value={props.file}
-                        type="file"
-                        placeholder="Avatar"
-                        disabled={!canEdit}
-                        onChange={(e) => props.setFile(e.target.files)}
-                        name="name"
-                      />
-                    </div>
-
-                  </div>
-                  <Padding padding="8px" />
+                {actualStep === 0 && (<>
+                  {canViewFull && (
+                    <>
+                      <Avatar>
+                        <img
+                          alt=""
+                          src={
+                            props.file
+                              ? URL.createObjectURL(props.file![0]) ?? undefined
+                              : props.registrations?.avatar_url
+                                ? props.registrations?.avatar_url
+                                : avatar
+                          }
+                        />
+                      </Avatar>
+                      <Padding padding="8px" />
+                      <div className="grid">
+                        <div className="col-12 md:col-6">
+                          <label>Avatar </label>
+                          <Padding />
+                          <TextInput
+                            type="file"
+                            placeholder="Avatar"
+                            disabled={!canEdit}
+                            onChange={(e) => props.setFile(e.target.files)}
+                            name="name"
+                          />
+                        </div>
+                      </div>
+                      <Padding padding="8px" />
+                    </>
+                  )}
                   <h3>Dados basicos</h3>
                   <Padding />
                   <div className="grid">
@@ -468,7 +484,6 @@ const BeneficiariesEditPage = () => {
                         disabled
                         name="thp_id"
                       />
-
                     </div>
                     <div className="col-12 md:col-6">
                       <label>Status</label>
@@ -478,9 +493,6 @@ const BeneficiariesEditPage = () => {
                         name="status"
                         disabled
                       />
-                      {errors.status && touched.status ? (
-                        <FieldError message={fieldError("status")} />
-                      ) : null}
                     </div>
                   </div>
                   <div className="grid">
@@ -494,169 +506,185 @@ const BeneficiariesEditPage = () => {
                         onChange={handleChange}
                         name="name"
                       />
-
                       {errors.name && touched.name ? (
                         <FieldError message={fieldError("name")} />
                       ) : null}
                     </div>
-                    <div className="col-12 md:col-6">
-                      <label>Sexo *</label>
-                      <Padding />
-                      <DropdownComponent
-                        value={values.sex}
-                        optionsLabel="type"
-                        options={typesex}
-                        name="sex"
-                        disabled={!canEdit}
-                        onChange={handleChange}
-                      />
-
-                      {errors.sex && touched.sex ? (
-                        <FieldError message={fieldError("sex")} />
-                      ) : null}
+                    {canViewFull && (
+                      <div className="col-12 md:col-6">
+                        <label>Sexo *</label>
+                        <Padding />
+                        <DropdownComponent
+                          value={values.sex}
+                          optionsLabel="type"
+                          options={typesex}
+                          name="sex"
+                          disabled={!canEdit}
+                          onChange={handleChange}
+                        />
+                        {errors.sex && touched.sex ? (
+                          <FieldError message={fieldError("sex")} />
+                        ) : null}
+                      </div>
+                    )}
+                  </div>
+                  {canViewFull && (
+                    <div className="grid">
+                      <div className="col-12 md:col-6">
+                        <label>Data de Nascimento *</label>
+                        <Padding />
+                        <MaskInput
+                          value={values.birthday?.toString()}
+                          mask="99/99/9999"
+                          placeholder="Data de Nascimento"
+                          name="birthday"
+                          disabled={!canEdit}
+                          onChange={handleBirthdayChange}
+                        />
+                        {errors.birthday && touched.birthday ? (
+                          <FieldError message={fieldError("birthday")} />
+                        ) : null}
+                      </div>
+                      <div className="col-12 md:col-6">
+                        <label>Cor de raça *</label>
+                        <Padding />
+                        <DropdownComponent
+                          value={values.color_race}
+                          options={color_race}
+                          name="color_race"
+                          disabled={!canEdit}
+                          onChange={handleChange}
+                        />
+                        {errors.color_race && touched.color_race ? (
+                          <FieldError message={fieldError("color_race")} />
+                        ) : null}
+                      </div>
                     </div>
-                  </div>{" "}
-                  <div className="grid">
-                    <div className="col-12 md:col-6">
-                      <label>Data de Nascimento *</label>
-                      <Padding />
-                      <MaskInput
-                        value={values.birthday?.toString()}
-                        mask="99/99/9999"
-                        placeholder="Data de Nascimento"
-                        name="birthday"
-                        disabled={!canEdit}
-                        onChange={handleBirthdayChange}
-                      />
-
-                      {errors.birthday && touched.birthday ? (
-                        <FieldError message={fieldError("birthday")} />
-                      ) : null}
-                    </div>
-                    <div className="col-12 md:col-6">
-                      <label>Cor de raça *</label>
-                      <Padding />
-                      <DropdownComponent
-                        value={values.color_race}
-                        options={color_race}
-                        name="color_race"
-                        disabled={!canEdit}
-                        onChange={handleChange}
-                      />{" "}
-                      {errors.color_race && touched.color_race ? (
-                        <FieldError message={fieldError("color_race")} />
-                      ) : null}
-                    </div>
-                  </div>{" "}
+                  )}
                   <div className="grid">
                     <div className="col-12 md:col-6">
                       <label>CPF *</label>
                       <Padding />
-                      <MaskInput
-                        value={values.cpf}
-                        mask="999.999.999-99"
-                        placeholder="CPF *"
-                        disabled={!canEdit}
-                        onChange={handleChange}
-                        name="cpf"
-                      />
+                      {canViewFull ? (
+                        <MaskInput
+                          value={values.cpf}
+                          mask="999.999.999-99"
+                          placeholder="CPF *"
+                          disabled={!canEdit}
+                          onChange={handleChange}
+                          name="cpf"
+                        />
+                      ) : (
+                        <TextInput
+                          value={maskCpf(values.cpf ?? '')}
+                          placeholder="CPF"
+                          disabled
+                          name="cpf"
+                        />
+                      )}
                       {errors.cpf && touched.cpf ? (
                         <FieldError message={fieldError("cpf")} />
                       ) : null}
                     </div>
-                    <div className="col-12 md:col-6">
-                      <label>Data de matricula</label>
-                      <Padding />
-                      <CalendarComponent
-                        value={values.date_registration}
-                        name="date_registration"
-                        dateFormat="dd/mm/yy"
-                        disabled={!canEdit}
-                        onChange={handleChange}
-                      />
-                      {errors.date_registration && touched.date_registration ? (
-                        <FieldError message={fieldError("date_registration")} />
-                      ) : null}
-                    </div>
-                    <div className="col-12 md:col-6">
-                      <label>
-                        Telefone para contato{shouldRequireBeneficiaryPhone(values.birthday?.toString() ?? "") ? " *" : ""}
-                      </label>
-                      <Padding />
-                      <MaskInput
-                        value={values.telephone}
-                        mask="(99) 9 9999-9999"
-                        name="telephone"
-                        disabled={!canEdit}
-                        onChange={handleChange}
-                        placeholder="Telefone para contato"
-                      />
-                      {errors.telephone && touched.telephone ? (
-                        <FieldError message={fieldError("telephone")} />
-                      ) : null}
-                    </div>
-                    <div className="col-12 md:col-6">
-                      <label>Deficiente *</label>
-                      <Padding />
-                      <DropdownComponent
-                        value={values.deficiency}
-                        placerholder="Deficiente"
-                        name="deficiency"
-                        disabled={!canEdit}
-                        onChange={handleChange}
-                        options={[
-                          { id: true, name: "Sim" },
-                          { id: false, name: "Não" },
-                        ]}
-                      />
-                      {errors.deficiency && touched.deficiency ? (
-                        <FieldError message={fieldError("deficiency")} />
-                      ) : null}
-                    </div>
-                    {values.deficiency?.id && (
-                      <div className="col-12 md:col-6">
-                        <label>Qual deficiência?</label>
-                        <Padding />
-                        <TextInput
-                          value={values.deficiency_description}
-                          name="deficiency_description"
-                          disabled={!canEdit}
-                          onChange={handleChange}
-                          placeholder="Qual deficiência ?"
-                        />
-                      </div>
+                    {canViewFull && (
+                      <>
+                        <div className="col-12 md:col-6">
+                          <label>Data de matricula</label>
+                          <Padding />
+                          <CalendarComponent
+                            value={values.date_registration}
+                            name="date_registration"
+                            dateFormat="dd/mm/yy"
+                            disabled={!canEdit}
+                            onChange={handleChange}
+                          />
+                          {errors.date_registration && touched.date_registration ? (
+                            <FieldError message={fieldError("date_registration")} />
+                          ) : null}
+                        </div>
+                        <div className="col-12 md:col-6">
+                          <label>
+                            Telefone para contato{shouldRequireBeneficiaryPhone(values.birthday?.toString() ?? "") ? " *" : ""}
+                          </label>
+                          <Padding />
+                          <MaskInput
+                            value={values.telephone}
+                            mask="(99) 9 9999-9999"
+                            name="telephone"
+                            disabled={!canEdit}
+                            onChange={handleChange}
+                            placeholder="Telefone para contato"
+                          />
+                          {errors.telephone && touched.telephone ? (
+                            <FieldError message={fieldError("telephone")} />
+                          ) : null}
+                        </div>
+                        <div className="col-12 md:col-6">
+                          <label>Deficiente *</label>
+                          <Padding />
+                          <DropdownComponent
+                            value={values.deficiency}
+                            placerholder="Deficiente"
+                            name="deficiency"
+                            disabled={!canEdit}
+                            onChange={handleChange}
+                            options={[
+                              { id: true, name: "Sim" },
+                              { id: false, name: "Não" },
+                            ]}
+                          />
+                          {errors.deficiency && touched.deficiency ? (
+                            <FieldError message={fieldError("deficiency")} />
+                          ) : null}
+                        </div>
+                        {values.deficiency?.id && (
+                          <div className="col-12 md:col-6">
+                            <label>Qual deficiência?</label>
+                            <Padding />
+                            <TextInput
+                              value={values.deficiency_description}
+                              name="deficiency_description"
+                              disabled={!canEdit}
+                              onChange={handleChange}
+                              placeholder="Qual deficiência ?"
+                            />
+                          </div>
+                        )}
+                      </>
                     )}
-                  </div>{" "}
-                  <div className="grid">
-                    <div className="col-12 md:col-6">
-                      <label>Zona *</label>
-                      <Padding />
-                      <Row className="gap-2">
-                        <RadioButtonComponent
-                          value={1}
-                          checked={values.zone === 1}
-                          onChange={handleChange}
-                          name="zone"
-                          disabled={!canEdit}
-                          label="Rural"
-                        />
-                        <RadioButtonComponent
-                          value={2}
-                          checked={values.zone === 2}
-                          onChange={handleChange}
-                          name="zone"
-                          disabled={!canEdit}
-                          label="Urbana"
-                        />
-                      </Row>
-                      {errors.zone && touched.zone ? (
-                        <FieldError message={fieldError("zone")} />
-                      ) : null}
-                    </div>
                   </div>
+                  {canViewFull && (
+                    <div className="grid">
+                      <div className="col-12 md:col-6">
+                        <label>Zona *</label>
+                        <Padding />
+                        <Row className="gap-2">
+                          <RadioButtonComponent
+                            value={1}
+                            checked={values.zone === 1}
+                            onChange={handleChange}
+                            name="zone"
+                            disabled={!canEdit}
+                            label="Rural"
+                          />
+                          <RadioButtonComponent
+                            value={2}
+                            checked={values.zone === 2}
+                            onChange={handleChange}
+                            name="zone"
+                            disabled={!canEdit}
+                            label="Urbana"
+                          />
+                        </Row>
+                        {errors.zone && touched.zone ? (
+                          <FieldError message={fieldError("zone")} />
+                        ) : null}
+                      </div>
+                    </div>
+                  )}
                   <Padding padding="8px" />
                 </>)}
-                {currentStep === 1 && (<>
+                {actualStep === 1 && (<>
                   <h3>Dados Responsavel (Se for menor de 18 anos)</h3>
                   <Padding />
                   {isUnder18ByBirthDate(values.birthday?.toString() ?? "") ? (
@@ -769,7 +797,7 @@ const BeneficiariesEditPage = () => {
                   )}
                   <Padding />
                 </>)}
-                {currentStep === 2 && (<>
+                {actualStep === 2 && (<>
                   <h3>Endereço</h3>
                   <Padding padding="8px" />
                   <InputAddress
@@ -782,7 +810,7 @@ const BeneficiariesEditPage = () => {
                     disabled={!canEdit}
                   />
                 </>)}
-                {currentStep === 3 && (<>
+                {actualStep === 3 && (<>
                   <Padding padding="8px" />
                   <h3>Autorização de imagem</h3>
                   <Padding padding="8px" />
@@ -901,7 +929,7 @@ const BeneficiariesEditPage = () => {
                 </>)}
 
                 <StepsNavigator
-                  steps={STEPS_EDIT}
+                  steps={canViewFull ? STEPS_EDIT : STEPS_EDIT_LIMITED}
                   currentStep={currentStep}
                   onStepChange={setCurrentStep}
                   onlyActions
