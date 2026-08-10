@@ -34,7 +34,7 @@ export interface CreateUser {
 export interface UserProfileSummary {
   id: number
   name: string
-  current_type: 'COORDINATOR' | 'COORDINATION_SUPPORT' | 'REAPPLICATOR' | 'OTHER' | 'COMMUNICATION' | 'ACCOUNTABILITY'
+  current_type: 'COORDINATOR' | 'COORDINATION_SUPPORT' | 'REAPPLICATOR' | 'OFICINEIRO' | 'OTHER' | 'COMMUNICATION' | 'ACCOUNTABILITY'
 }
 
 export interface User {

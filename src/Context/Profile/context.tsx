@@ -4,7 +4,7 @@ import { ProfileState } from './state';
 
 export const ProfileContext = createContext<ProfileContextTypes | null>(null);
 
-const ProfileProvider = ({ children, fixedType }: { children: React.ReactNode; fixedType?: 'COORDINATOR' | 'COORDINATION_SUPPORT' | 'REAPPLICATOR' | 'OTHER' | 'COMMUNICATION' | 'ACCOUNTABILITY' }) => {
+const ProfileProvider = ({ children, fixedType }: { children: React.ReactNode; fixedType?: 'COORDINATOR' | 'COORDINATION_SUPPORT' | 'REAPPLICATOR' | 'OFICINEIRO' | 'OTHER' | 'COMMUNICATION' | 'ACCOUNTABILITY' }) => {
   const state = ProfileState(fixedType);
   return (
     <ProfileContext.Provider value={state}>

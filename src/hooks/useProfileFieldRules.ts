@@ -1,7 +1,7 @@
 import { PROFILE_TYPE, ProfileType } from "../Controller/controllerGlobal";
 
 export function isSocialProfile(type: ProfileType | ""): boolean {
-  return type === PROFILE_TYPE.REAPPLICATOR;
+  return type === PROFILE_TYPE.REAPPLICATOR || type === PROFILE_TYPE.OFICINEIRO;
 }
 
 export function getProfileTypeOptions(includeReapplicator = true) {
@@ -9,11 +9,12 @@ export function getProfileTypeOptions(includeReapplicator = true) {
     { id: PROFILE_TYPE.COORDINATOR,          name: "Coordenação" },
     { id: PROFILE_TYPE.COORDINATION_SUPPORT, name: "Apoio à Coordenação" },
     { id: PROFILE_TYPE.REAPPLICATOR,         name: "Reaplicador" },
+    { id: PROFILE_TYPE.OFICINEIRO,           name: "Oficineiro" },
     { id: PROFILE_TYPE.COMMUNICATION,        name: "Comunicação" },
     { id: PROFILE_TYPE.ACCOUNTABILITY,       name: "Prestação de Contas" },
     { id: PROFILE_TYPE.OTHER,                name: "Outro" },
   ];
   return includeReapplicator
     ? all
-    : all.filter((o) => o.id !== PROFILE_TYPE.REAPPLICATOR);
+    : all.filter((o) => o.id !== PROFILE_TYPE.REAPPLICATOR && o.id !== PROFILE_TYPE.OFICINEIRO);
 }
