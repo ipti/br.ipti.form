@@ -64,10 +64,15 @@ export const requestFoulsClassroomOne = (id: number) => {
     });
 };
 
-export const requestClassroomReport = (id: number) => {
-  let path = "/classroom-bff/report";
+export const requestClassroomReport = (id: number, dateStart?: Date, dateEnd?: Date) => {
   return http
-    .get(path, { params: { idClassroom: id } })
+    .get("/classroom-bff/report", {
+      params: {
+        idClassroom: id,
+        ...(dateStart ? { dateStart: dateStart.toISOString() } : {}),
+        ...(dateEnd ? { dateEnd: dateEnd.toISOString() } : {}),
+      },
+    })
     .then((response) => response.data)
     .catch((err) => {
       if (err.response.status === 401) {
