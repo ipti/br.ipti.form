@@ -137,6 +137,17 @@ const ModalAddTerm = ({
 
   const adhesionTypeId = adhesionType?.id;
 
+  const blockedTypeIds = useMemo(() => {
+    if (isEdit) return new Set<number>();
+    const terms = props.registrations?.register_term ?? [];
+    return new Set<number>(
+      (terms as any[])
+        .filter((t) => t.status === 'ACTIVE_TERM' || t.status === 'TERM_ANALYSIS')
+        .map((t) => t.term_type?.id)
+        .filter((id): id is number => id !== undefined),
+    );
+  }, [props.registrations?.register_term, isEdit]);
+
   // Memoize initial values so Date.now() is evaluated only once per open,
   // preventing enableReinitialize from resetting the form on every re-render.
   const initialValues = useMemo(() => {
@@ -175,7 +186,11 @@ const ModalAddTerm = ({
     }),
   });
 
-  const optionsType = termTypes.map((t) => ({ id: t.id, name: t.label }));
+  const optionsType = termTypes.map((t) => ({
+    id: t.id,
+    name: t.label,
+    blocked: !isEdit && blockedTypeIds.has(t.id),
+  }));
 
   const optionsStatusAdmin = termStatusInfo
     .filter((s) => s.key === "ACTIVE_TERM" || s.key === "INVALID_TERM")
@@ -249,7 +264,19 @@ const ModalAddTerm = ({
                     options={optionsType}
                     optionLabel="name"
                     optionValue="id"
+                    optionDisabled="blocked"
                     placeholder="Selecione o tipo"
+                    itemTemplate={(option) => (
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px", opacity: option.blocked ? 0.5 : 1 }}>
+                        {option.blocked && (
+                          <i className="pi pi-lock" style={{ fontSize: "12px", color: "#f59e0b" }} title="Já existe um termo ativo ou em análise deste tipo" />
+                        )}
+                        <span>{option.name}</span>
+                        {option.blocked && (
+                          <span style={{ fontSize: "11px", color: "#f59e0b" }}>(ativo/em análise)</span>
+                        )}
+                      </div>
+                    )}
                     onChange={(e) => {
                       setFieldValue("term_type_id", e.value);
                       const picked = termTypes.find((t) => t.id === e.value);
