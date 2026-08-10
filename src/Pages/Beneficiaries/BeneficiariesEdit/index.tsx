@@ -254,8 +254,9 @@ const StatusTermHeader = () => {
 const BeneficiariesEditPage = () => {
   const props = useContext(BeneficiariesEditContext) as BeneficiariesEditType;
   const { can } = usePermissions();
-  const canEdit     = can("beneficiary.edit");
-  const canViewFull = can("beneficiary.viewFull");
+  const canEdit          = can("beneficiary.edit");
+  const canAddEnrollment = can("registration.create");
+  const canViewFull      = can("beneficiary.viewFull");
   const [visible, setVisible] = useState<any>();
   const [visibleTerm, setVisibleTerm] = useState<any>();
   const [visibleDeleteTerm, setVisibleDeleteTerm] = useState<any>();
@@ -330,7 +331,7 @@ const BeneficiariesEditPage = () => {
         className="flex justify-content-between"
         style={{ background: color.colorCard }}
       >
-        {canEdit && (
+        {(canEdit || canAddEnrollment) && (
           <Button
             label="Nova matricula"
             icon="pi pi-plus"
@@ -347,7 +348,7 @@ const BeneficiariesEditPage = () => {
         className="flex justify-content-between"
         style={{ background: color.colorCard }}
       >
-        {canEdit && (
+        {(canEdit || canAddEnrollment) && (
           <Button
             label={"Novo termo"}
             icon="pi pi-plus"
