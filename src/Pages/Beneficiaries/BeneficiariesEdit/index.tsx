@@ -49,6 +49,7 @@ import {
   shouldRequireBeneficiaryPhone,
 } from "../../../Utils/beneficiaryRules";
 import { usePermissions } from "../../../hooks/usePermissions";
+import { normalizeName } from "../../../Utils/normalizeName";
 
 const schema = Yup.object().shape({
   name: Yup.string().required("Nome é obrigatório"),
@@ -503,8 +504,8 @@ const BeneficiariesEditPage = () => {
                         value={values.name}
                         placeholder="Nome"
                         disabled={!canEdit}
-                        onChange={handleChange}
                         name="name"
+                        onChange={(e) => setFieldValue('name', normalizeName(e.target.value))}
                       />
                       {errors.name && touched.name ? (
                         <FieldError message={fieldError("name")} />

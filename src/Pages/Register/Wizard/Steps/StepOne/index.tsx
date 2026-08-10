@@ -12,6 +12,7 @@ import { validaCPF } from "../../../../../Controller/controllerValidCPF";
 import { Column, Padding, Row } from "../../../../../Styles/styles";
 import { useFetchRequestRegistrationOneCPF } from "../../../../../Services/PreRegistration/query";
 import InputsEquals from "../StepTwo/InputsEquals";
+import { normalizeName } from "../../../../../Utils/normalizeName";
 import {
   getDateFromUnknown,
   isUnder18ByBirthDate,
@@ -133,8 +134,8 @@ const StepOneFormFields = ({
               <TextInput
                 placeholder="Nome *"
                 name="name"
-                onChange={handleChange}
                 value={values.name}
+                onChange={(e) => setFieldValue('name', normalizeName(e.target.value))}
               />
             </div>
             {errors.name && touched.name ? (

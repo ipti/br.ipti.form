@@ -28,6 +28,7 @@ import InputAddress from "../../../Components/InputsAddress";
 import { useFetchRequestRegistrationOneCPF } from "../../../Services/PreRegistration/query";
 import { RegistrationCPF } from "../../../Services/PreRegistration/types";
 import CalendarComponent from "../../../Components/Calendar";
+import { normalizeName } from "../../../Utils/normalizeName";
 import {
   isUnder18ByBirthDate,
   shouldRequireBeneficiaryPhone,
@@ -238,7 +239,12 @@ const RegistrationPage = () => {
                     <div className="col-12 md:col-6">
                       <label>Nome *</label>
                       <Padding />
-                      <TextInput value={values.name} placeholder="Nome" onChange={handleChange} name="name" />
+                      <TextInput
+                        value={values.name}
+                        placeholder="Nome"
+                        name="name"
+                        onChange={(e) => setFieldValue('name', normalizeName(e.target.value))}
+                      />
                       <FieldError message={fieldError("name")} />
                     </div>
                     <div className="col-12 md:col-6">
