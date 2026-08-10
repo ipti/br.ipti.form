@@ -44,6 +44,6 @@ export interface User {
   active: boolean
   role: string
   profileId?: number
-  profileType?: 'COORDINATOR' | 'COORDINATION_SUPPORT' | 'REAPPLICATOR' | 'OTHER' | 'COMMUNICATION' | 'ACCOUNTABILITY'
+  profileType?: 'COORDINATOR' | 'COORDINATION_SUPPORT' | 'REAPPLICATOR' | 'OFICINEIRO' | 'OTHER' | 'COMMUNICATION' | 'ACCOUNTABILITY'
   profile?: UserProfileSummary
 }

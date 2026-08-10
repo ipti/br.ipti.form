@@ -5,11 +5,13 @@ type PermissionRule = (user: User | undefined) => boolean;
 const isAdmin         = (u: User | undefined) => u?.role === 'ADMIN';
 const isCoordinator   = (u: User | undefined) => u?.profileType === 'COORDINATOR' || u?.profileType === 'COORDINATION_SUPPORT';
 const isReapplicator  = (u: User | undefined) => u?.profileType === 'REAPPLICATOR' || u?.profileType === 'OTHER';
+const isOficineiro    = (u: User | undefined) => u?.profileType === 'OFICINEIRO';
 const adminOrCoord    = (u: User | undefined) => isAdmin(u) || isCoordinator(u);
 const isCommunication = (u: User | undefined) => u?.profileType === 'COMMUNICATION';
 const isAccountability = (u: User | undefined) => u?.profileType === 'ACCOUNTABILITY';
+const canAddEnrollment = (u: User | undefined) => isReapplicator(u) || isOficineiro(u);
 const hasLimitedBeneficiaryView = (u: User | undefined) =>
-  isReapplicator(u) || isCommunication(u) || isAccountability(u);
+  canAddEnrollment(u) || isCommunication(u) || isAccountability(u);
 
 // Para alterar quem pode fazer o quê: editar apenas este arquivo.
 export const PermissionsConfig: Record<string, PermissionRule> = {
@@ -37,10 +39,10 @@ export const PermissionsConfig: Record<string, PermissionRule> = {
   // ── Reuniões ──────────────────────────────────────────────────────────────
   'meeting.delete':             adminOrCoord,
   'meeting.editStatus':         adminOrCoord,
-  'meeting.editMembers':        (u) => adminOrCoord(u) || isReapplicator(u),
-  'meeting.viewJustification':  isReapplicator,
-  'meeting.uploadFiles':        (u) => isReapplicator(u) || adminOrCoord(u),
-  'meeting.create':            (u) => adminOrCoord(u) || isReapplicator(u),
+  'meeting.editMembers':        (u) => adminOrCoord(u) || canAddEnrollment(u),
+  'meeting.viewJustification':  (u) => canAddEnrollment(u),
+  'meeting.uploadFiles':        (u) => canAddEnrollment(u) || adminOrCoord(u),
+  'meeting.create':             (u) => adminOrCoord(u) || canAddEnrollment(u),
 
 
   // ── Projetos ──────────────────────────────────────────────────────────────
@@ -51,13 +53,15 @@ export const PermissionsConfig: Record<string, PermissionRule> = {
   // ── Beneficiários ────────────────────────────────────────────────────────────
   'beneficiary.view':     (u) => adminOrCoord(u) || hasLimitedBeneficiaryView(u),
   'beneficiary.viewFull': adminOrCoord,
-  'beneficiary.create':   adminOrCoord,
+  'beneficiary.create':   (u) => adminOrCoord(u) || canAddEnrollment(u),
   'beneficiary.edit':     adminOrCoord,
   'beneficiary.delete':   adminOrCoord,
 
   // ── Matrículas ────────────────────────────────────────────────────────────
-  'registration.view':   (u) => adminOrCoord(u) || hasLimitedBeneficiaryView(u),
-  'registration.delete': adminOrCoord,
+  'registration.view':    (u) => adminOrCoord(u) || hasLimitedBeneficiaryView(u),
+  'registration.create':  (u) => adminOrCoord(u) || canAddEnrollment(u),
+  'registration.edit':    adminOrCoord,
+  'registration.delete':  adminOrCoord,
 
   // ── Tecnologias Sociais ───────────────────────────────────────────────────
   'socialTechnology.create': isAdmin,

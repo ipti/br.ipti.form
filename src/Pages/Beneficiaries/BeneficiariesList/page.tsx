@@ -47,7 +47,8 @@ const propsAplication = useContext(
   const renderHeader = () => {
     return (
       <div
-        className="flex justify-content-between"
+        className="flex justify-content-between align-items-center"
+        style={{ gap: "8px" }}
       >
         {can("beneficiary.create") && (
           <Button
@@ -56,7 +57,7 @@ const propsAplication = useContext(
             onClick={() => history("criar")}
           />
         )}
-        <span className="p-input-icon-left">
+        <span className="p-input-icon-left" style={{ marginLeft: "auto" }}>
           <i className="pi pi-search" />
           <InputText
             value={props.allFilter}
