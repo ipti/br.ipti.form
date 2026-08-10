@@ -1,6 +1,7 @@
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import styled from "styled-components";
 import Present from "../../../../Assets/images/status-approved.svg";
@@ -11,6 +12,7 @@ import {
   StatusTermEnum,
   formatarData,
 } from "../../../../Controller/controllerGlobal";
+import CalendarComponent from "../../../../Components/Calendar";
 import http from "../../../../Services/axios";
 import { useFetchRequestClassroomReport } from "../../../../Services/Classroom/query";
 import color from "../../../../Styles/colors";
@@ -193,11 +195,15 @@ const Report = () => {
 
 const ReportPage = () => {
   const { id } = useParams();
+  const [dateStart, setDateStart] = useState<Date | undefined>(undefined);
+  const [dateEnd, setDateEnd] = useState<Date | undefined>(undefined);
 
-  const { data } = useFetchRequestClassroomReport(parseInt(id!));
+  const { data } = useFetchRequestClassroomReport(parseInt(id!), dateStart, dateEnd);
+
+  const hasFilter = !!dateStart || !!dateEnd;
 
   const { generatePDF, generateImagesZip, isGeneratingImagesZip } =
-    ReportClassroom();
+    ReportClassroom(dateStart, dateEnd);
 
   const getLatestTermStatus = (rowData: any) => {
     const latestTerm = rowData?.registration?.register_term?.[0];
@@ -283,9 +289,10 @@ const ReportPage = () => {
 
   const downloadCSV = async () => {
     try {
-      const response = await http.get(
-        "/classroom-bff/frequency-csv?classroomId=" + id
-      );
+      const params: Record<string, string> = { classroomId: id! };
+      if (dateStart) params.dateStart = dateStart.toISOString();
+      if (dateEnd) params.dateEnd = dateEnd.toISOString();
+      const response = await http.get("/classroom-bff/frequency-csv", { params });
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
@@ -347,6 +354,40 @@ const ReportPage = () => {
               <small>Critério de aprovação</small>
               <strong>{data?.project?.approval_percentage ?? 0}%</strong>
             </div>
+          </div>
+
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-end", gap: "12px", marginBottom: "1rem" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+              <small style={{ color: color.colorsBaseInkLight, fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                Data inicial
+              </small>
+              <CalendarComponent
+                value={dateStart}
+                onChange={(e: any) => setDateStart(e.value as Date | undefined)}
+                dateFormat="dd/mm/yy"
+                placeholder="Todos"
+              />
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+              <small style={{ color: color.colorsBaseInkLight, fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                Data final
+              </small>
+              <CalendarComponent
+                value={dateEnd}
+                onChange={(e: any) => setDateEnd(e.value as Date | undefined)}
+                dateFormat="dd/mm/yy"
+                placeholder="Todos"
+              />
+            </div>
+            {hasFilter && (
+              <Button
+                label="Ver todos"
+                icon="pi pi-times"
+                severity="secondary"
+                text
+                onClick={() => { setDateStart(undefined); setDateEnd(undefined); }}
+              />
+            )}
           </div>
 
           <DataTable

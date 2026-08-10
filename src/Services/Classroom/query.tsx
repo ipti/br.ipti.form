@@ -10,8 +10,11 @@ export const useFetchRequestFoulsClassroomOne = (id: number) => {
 };
 
 
-export const useFetchRequestClassroomReport = (id: number) => {
-  return useQuery(["useRequestsClassroomReport", id], () => requestClassroomReport(id));
+export const useFetchRequestClassroomReport = (id: number, dateStart?: Date, dateEnd?: Date) => {
+  return useQuery(
+    ["useRequestsClassroomReport", id, dateStart?.toISOString(), dateEnd?.toISOString()],
+    () => requestClassroomReport(id, dateStart, dateEnd),
+  );
 };
 
 

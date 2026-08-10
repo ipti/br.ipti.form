@@ -55,7 +55,7 @@ const loadScript = (src: string) =>
     document.body.appendChild(script);
   });
 
-export const ReportClassroom = () => {
+export const ReportClassroom = (dateStart?: Date, dateEnd?: Date) => {
   const { id } = useParams();
 
   const [logoBase64, setLogoBase64] = useState<string | null>(null);
@@ -65,7 +65,7 @@ export const ReportClassroom = () => {
 
   const [report, setReport] = useState<ReportClassroomType | undefined>();
   const { data: foulsRequest } = useFetchRequestFoulsClassroomOne(parseInt(id!));
-  const { data } = useFetchRequestClassroomReport(parseInt(id!));
+  const { data } = useFetchRequestClassroomReport(parseInt(id!), dateStart, dateEnd);
 
   const fouls = foulsRequest as MediafrequencyType;
 
