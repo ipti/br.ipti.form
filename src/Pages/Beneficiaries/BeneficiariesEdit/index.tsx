@@ -201,7 +201,7 @@ const StatusTermHeader = () => {
   const op = useRef<OverlayPanel>(null);
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-      <span>Status</span>
+      <span>Status do termo</span>
       <button
         type="button"
         onClick={(e) => op.current?.toggle(e)}
@@ -488,7 +488,7 @@ const BeneficiariesEditPage = () => {
                       />
                     </div>
                     <div className="col-12 md:col-6">
-                      <label>Status</label>
+                      <label>Status do beneficiário</label>
                       <Padding />
                       <TextInput
                         value={props.registrations?.status ? StatusRegistrationEnum[props.registrations?.status] : props.registrations?.status}
@@ -925,7 +925,7 @@ const BeneficiariesEditPage = () => {
                       header="Plano de trabalho"
                     ></Column>
                     <Column field="classroom.name" header="Turma"></Column>
-                    <Column body={StatusBody} header="Status"></Column>
+                    <Column body={StatusBody} header="Status da matrícula"></Column>
                     <Column header="Ações" body={ActionBeneficiariesBody}></Column>
                   </DataTable>
                 </>)}

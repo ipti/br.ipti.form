@@ -171,7 +171,7 @@ const propsAplication = useContext(
             }}
             header="Data de matricula"
           ></Column>
-          <Column header={'Status'} align={"center"} body={(bodyRow) => {
+          <Column header={'Status do beneficiário'} align={"center"} body={(bodyRow) => {
             return (
               <div >{StatusRegistrationEnum[bodyRow.status]}</div>
             )
