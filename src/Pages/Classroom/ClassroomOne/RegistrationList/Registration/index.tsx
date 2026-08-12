@@ -143,7 +143,7 @@ const RegistrationPage = () => {
             <Column body={(row) => formatarData(row?.dateTerm!)} header="Data de assinatura" />
             <Column body={(row) => formatarData(row?.dateValid ?? "")} header="Data de validade" />
             <Column body={(row) => row?.term_type?.label ?? row?.type ?? ""} header="Tipo do termo" />
-            <Column body={(row) => StatusTermEnum[row?.status ?? ""] ?? ""} header="Status" />
+            <Column body={(row) => StatusTermEnum[row?.status ?? ""] ?? ""} header="Status do termo" />
             <Column body={(row) => row?.observation} header="Observações" />
           </DataTable>
 

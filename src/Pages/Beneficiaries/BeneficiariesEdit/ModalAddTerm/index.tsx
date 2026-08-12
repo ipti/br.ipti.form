@@ -139,14 +139,14 @@ const ModalAddTerm = ({
 
   const blockedTypeIds = useMemo(() => {
     if (isEdit) return new Set<number>();
-    const terms = props.registrations?.register_term ?? [];
+    const terms = props?.registrations?.register_term ?? [];
     return new Set<number>(
       (terms as any[])
         .filter((t) => t.status === 'ACTIVE_TERM' || t.status === 'TERM_ANALYSIS')
         .map((t) => t.term_type?.id)
         .filter((id): id is number => id !== undefined),
     );
-  }, [props.registrations?.register_term, isEdit]);
+  }, [props?.registrations?.register_term, isEdit]);
 
   // Memoize initial values so Date.now() is evaluated only once per open,
   // preventing enableReinitialize from resetting the form on every re-render.
