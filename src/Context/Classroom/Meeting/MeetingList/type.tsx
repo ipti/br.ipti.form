@@ -11,4 +11,5 @@ export interface Meeting {
   status: string
   user_fk: number
   classroom_fk: number
+  reaproveitado: boolean
 }

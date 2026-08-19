@@ -1,5 +1,6 @@
 import { Form, Formik } from "formik";
 import { Button } from "primereact/button";
+import { Checkbox } from "primereact/checkbox";
 import { Dialog } from "primereact/dialog";
 import { useContext, useState } from "react";
 import * as Yup from "yup";
@@ -50,7 +51,8 @@ const ModalReuseClassroom = ({
           year: year,
           idTs: "",
           idProject: "",
-          name: classroom?.name || "" ,
+          name: classroom?.name || "",
+          reuseEncontros: false,
         }}
         validationSchema={schema}
         onSubmit={(values) => {
@@ -58,6 +60,7 @@ const ModalReuseClassroom = ({
             idClassroom: classroom?.id,
             idProject: values.idProject,
             name: values.name,
+            reuseEncontros: values.reuseEncontros,
           });
           onHide();
         }}
@@ -148,6 +151,37 @@ const ModalReuseClassroom = ({
                     </div>
                   ) : null}
                 </div>
+              </div>
+              <Padding padding="16px" />
+              <div className="col-12">
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <Checkbox
+                    inputId="reuseEncontros"
+                    checked={values.reuseEncontros}
+                    onChange={(e) => setFieldValue("reuseEncontros", e.checked)}
+                  />
+                  <label htmlFor="reuseEncontros" style={{ cursor: "pointer", fontWeight: 500 }}>
+                    Reaproveitar encontros da turma
+                  </label>
+                </div>
+                {values.reuseEncontros && (
+                  <div style={{
+                    marginTop: 10,
+                    padding: "10px 14px",
+                    borderRadius: 8,
+                    background: "rgba(252,173,9,0.12)",
+                    border: "1px solid rgba(252,173,9,0.4)",
+                    display: "flex",
+                    gap: 8,
+                    alignItems: "flex-start",
+                  }}>
+                    <i className="pi pi-exclamation-triangle" style={{ color: "#9a6700", marginTop: 2, flexShrink: 0 }} />
+                    <span style={{ fontSize: "0.85rem", color: "#9a6700", lineHeight: 1.5 }}>
+                      Os encontros serão copiados com as mesmas datas da turma original.
+                      Após o reaproveitamento, <strong>atualize a data de cada encontro</strong> antes de registrar presença.
+                    </span>
+                  </div>
+                )}
               </div>
               <Padding padding="16px" />
               <Column style={{ width: "100%" }}>

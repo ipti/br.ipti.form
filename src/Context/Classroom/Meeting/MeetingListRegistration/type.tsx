@@ -20,6 +20,7 @@ export interface Meeting {
   theme: string
   justification: any
   classroom_fk: number
+  reaproveitado: boolean
   fouls: any[]
   classroom: Classroom
   meeting_profile: MeetingProfile[]

@@ -13,11 +13,10 @@ import {
   converterData,
   formatarData,
   PROFILE_TYPE,
-  profileTypeLabel,
-  ROLE,
+  ROLE
 } from "../../../Controller/controllerGlobal";
-import { isSocialProfile } from "../../../hooks/useProfileFieldRules";
 import { usePermissions } from "../../../hooks/usePermissions";
+import { isSocialProfile } from "../../../hooks/useProfileFieldRules";
 import { useFetchProfileOne } from "../../../Services/Profile/query";
 import { ControllerUser } from "../../../Services/Users/controller";
 import { useFetchRequestUsersOne } from "../../../Services/Users/query";

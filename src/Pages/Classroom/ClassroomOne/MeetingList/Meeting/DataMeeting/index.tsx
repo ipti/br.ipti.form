@@ -6,18 +6,18 @@ import { useContext, useState } from "react";
 import { Popover } from "react-tiny-popover";
 import CalendarComponent from "../../../../../../Components/Calendar";
 import DropdownComponent from "../../../../../../Components/Dropdown";
+import QuillEditor from "../../../../../../Components/QuillEditor";
 import TextAreaComponent from "../../../../../../Components/TextArea";
 import TextInput from "../../../../../../Components/TextInput";
+import TimeInput from "../../../../../../Components/TimeInput";
 import { AplicationContext } from "../../../../../../Context/Aplication/context";
 import { MeetingListRegistrationContext } from "../../../../../../Context/Classroom/Meeting/MeetingListRegistration/context";
 import { MeetingListRegisterTypes } from "../../../../../../Context/Classroom/Meeting/MeetingListRegistration/type";
-import { ROLE, Status } from "../../../../../../Controller/controllerGlobal";
+import { Status } from "../../../../../../Controller/controllerGlobal";
 import { usePermissions } from "../../../../../../hooks/usePermissions";
 import { useFetchProfiles } from "../../../../../../Services/Profile/query";
 import { Column, Padding, Row } from "../../../../../../Styles/styles";
 import { PropsAplicationContext } from "../../../../../../Types/types";
-import TimeInput from "../../../../../../Components/TimeInput";
-import QuillEditor from "../../../../../../Components/QuillEditor";
 
 const getMeetingDescriptionAsString = (content: unknown) => {
   if (!content) {
@@ -302,6 +302,25 @@ const DataMeeting = () => {
               ) : null}
             </Row>
             <Padding padding="16px" />
+            {props.meeting?.reaproveitado && (
+              <div style={{
+                marginBottom: 16,
+                padding: "12px 16px",
+                borderRadius: 8,
+                background: "rgba(252,173,9,0.12)",
+                border: "1px solid rgba(252,173,9,0.4)",
+                display: "flex",
+                gap: 10,
+                alignItems: "flex-start",
+              }}>
+                <i className="pi pi-exclamation-triangle" style={{ color: "#9a6700", marginTop: 2, flexShrink: 0 }} />
+                <span style={{ fontSize: "0.875rem", color: "#9a6700", lineHeight: 1.6 }}>
+                  <strong>Este encontro foi reaproveitado de outra turma.</strong><br />
+                  A data abaixo é a data original do encontro — verifique e atualize antes de registrar presença.
+                  O aviso desaparece após salvar as alterações.
+                </span>
+              </div>
+            )}
             <div style={sectionStyle}>
               <h4 style={{ margin: "0 0 4px 0", color: "#1f2937" }}>Informações do encontro</h4>
               <p style={{ margin: "0 0 12px 0", color: "#64748b", fontSize: "13px" }}>

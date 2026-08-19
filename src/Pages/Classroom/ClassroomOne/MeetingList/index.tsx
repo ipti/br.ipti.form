@@ -57,6 +57,7 @@ const MeetingListPage = () => {
                   data={item.meeting_date}
                   status={item.status}
                   idMeeting={item.id}
+                  reaproveitado={item.reaproveitado}
                 />
               </div>
             );

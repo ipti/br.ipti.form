@@ -19,11 +19,13 @@ const CardMeeting = ({
   data,
   status,
   idMeeting,
+  reaproveitado,
 }: {
   title: string;
   data: string;
   status: string;
   idMeeting: number;
+  reaproveitado?: boolean;
 }) => {
   const history = useNavigate();
   const [visible, setVisible] = useState(false);
@@ -86,7 +88,7 @@ const CardMeeting = ({
           {formatarData(data)}
         </span>
 
-        <div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
           <span style={{
             fontSize: "0.7rem",
             fontWeight: 700,
@@ -97,6 +99,22 @@ const CardMeeting = ({
           }}>
             {statusStyle.label}
           </span>
+          {reaproveitado && (
+            <span style={{
+              fontSize: "0.7rem",
+              fontWeight: 700,
+              padding: "3px 10px",
+              borderRadius: "999px",
+              background: "rgba(252,173,9,0.16)",
+              color: "#9a6700",
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
+            }}>
+              <i className="pi pi-calendar-times" style={{ fontSize: "0.65rem" }} />
+              Verifique a data
+            </span>
+          )}
         </div>
       </div>
 
