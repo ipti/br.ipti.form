@@ -1,5 +1,5 @@
-import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
+import { InputText } from "primereact/inputtext";
 import { useContext, useState } from "react";
 import { useParams } from "react-router-dom";
 import CardRegistration from "../../../../Components/Card/CardRegistration";
@@ -12,7 +12,6 @@ import RegistartionClassroomProvider, {
 import { RegistrationClassroomTypes } from "../../../../Context/Classroom/RegistrationsList/type";
 import { StatusTermEnum } from "../../../../Controller/controllerGlobal";
 import { useFetchRequestClassroomOne } from "../../../../Services/Classroom/query";
-import { Padding, Row } from "../../../../Styles/styles";
 import { useTermTypes } from "../../../../hooks/useTermTypes";
 
 const RegistrationList = () => {

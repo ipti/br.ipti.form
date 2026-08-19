@@ -4,12 +4,13 @@ import Loading from "../../../../../Components/Loading";
 import StepsNavigator from "../../../../../Components/StepsNavigator";
 import TextAreaComponent from "../../../../../Components/TextArea";
 import Upload from "../../../../../Components/Upload";
+import UserLogs from "../../../../../Components/UserLogs";
 import { AplicationContext } from "../../../../../Context/Aplication/context";
 import MeetingListRegistrationProvider, {
   MeetingListRegistrationContext,
 } from "../../../../../Context/Classroom/Meeting/MeetingListRegistration/context";
 import { MeetingListRegisterTypes } from "../../../../../Context/Classroom/Meeting/MeetingListRegistration/type";
-import { ROLE, Status } from "../../../../../Controller/controllerGlobal";
+import { Status } from "../../../../../Controller/controllerGlobal";
 import { usePermissions } from "../../../../../hooks/usePermissions";
 import { Column, Container, Padding } from "../../../../../Styles/styles";
 import { PropsAplicationContext } from "../../../../../Types/types";
@@ -17,7 +18,6 @@ import Beneficiarios from "./Beneficiarios";
 import DataMeeting from "./DataMeeting";
 import ModalFiles from "./ModalFiles";
 import ListArchivesAttendanceList from "./UploadArchivesAttendanceList";
-import UserLogs from "../../../../../Components/UserLogs";
 
 const Meeting = () => {
   return (

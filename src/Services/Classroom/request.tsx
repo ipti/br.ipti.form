@@ -1,6 +1,6 @@
 import { ChangeClassroom, CreateClassroom, ReuseClassroom } from "../../Context/Classroom/type";
 import http from "../axios";
-import { getYear, logout } from "../localstorage";
+import { logout } from "../localstorage";
 
 export const requestCreateClassroom = (data: CreateClassroom) => {
   return http
