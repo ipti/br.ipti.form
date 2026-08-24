@@ -396,7 +396,7 @@ const BeneficiariesEditPage = () => {
           validationSchema={schema}
           onSubmit={(values) => {
             props.handleUpdateRegistration(
-              { ...values },
+              { ...values, name: values.name?.trim() },
               props.registrations?.id!
             );
           }}

@@ -303,7 +303,7 @@ const StepOne = () => {
     <Formik
       initialValues={initialValue}
       validationSchema={schema}
-      onSubmit={(values) => props.NextStep(values)}
+      onSubmit={(values) => props.NextStep({ ...values, name: values.name.trim() })}
     >
       {({ values, handleChange, errors, touched, setFieldValue }) => {
         return (

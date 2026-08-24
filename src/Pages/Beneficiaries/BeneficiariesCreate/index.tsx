@@ -143,7 +143,9 @@ const RegistrationPage = () => {
         onSubmit={(values) => {
           delete values.project;
           const cleaned = Object.fromEntries(
-            Object.entries(values).filter(([_, v]) => v !== "" && v !== null && v !== undefined)
+            Object.entries({ ...values, name: values.name.trim() }).filter(
+              ([_, v]) => v !== "" && v !== null && v !== undefined
+            )
           );
           props.CreateRegister(cleaned as typeof values);
         }}
