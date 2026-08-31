@@ -1,5 +1,6 @@
 import { Message } from "primereact/message";
 import { useContext, useState } from "react";
+import Swal from "sweetalert2";
 import Loading from "../../../../../Components/Loading";
 import StepsNavigator from "../../../../../Components/StepsNavigator";
 import TextAreaComponent from "../../../../../Components/TextArea";
@@ -35,6 +36,28 @@ const MeetingPage = () => {
   const [visible, setVisible] = useState(false)
   const [indexImage, setindexImage] = useState(0)
   const [currentStep, setCurrentStep] = useState(0);
+  const [isEditingData, setIsEditingData] = useState(false);
+  const [hasSelectedFiles, setHasSelectedFiles] = useState(false);
+
+  const handleStepChange = (index: number) => {
+    if (isEditingData) {
+      Swal.fire({
+        icon: "warning",
+        title: "Alterações não salvas",
+        text: "Salve ou cancele as alterações antes de trocar de etapa.",
+      });
+      return;
+    }
+    if (hasSelectedFiles) {
+      Swal.fire({
+        icon: "warning",
+        title: "Arquivos selecionados",
+        text: "Envie ou limpe a seleção de arquivos antes de trocar de etapa.",
+      });
+      return;
+    }
+    setCurrentStep(index);
+  };
 
   const propsAplication = useContext(
     AplicationContext
@@ -113,11 +136,14 @@ const MeetingPage = () => {
           <StepsNavigator
             steps={steps}
             currentStep={currentStep}
-            onStepChange={setCurrentStep}
+            onStepChange={handleStepChange}
             showActions={false}
+            disabled={isEditingData || hasSelectedFiles}
           />
 
-          {currentStep === 0 && <DataMeeting />}
+          {currentStep === 0 && (
+            <DataMeeting onEditingChange={setIsEditingData} />
+          )}
 
           {currentStep === 1 && (
             <>
@@ -128,7 +154,16 @@ const MeetingPage = () => {
                     <div className="col-12">
                       <label>Salve os arquivos do encontro</label>
                       <Padding />
-                      <Upload />
+                      {hasSelectedFiles && (
+                        <>
+                          <Message
+                            severity="warn"
+                            text="Você selecionou arquivos que ainda não foram enviados. Envie ou limpe a seleção antes de trocar de etapa."
+                          />
+                          <Padding />
+                        </>
+                      )}
+                      <Upload onSelectionChange={setHasSelectedFiles} />
                     </div>
                   </div>
                 )}
@@ -182,8 +217,9 @@ const MeetingPage = () => {
             <StepsNavigator
               steps={steps}
               currentStep={currentStep}
-              onStepChange={setCurrentStep}
+              onStepChange={handleStepChange}
               onlyActions
+              disabled={isEditingData || hasSelectedFiles}
             />
           </div>
         </>

@@ -16,6 +16,7 @@ type StepsNavigatorProps = {
   previousLabel?: string;
   nextLabel?: string;
   finishLabel?: string;
+  disabled?: boolean;
 };
 
 const StepsNavigator = ({
@@ -27,6 +28,7 @@ const StepsNavigator = ({
   previousLabel = "Etapa anterior",
   nextLabel = "Próxima etapa",
   finishLabel = "Concluir navegação",
+  disabled = false,
 }: StepsNavigatorProps) => {
   const progressPercent =
     steps.length > 1 ? (currentStep / (steps.length - 1)) * 100 : 100;
@@ -53,6 +55,7 @@ const StepsNavigator = ({
                 <button
                   key={step.key}
                   type="button"
+                  disabled={disabled && !isActive}
                   onClick={() => onStepChange(index)}
                   className={[
                     "step-button",
@@ -94,7 +97,7 @@ const StepsNavigator = ({
             icon="pi pi-arrow-left"
             severity="secondary"
             outlined
-            disabled={currentStep === 0}
+            disabled={currentStep === 0 || disabled}
             onClick={() => onStepChange(Math.max(currentStep - 1, 0))}
           />
           <Button
@@ -102,7 +105,7 @@ const StepsNavigator = ({
             label={isLast ? finishLabel : nextLabel}
             icon={isLast ? "pi pi-check" : "pi pi-arrow-right"}
             iconPos="right"
-            disabled={isLast}
+            disabled={isLast || disabled}
             onClick={() =>
               onStepChange(Math.min(currentStep + 1, steps.length - 1))
             }

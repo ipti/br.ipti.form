@@ -1,11 +1,11 @@
 import { Form, Formik } from "formik";
 import { Button } from "primereact/button";
 import { Chip } from "primereact/chip";
+import { Message } from "primereact/message";
 import { MultiSelect } from "primereact/multiselect";
 import { useContext, useState } from "react";
 import { Popover } from "react-tiny-popover";
 import CalendarComponent from "../../../../../../Components/Calendar";
-import DropdownComponent from "../../../../../../Components/Dropdown";
 import QuillEditor from "../../../../../../Components/QuillEditor";
 import TextAreaComponent from "../../../../../../Components/TextArea";
 import TextInput from "../../../../../../Components/TextInput";
@@ -149,12 +149,20 @@ const sanitizeMeetingDescriptionForView = (content: string | null | undefined) =
   return sanitized;
 };
 
-const DataMeeting = () => {
+type DataMeetingProps = {
+  onEditingChange?: (editing: boolean) => void;
+};
+
+const DataMeeting = ({ onEditingChange }: DataMeetingProps) => {
 
   const { data: profilesResponse } = useFetchProfiles({ page: 1, perPage: 1000 });
   const profileRequest = profilesResponse?.data ?? [];
 
-  const [edit, setEdit] = useState(false);
+  const [edit, setEditState] = useState(false);
+  const setEdit = (value: boolean) => {
+    setEditState(value);
+    onEditingChange?.(value);
+  };
   const [statusInfoOpen, setStatusInfoOpen] = useState(false);
   const [obsInfoOpen, setObsInfoOpen] = useState(false);
 
@@ -174,6 +182,12 @@ const DataMeeting = () => {
     { id: Status.REPROVED, name: "Pendente de Revisão" },
     { id: Status.PENDING, name: "Pendente de Análise" },
   ];
+
+  const statusColors: Record<string, { bg: string; border: string; text: string }> = {
+    [Status.APPROVED]: { bg: "#f0fdf4", border: "#86efac", text: "#166534" },
+    [Status.REPROVED]: { bg: "#fef2f2", border: "#fca5a5", text: "#991b1b" },
+    [Status.PENDING]: { bg: "#fffbeb", border: "#fcd34d", text: "#92400e" },
+  };
 
   const getStatus = (id: string) => {
     return status.find((props) => props.id === id);
@@ -262,17 +276,9 @@ const DataMeeting = () => {
             <Row id="space-between">
               <Row>
                 <Column id="center">
-                  {edit ? (
-                    <TextInput
-                      name="name"
-                      value={values.name}
-                      onChange={handleChange}
-                    />
-                  ) : (
-                    <Row>
-                      <h2>{props.meeting?.name}</h2>
-                    </Row>
-                  )}
+                  <Row>
+                    <h2>{values.name || props.meeting?.name}</h2>
+                  </Row>
                 </Column>
                 <Padding />
                 {!edit && canEdit ? (
@@ -301,6 +307,15 @@ const DataMeeting = () => {
                 </Row>
               ) : null}
             </Row>
+            {edit && (
+              <>
+                <Padding padding="10px" />
+                <Message
+                  severity="warn"
+                  text="Você está editando este encontro. Salve ou cancele as alterações antes de trocar de etapa."
+                />
+              </>
+            )}
             <Padding padding="16px" />
             {props.meeting?.reaproveitado && (
               <div style={{
@@ -327,6 +342,17 @@ const DataMeeting = () => {
                 Preencha os dados principais para identificar e organizar este encontro.
               </p>
               <div className="grid">
+                <div className="col-12 md:col-6">
+                  <label>Nome do encontro</label>
+                  <Padding />
+                  <TextInput
+                    name="name"
+                    placeholder="Nome do encontro"
+                    value={values.name}
+                    disabled={!edit}
+                    onChange={handleChange}
+                  />
+                </div>
                 <div className="col-12 md:col-6">
                   <label>Tema</label>
                   <Padding />
@@ -393,15 +419,66 @@ const DataMeeting = () => {
                       </Popover>
                     </div>
                     <Padding />
-                    <DropdownComponent
-                      disabled={!edit}
-                      value={values.status}
-                      onChange={handleChange}
-                      name="status"
-                      placerholder="Status"
-                      optionsLabel="name"
-                      options={!props.ArchivesMeeting ? status.filter((i) => i.id !== Status.APPROVED) : status}
-                    />
+                    {values.status && (
+                      <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
+                        <span style={{ fontSize: "12px", color: "#64748b" }}>Status atual:</span>
+                        <span
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "6px",
+                            padding: "4px 12px",
+                            borderRadius: "999px",
+                            background: statusColors[values.status.id].bg,
+                            border: `1px solid ${statusColors[values.status.id].border}`,
+                            color: statusColors[values.status.id].text,
+                            fontWeight: 600,
+                            fontSize: "12px",
+                          }}
+                        >
+                          <i className="pi pi-circle-fill" style={{ fontSize: "8px" }} />
+                          {values.status.name}
+                        </span>
+                      </div>
+                    )}
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                      {(!props.ArchivesMeeting
+                        ? status.filter((i) => i.id !== Status.APPROVED)
+                        : status
+                      ).map((item) => {
+                        const colors = statusColors[item.id];
+                        const isSelected = values.status?.id === item.id;
+
+                        return (
+                          <button
+                            key={item.id}
+                            type="button"
+                            disabled={!edit}
+                            onClick={() => setFieldValue("status", item)}
+                            style={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "6px",
+                              padding: "8px 16px",
+                              borderRadius: "999px",
+                              border: isSelected
+                                ? `1.5px solid ${colors.border}`
+                                : "1.5px solid #e5e7eb",
+                              background: isSelected ? colors.bg : "#fff",
+                              color: isSelected ? colors.text : "#94a3b8",
+                              fontWeight: isSelected ? 600 : 500,
+                              fontSize: "13px",
+                              cursor: edit ? "pointer" : "default",
+                              opacity: !edit && !isSelected ? 0.5 : 1,
+                              transition: "all 0.15s",
+                            }}
+                          >
+                            {isSelected && <i className="pi pi-check" style={{ fontSize: "11px" }} />}
+                            {item.name}
+                          </button>
+                        );
+                      })}
+                    </div>
                     {values.status?.id === Status.REPROVED && <div className="col-12 md:col-6">
                       <label>Justificativa</label>
                       <Padding />

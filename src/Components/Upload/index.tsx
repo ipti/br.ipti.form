@@ -1,11 +1,15 @@
 import { Button } from 'primereact/button';
 import { FileUpload, FileUploadHeaderTemplateOptions, ItemTemplateOptions } from 'primereact/fileupload';
-import { useContext, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { MeetingListRegistrationContext } from '../../Context/Classroom/Meeting/MeetingListRegistration/context';
 import { MeetingListRegisterTypes } from '../../Context/Classroom/Meeting/MeetingListRegistration/type';
 
-export default function Upload() {
+type UploadProps = {
+    onSelectionChange?: (hasFiles: boolean) => void;
+};
+
+export default function Upload({ onSelectionChange }: UploadProps) {
     const [files, setFiles] = useState<File[]>([]);
     const [isSending, setIsSending] = useState(false);
     const [sent, setSent] = useState(false);
@@ -13,6 +17,10 @@ export default function Upload() {
 
     const { idMeeting } = useParams();
     const meetingList = useContext(MeetingListRegistrationContext) as MeetingListRegisterTypes;
+
+    useEffect(() => {
+        onSelectionChange?.(files.length > 0);
+    }, [files]);
 
     const handleSend = async () => {
         if (files.length === 0) return;
