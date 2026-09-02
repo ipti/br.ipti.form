@@ -139,7 +139,7 @@ const STEPS_EDIT_LIMITED: StepItem[] = [
   { key: "termos", label: "Termos & Matrículas", description: "Histórico de termos e matrículas." },
 ];
 
-const maskCpf = (cpf: string) => {
+export const maskCpf = (cpf: string) => {
   const digits = (cpf || '').replace(/\D/g, '');
   if (digits.length !== 11) return cpf;
   return `${digits.slice(0, 3)}.***.***-${digits.slice(9)}`;

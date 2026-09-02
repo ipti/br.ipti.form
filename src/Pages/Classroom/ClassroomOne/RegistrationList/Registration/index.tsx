@@ -23,7 +23,8 @@ import {
 } from "../../../../../Controller/controllerGlobal";
 import { useFetchRequestClassroomOne } from "../../../../../Services/Classroom/query";
 import { Padding } from "../../../../../Styles/styles";
-import { Avatar } from "../../../../Beneficiaries/BeneficiariesEdit";
+import { usePermissions } from "../../../../../hooks/usePermissions";
+import { Avatar, maskCpf } from "../../../../Beneficiaries/BeneficiariesEdit";
 import ModalAddTerm from "../../../../Beneficiaries/BeneficiariesEdit/ModalAddTerm";
 
 
@@ -42,6 +43,9 @@ const RegistrationPage = () => {
   const [visibleTerm, setVisibleTerm] = useState<any>();
   const history = useNavigate();
 
+  const { can } = usePermissions();
+  const canViewFull = can("beneficiary.viewFull");
+  const canEdit = can("registration.edit");
 
   const { id } = useParams();
   const { data: classroom } = useFetchRequestClassroomOne(parseInt(id!));
@@ -73,34 +77,43 @@ const RegistrationPage = () => {
 
       {props.registration ? (
         <>
-          <Formik
-            initialValues={props.initialValue}
-            onSubmit={(values) => {
-              props.handleUpdateRegistration({ ...values });
-            }}
-          >
-            {({ values, handleChange }) => (
-              <Form>
-                <div className="grid align-items-end">
-                  <div className="col-12 md:col-6">
-                    <label>Status da matrícula</label>
-                    <Padding />
-                    <DropdownComponent
-                      value={values.status}
-                      onChange={handleChange}
-                      name="status"
-                      placerholder="Status"
-                      optionsLabel="name"
-                      options={getStatusList()}
-                    />
+          {canEdit ? (
+            <Formik
+              initialValues={props.initialValue}
+              onSubmit={(values) => {
+                props.handleUpdateRegistration({ ...values });
+              }}
+            >
+              {({ values, handleChange }) => (
+                <Form>
+                  <div className="grid align-items-end">
+                    <div className="col-12 md:col-6">
+                      <label>Status da matrícula</label>
+                      <Padding />
+                      <DropdownComponent
+                        value={values.status}
+                        onChange={handleChange}
+                        name="status"
+                        placerholder="Status"
+                        optionsLabel="name"
+                        options={getStatusList()}
+                      />
+                    </div>
+                    <div className="col-12 md:col-6">
+                      <Button label="Salvar" />
+                    </div>
                   </div>
-                  <div className="col-12 md:col-6">
-                    <Button label="Salvar" />
-                  </div>
-                </div>
-              </Form>
-            )}
-          </Formik>
+                </Form>
+              )}
+            </Formik>
+          ) : (
+            <div className="grid">
+              <InfoField
+                label="Status da matrícula"
+                value={getStatusList().find((s) => s.id === props.registration?.status)?.name ?? props.registration?.status}
+              />
+            </div>
+          )}
 
           <Padding padding="16px" />
           <Avatar>
@@ -111,27 +124,35 @@ const RegistrationPage = () => {
           <h3>Dados Básicos</h3>
           <Padding />
           <div className="grid">
-            <InfoField label="Id THP" value={reg?.thp_id} />
-            <InfoField label="Status do beneficiário" value={reg?.status ? StatusRegistrationEnum[reg.status] : reg?.status} />
+            {canViewFull && <InfoField label="Id THP" value={reg?.thp_id} />}
+            {canViewFull && (
+              <InfoField label="Status do beneficiário" value={reg?.status ? StatusRegistrationEnum[reg.status] : reg?.status} />
+            )}
             <InfoField label="Nome" value={reg?.name} />
-            <InfoField label="Sexo" value={typesex.find((s) => s.id === reg?.sex)?.type} />
-            <InfoField label="Data de Nascimento" value={reg?.birthday?.toString()} />
-            <InfoField label="Cor de raça" value={color_race.find((c) => c.id === reg?.color_race)?.name} />
-            <InfoField label="CPF" value={reg?.cpf} />
-            <InfoField label="Telefone para contato" value={reg?.responsable_telephone} />
-            <InfoField label="Deficiente" value={reg?.deficiency === true ? "Sim" : reg?.deficiency === false ? "Não" : undefined} />
-            {reg?.deficiency && (
+            {canViewFull && <InfoField label="Sexo" value={typesex.find((s) => s.id === reg?.sex)?.type} />}
+            {canViewFull && <InfoField label="Data de Nascimento" value={reg?.birthday?.toString()} />}
+            {canViewFull && <InfoField label="Cor de raça" value={color_race.find((c) => c.id === reg?.color_race)?.name} />}
+            <InfoField label="CPF" value={canViewFull ? reg?.cpf : maskCpf(reg?.cpf ?? "")} />
+            {canViewFull && <InfoField label="Telefone para contato" value={reg?.responsable_telephone} />}
+            {canViewFull && (
+              <InfoField label="Deficiente" value={reg?.deficiency === true ? "Sim" : reg?.deficiency === false ? "Não" : undefined} />
+            )}
+            {canViewFull && reg?.deficiency && (
               <InfoField label="Qual deficiência?" value={reg?.deficiency_description} />
             )}
           </div>
 
-          <Padding padding="8px" />
-          <h3>Dados do Responsável</h3>
-          <Padding />
-          <div className="grid">
-            <InfoField label="Nome do Responsável" value={reg?.responsable_name} />
-            <InfoField label="CPF do Responsável" value={reg?.responsable_cpf} />
-          </div>
+          {canViewFull && (
+            <>
+              <Padding padding="8px" />
+              <h3>Dados do Responsável</h3>
+              <Padding />
+              <div className="grid">
+                <InfoField label="Nome do Responsável" value={reg?.responsable_name} />
+                <InfoField label="CPF do Responsável" value={reg?.responsable_cpf} />
+              </div>
+            </>
+          )}
 
           <Padding padding="8px" />
           <h3>Termo</h3>
@@ -147,35 +168,40 @@ const RegistrationPage = () => {
             <Column body={(row) => row?.observation} header="Observações" />
           </DataTable>
 
-          <h3 className="mt-4">Endereço</h3>
-          <Padding />
-          {!reg?.state_fk ? (
-            <div style={{
-              display: "flex", alignItems: "center", gap: "10px",
-              backgroundColor: "#fff8e1", border: "1px solid #f6c94e",
-              borderRadius: "8px", padding: "12px 16px", color: "#b07d00",
-            }}>
-              <i className="pi pi-exclamation-triangle" style={{ fontSize: "1.4rem", color: "#f6c94e" }} />
-              <div>
-                <strong>Endereço pendente</strong>
-                <p style={{ margin: 0, fontSize: "0.85rem" }}>
-                  O beneficiário ainda não possui um endereço cadastrado.{" "}
-                  Para cadastrar, clique em <strong>"Ver mais informações"</strong>.
-                </p>
-              </div>
-            </div>
-          ) : (
-            <div className="grid">
-              <InfoField label="CEP" value={reg?.cep} />
-              <InfoField label="Endereço" value={reg?.address} />
-              <InfoField label="Complemento" value={reg?.complement} />
-              <InfoField label="Estado" value={reg?.state?.name} />
-              <InfoField label="Cidade" value={reg?.city?.name} />
-            </div>
+          {canViewFull && (
+            <>
+              <h3 className="mt-4">Endereço</h3>
+              <Padding />
+              {!reg?.state_fk ? (
+                <div style={{
+                  display: "flex", alignItems: "center", gap: "10px",
+                  backgroundColor: "#fff8e1", border: "1px solid #f6c94e",
+                  borderRadius: "8px", padding: "12px 16px", color: "#b07d00",
+                }}>
+                  <i className="pi pi-exclamation-triangle" style={{ fontSize: "1.4rem", color: "#f6c94e" }} />
+                  <div>
+                    <strong>Endereço pendente</strong>
+                    <p style={{ margin: 0, fontSize: "0.85rem" }}>
+                      O beneficiário ainda não possui um endereço cadastrado.{" "}
+                      Para cadastrar, clique em <strong>"Ver mais informações"</strong>.
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid">
+                  <InfoField label="CEP" value={reg?.cep} />
+                  <InfoField label="Endereço" value={reg?.address} />
+                  <InfoField label="Complemento" value={reg?.complement} />
+                  <InfoField label="Estado" value={reg?.state?.name} />
+                  <InfoField label="Cidade" value={reg?.city?.name} />
+                </div>
+              )}
+            </>
           )}
         </>
       ) : null}
 
+      {canViewFull && (
       <div style={{
         marginTop: "24px",
         padding: "16px",
@@ -203,6 +229,7 @@ const RegistrationPage = () => {
           onClick={() => history('/beneficiarios/' + reg?.id)}
         />
       </div>
+      )}
 
       <ModalAddTerm
         onHide={() => setVisibleTerm(false)}
