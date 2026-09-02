@@ -60,7 +60,8 @@ export const PermissionsConfig: Record<string, PermissionRule> = {
   // ── Matrículas ────────────────────────────────────────────────────────────
   'registration.view':    (u) => adminOrCoord(u) || hasLimitedBeneficiaryView(u),
   'registration.create':  (u) => adminOrCoord(u) || canAddEnrollment(u),
-  'registration.edit':    adminOrCoord,
+  'registration.edit':        adminOrCoord,
+  'registration.editStatus':  (u) => adminOrCoord(u) || canAddEnrollment(u),
   'registration.delete':  adminOrCoord,
 
   // ── Tecnologias Sociais ───────────────────────────────────────────────────

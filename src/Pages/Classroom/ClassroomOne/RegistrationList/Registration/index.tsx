@@ -45,7 +45,7 @@ const RegistrationPage = () => {
 
   const { can } = usePermissions();
   const canViewFull = can("beneficiary.viewFull");
-  const canEdit = can("registration.edit");
+  const canEdit = can("registration.editStatus");
 
   const { id } = useParams();
   const { data: classroom } = useFetchRequestClassroomOne(parseInt(id!));
