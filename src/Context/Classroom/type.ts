@@ -9,9 +9,11 @@ export interface ClassroomTypes {
     body: {
       name: string;
       status: string;
-      state_fk: number | undefined;
-      city_fk: number | undefined;
-      neighborhood: string;
+      state_fk?: number;
+      city_fk?: number;
+      neighborhood?: string;
+      data_inicio_prevista?: string;
+      data_fim_prevista?: string;
     },
     id: number
   ) => void;
@@ -52,6 +54,8 @@ export interface CreateClassroom {
   name: string;
   project: number;
   year: number;
+  data_inicio_prevista?: string;
+  data_fim_prevista?: string;
 }
 
 export type MediafrequencyType = Mediafrequency[]

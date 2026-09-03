@@ -99,7 +99,7 @@ export const ControllerClassroom = () => {
   );
 
   const requestUpdateClassroomMutation = useMutation(
-    ({ data, id }: { data: { name: string, status: string }; id: number }) =>
+    ({ data, id }: { data: { name: string; status: string; state_fk?: number; city_fk?: number; neighborhood?: string; data_inicio_prevista?: string; data_fim_prevista?: string }; id: number }) =>
       requestUpdateClassroom(id, data),
     {
       onError: (error: any) => {

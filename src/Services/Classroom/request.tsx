@@ -85,7 +85,15 @@ export const requestClassroomReport = (id: number, dateStart?: Date, dateEnd?: D
 
 export const requestUpdateClassroom = (
   id: number,
-  data: { name: string; status: string }
+  data: {
+    name: string;
+    status: string;
+    state_fk?: number;
+    city_fk?: number;
+    neighborhood?: string;
+    data_inicio_prevista?: string;
+    data_fim_prevista?: string;
+  }
 ) => {
   let path = "/classroom/";
   return http

@@ -8,6 +8,7 @@ import * as Yup from "yup";
 import pessoas from "../../../Assets/images/pessoasgray.svg";
 import report from "../../../Assets/images/report-svgrepo-com.svg";
 import meeting from "../../../Assets/images/school_teacher.svg";
+import CalendarComponent from "../../../Components/Calendar";
 import CardQuant from "../../../Components/Chart/CardQuant";
 import ContentPage from "../../../Components/ContentPage";
 import DropdownComponent from "../../../Components/Dropdown";
@@ -165,6 +166,12 @@ const ClassroomOnePage = () => {
                 state_fk: classroom?.state_fk ?? undefined,
                 city_fk: classroom?.city_fk ?? undefined,
                 neighborhood: classroom?.neighborhood ?? "",
+                data_inicio_prevista: classroom?.data_inicio_prevista
+                  ? new Date(classroom.data_inicio_prevista)
+                  : null as Date | null,
+                data_fim_prevista: classroom?.data_fim_prevista
+                  ? new Date(classroom.data_fim_prevista)
+                  : null as Date | null,
               }}
               validationSchema={schemaEditClassroom}
               onSubmit={(values) => {
@@ -175,6 +182,12 @@ const ClassroomOnePage = () => {
                     state_fk: values.state_fk,
                     city_fk: values.city_fk,
                     neighborhood: values.neighborhood,
+                    data_inicio_prevista: values.data_inicio_prevista
+                      ? (values.data_inicio_prevista as Date).toISOString().split("T")[0]
+                      : undefined,
+                    data_fim_prevista: values.data_fim_prevista
+                      ? (values.data_fim_prevista as Date).toISOString().split("T")[0]
+                      : undefined,
                   },
                   parseInt(id!)
                 );
@@ -245,6 +258,46 @@ const ClassroomOnePage = () => {
                           <label>Bairro/Povoado</label>
                           <Padding />
                           <TextInput name="neighborhood" placeholder="Bairro/Povoado" onChange={handleChange} value={values.neighborhood} />
+                        </div>
+                      </div>
+                      <div className="grid">
+                        <div className="col-12 md:col-6">
+                          <label>Data de início prevista</label>
+                          <Padding />
+                          <CalendarComponent
+                            name="data_inicio_prevista"
+                            value={values.data_inicio_prevista}
+                            onChange={(e: any) => setFieldValue("data_inicio_prevista", e.value)}
+                            placeholder="Selecione a data"
+                            dateFormat="dd/mm/yy"
+                          />
+                        </div>
+                        <div className="col-12 md:col-6">
+                          <label>Data de conclusão prevista</label>
+                          <Padding />
+                          <CalendarComponent
+                            name="data_fim_prevista"
+                            value={values.data_fim_prevista}
+                            onChange={(e: any) => setFieldValue("data_fim_prevista", e.value)}
+                            placeholder="Selecione a data"
+                            dateFormat="dd/mm/yy"
+                          />
+                        </div>
+                      </div>
+                      <div className="grid">
+                        <div className="col-12 md:col-6">
+                          <label style={{ color: "#6b7280", fontSize: "13px" }}>Data de início executada</label>
+                          <Padding />
+                          <p style={{ margin: 0, fontSize: "14px" }}>
+                            {classroom?.data_inicio_executada ? formatarData(classroom.data_inicio_executada) : "—"}
+                          </p>
+                        </div>
+                        <div className="col-12 md:col-6">
+                          <label style={{ color: "#6b7280", fontSize: "13px" }}>Data de conclusão executada</label>
+                          <Padding />
+                          <p style={{ margin: 0, fontSize: "14px" }}>
+                            {classroom?.data_fim_executada ? formatarData(classroom.data_fim_executada) : "—"}
+                          </p>
                         </div>
                       </div>
                       <Padding />
@@ -382,6 +435,37 @@ const ClassroomOnePage = () => {
                 <span>{classroom.neighborhood}</span>
               </>
             )}
+          </div>
+          <Padding padding="16px" />
+          <div className="grid">
+            <div className="col-12 md:col-3">
+              <label style={{ fontWeight: "bold", color: "#6b7280", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Início previsto</label>
+              <Padding />
+              <p style={{ margin: 0, fontSize: "14px" }}>
+                {classroom?.data_inicio_prevista ? formatarData(classroom.data_inicio_prevista) : "—"}
+              </p>
+            </div>
+            <div className="col-12 md:col-3">
+              <label style={{ fontWeight: "bold", color: "#6b7280", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Conclusão prevista</label>
+              <Padding />
+              <p style={{ margin: 0, fontSize: "14px" }}>
+                {classroom?.data_fim_prevista ? formatarData(classroom.data_fim_prevista) : "—"}
+              </p>
+            </div>
+            <div className="col-12 md:col-3">
+              <label style={{ fontWeight: "bold", color: "#6b7280", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Início executado</label>
+              <Padding />
+              <p style={{ margin: 0, fontSize: "14px" }}>
+                {classroom?.data_inicio_executada ? formatarData(classroom.data_inicio_executada) : "—"}
+              </p>
+            </div>
+            <div className="col-12 md:col-3">
+              <label style={{ fontWeight: "bold", color: "#6b7280", fontSize: "12px", textTransform: "uppercase", letterSpacing: "0.05em" }}>Conclusão executada</label>
+              <Padding />
+              <p style={{ margin: 0, fontSize: "14px" }}>
+                {classroom?.data_fim_executada ? formatarData(classroom.data_fim_executada) : "—"}
+              </p>
+            </div>
           </div>
         </Column>
       )}

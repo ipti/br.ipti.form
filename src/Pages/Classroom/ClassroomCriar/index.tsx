@@ -3,6 +3,7 @@ import { Button } from "primereact/button";
 import { useContext, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
+import CalendarComponent from "../../../Components/Calendar";
 import ContentPage from "../../../Components/ContentPage";
 import DropdownComponent from "../../../Components/Dropdown";
 import FieldError from "../../../Components/FieldError";
@@ -17,6 +18,8 @@ import { Column, Padding, Row } from "../../../Styles/styles";
 
 const schema = Yup.object().shape({
     name: Yup.string().required("Nome é obrigatório"),
+    data_inicio_prevista: Yup.date().required("Data de início prevista é obrigatória").typeError("Data inválida"),
+    data_fim_prevista: Yup.date().required("Data de conclusão prevista é obrigatória").typeError("Data inválida"),
 });
 
 const initialValues = {
@@ -24,6 +27,8 @@ const initialValues = {
     state_fk: undefined as number | undefined,
     city_fk: undefined as number | undefined,
     neighborhood: "",
+    data_inicio_prevista: null as Date | null,
+    data_fim_prevista: null as Date | null,
 };
 
 const ErrorSummary = ({ errors }: { errors: string[] }) => {
@@ -98,7 +103,17 @@ const FormClassroomPage = () => {
                 initialValues={initialValues}
                 validationSchema={schema}
                 onSubmit={(values) => {
-                    props.CreateClassroom({ ...values, project: parseInt(id), year: parseInt(getYear() as string) });
+                    props.CreateClassroom({
+                        ...values,
+                        project: parseInt(id),
+                        year: parseInt(getYear() as string),
+                        data_inicio_prevista: values.data_inicio_prevista
+                            ? (values.data_inicio_prevista as Date).toISOString().split("T")[0]
+                            : undefined,
+                        data_fim_prevista: values.data_fim_prevista
+                            ? (values.data_fim_prevista as Date).toISOString().split("T")[0]
+                            : undefined,
+                    });
                 }}
             >
                 {({ values, errors, handleChange, setFieldValue }) => {
@@ -164,6 +179,33 @@ const FormClassroomPage = () => {
                                         placeholder="Bairro/Povoado"
                                         value={values.neighborhood}
                                     />
+                                </div>
+                            </div>
+
+                            <div className="grid">
+                                <div className="col-12 md:col-6">
+                                    <label>Data de início prevista *</label>
+                                    <Padding />
+                                    <CalendarComponent
+                                        name="data_inicio_prevista"
+                                        value={values.data_inicio_prevista}
+                                        onChange={(e: any) => setFieldValue("data_inicio_prevista", e.value)}
+                                        placeholder="Selecione a data"
+                                        dateFormat="dd/mm/yy"
+                                    />
+                                    <FieldError message={fieldError("data_inicio_prevista")} />
+                                </div>
+                                <div className="col-12 md:col-6">
+                                    <label>Data de conclusão prevista *</label>
+                                    <Padding />
+                                    <CalendarComponent
+                                        name="data_fim_prevista"
+                                        value={values.data_fim_prevista}
+                                        onChange={(e: any) => setFieldValue("data_fim_prevista", e.value)}
+                                        placeholder="Selecione a data"
+                                        dateFormat="dd/mm/yy"
+                                    />
+                                    <FieldError message={fieldError("data_fim_prevista")} />
                                 </div>
                             </div>
 

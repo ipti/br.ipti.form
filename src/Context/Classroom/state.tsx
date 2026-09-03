@@ -33,7 +33,7 @@ export const ClassroomState = () => {
 
     const { requestCreateClassroomMutation, requestChangeClassroomMutation, requestDeleteClassroomMutation, requestUpdateClassroomMutation, requestReuseClassroomMutation } = ControllerClassroom()
 
-    const UpdateClassroom = (body: { name: string, status: string }, id: number) => {
+    const UpdateClassroom = (body: { name: string; status: string; state_fk?: number; city_fk?: number; neighborhood?: string; data_inicio_prevista?: string; data_fim_prevista?: string }, id: number) => {
         requestUpdateClassroomMutation.mutate({ data: body, id: id })
     }
 
